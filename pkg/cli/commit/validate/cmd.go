@@ -3,9 +3,12 @@ package validate
 import (
 	"fmt"
 
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/ylallemant/githooks-butler/pkg/cli/commit/validate/options"
 	"github.com/ylallemant/githooks-butler/pkg/config"
+	"github.com/ylallemant/githooks-butler/pkg/git/commit"
 	"github.com/ylallemant/githooks-butler/pkg/globals"
 )
 
@@ -19,15 +22,30 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		pretty, _ := config.ToPrettyJSON(configuration)
+		message, validated := commit.Validate(options.Current.Message, configuration)
 
-		fmt.Println(string(pretty))
+		if !validated {
+			prompt := promptui.Select{
+				Label: "Select Commit Type",
+				Items: config.CommitTypes(configuration),
+			}
 
+			_, result, err := prompt.Run()
+
+			if err != nil {
+				return err
+			}
+
+			message = fmt.Sprintf("%s: %s", result, message)
+		}
+
+		fmt.Println(message)
 		return nil
 	},
 }
 
 func init() {
+	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "current git branch")
 }
 

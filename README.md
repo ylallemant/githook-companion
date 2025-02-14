@@ -8,7 +8,7 @@ Provides a set of tools to make git-hook configuration and utilisation easy.
 - init git-hooks in a repository or globally
 - lists and installs tools needed inside the git-hooks
 - retrieves information from the Git configuration - like origin server hostname
-- commit message interactive validation
+- interactive commit message standardisation
 
 ## Install
 
