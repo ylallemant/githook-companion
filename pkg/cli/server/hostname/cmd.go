@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/git-butler/pkg/git/server"
-	"github.com/ylallemant/git-butler/pkg/globals"
+	"github.com/ylallemant/githooks-butler/pkg/git/server"
+	"github.com/ylallemant/githooks-butler/pkg/globals"
 )
 
 var rootCmd = &cobra.Command{

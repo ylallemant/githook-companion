@@ -1,4 +1,4 @@
-module github.com/ylallemant/git-butler
+module github.com/ylallemant/githooks-butler
 
 go 1.23
 

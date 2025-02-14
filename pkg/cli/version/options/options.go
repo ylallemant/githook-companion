@@ -1,7 +1,7 @@
 package options
 
 var (
-	Domain  = "git-butler"
+	Domain  = "githooks-butler"
 	Current = NewOptions()
 )
 

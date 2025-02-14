@@ -9,11 +9,11 @@ set -e
 
 # eg. release-lab/whatchanged
 owner="ylallemant"
-repo="git-butler"
-exe_name="git-butler"
+repo="githooks-butler"
+exe_name="githooks-butler"
 githubUrl=""
 githubApiUrl=""
-version="0.0.2"
+version="0.0.1"
 separator="-"
 
 get_arch() {

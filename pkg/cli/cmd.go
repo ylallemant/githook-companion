@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/ylallemant/git-butler/pkg/cli/server"
-	"github.com/ylallemant/git-butler/pkg/cli/update"
-	"github.com/ylallemant/git-butler/pkg/cli/version"
+	"github.com/ylallemant/githooks-butler/pkg/cli/server"
+	"github.com/ylallemant/githooks-butler/pkg/cli/update"
+	"github.com/ylallemant/githooks-butler/pkg/cli/version"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "git-butler",
-	Short: "git-butler provides a toolset facilitating complex git-hook workflows",
+	Use:   "githooks-butler",
+	Short: "githooks-butler provides a toolset facilitating complex git-hook workflows",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("please use a subcommand...")

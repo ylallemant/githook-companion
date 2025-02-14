@@ -17,8 +17,8 @@ $inputVersion = if ($version) {
 $arr = $inputRepo.Split('/')
 
 $owner = "ylallemant"
-$repoName = "git-butler"
-$exeName = "git-butler"
+$repoName = "githooks-butler"
+$exeName = "githooks-butler"
 $separator = "-"
 $githubUrl = "https://github.com"
 

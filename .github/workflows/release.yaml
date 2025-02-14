@@ -30,7 +30,7 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         goversion: "1.18"
-        project_path: "./cmd/git-butler"
-        binary_name: "git-butler"
-        ldflags: -X github.com/ylallemant/git-butler/pkg/version.GitCommit=${{github.sha}} -X github.com/ylallemant/git-butler/pkg/version.Version=${{ github.ref_name }}
+        project_path: "./cmd/githooks-butler"
+        binary_name: "githooks-butler"
+        ldflags: -X github.com/ylallemant/githooks-butler/pkg/version.GitCommit=${{github.sha}} -X github.com/ylallemant/githooks-butler/pkg/version.Version=${{ github.ref_name }}
         #extra_files: LICENSE README.md
