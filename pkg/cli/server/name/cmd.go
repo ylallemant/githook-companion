@@ -27,7 +27,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&options.Current.Default, "default", options.Current.Default, "returned value if origin hostname can't be resolved to a name")
-	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "current git branch")
+	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 }
 
 func Command() *cobra.Command {
