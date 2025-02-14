@@ -1,0 +1,27 @@
+# Logs
+logs
+*.log
+
+# # Runtime data
+pids
+*.pid
+*.seed
+.DS_Store
+*.swp
+*.zip
+
+# editors
+.idea/
+.vscode/
+.history/
+
+# only local
+backup/
+
+# secret protection
+**/*.env
+
+# building folders
+dist/
+.go/
+.gocache/

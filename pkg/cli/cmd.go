@@ -1,0 +1,31 @@
+package cli
+
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+	"github.com/ylallemant/git-butler/pkg/cli/server"
+	"github.com/ylallemant/git-butler/pkg/cli/update"
+	"github.com/ylallemant/git-butler/pkg/cli/version"
+)
+
+var rootCmd = &cobra.Command{
+	Use:   "git-butler",
+	Short: "git-butler provides a toolset facilitating complex git-hook workflows",
+	Long:  ``,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("please use a subcommand...")
+		cmd.Usage()
+		return nil
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(server.Command())
+	rootCmd.AddCommand(update.Command())
+	rootCmd.AddCommand(version.Command())
+}
+
+func Command() *cobra.Command {
+	return rootCmd
+}
