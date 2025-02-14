@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/ylallemant/githooks-butler/pkg/cli/commit"
 	"github.com/ylallemant/githooks-butler/pkg/cli/server"
 	"github.com/ylallemant/githooks-butler/pkg/cli/update"
 	"github.com/ylallemant/githooks-butler/pkg/cli/version"
@@ -21,6 +22,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.AddCommand(commit.Command())
 	rootCmd.AddCommand(server.Command())
 	rootCmd.AddCommand(update.Command())
 	rootCmd.AddCommand(version.Command())
