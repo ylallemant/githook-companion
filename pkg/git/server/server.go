@@ -27,7 +27,7 @@ func Hostname() (string, error) {
 	return uri.Host, nil
 }
 
-func Name() (string, error) {
+func Name(OptionalDefaultValue string) (string, error) {
 	hostname, err := Hostname()
 	if err != nil {
 		return "", errors.Wrapf(err, "could not retrieve hostname")
@@ -35,6 +35,10 @@ func Name() (string, error) {
 
 	if name, found := api.Providers[hostname]; found {
 		return name, nil
+	}
+
+	if OptionalDefaultValue != "" {
+		return OptionalDefaultValue, nil
 	}
 
 	return hostname, nil

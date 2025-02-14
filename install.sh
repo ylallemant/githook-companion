@@ -13,7 +13,7 @@ repo="git-butler"
 exe_name="git-butler"
 githubUrl=""
 githubApiUrl=""
-version="0.0.7"
+version="0.0.2"
 separator="-"
 
 get_arch() {

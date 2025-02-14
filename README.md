@@ -6,7 +6,7 @@ Git-Butler
 ## Install
 
 ```sh
-curl -fsSL https://github.com/ylallemant/git-butler/raw/0.0.1/install.sh | bash
+curl -fsSL https://github.com/ylallemant/git-butler/raw/0.0.2/install.sh | bash
 ```
 
 ## Tests
