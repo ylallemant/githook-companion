@@ -42,6 +42,11 @@ github.com/stretchr/testify/assert/yaml
 # golang.org/x/sys v0.0.0-20181122145206-62eef0e2fa9b
 ## explicit
 golang.org/x/sys/unix
+# golang.org/x/text v0.22.0
+## explicit; go 1.18
+golang.org/x/text/runes
+golang.org/x/text/transform
+golang.org/x/text/unicode/norm
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
