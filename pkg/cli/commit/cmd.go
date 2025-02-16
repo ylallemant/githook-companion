@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	commitType "github.com/ylallemant/githooks-butler/pkg/cli/commit/type"
 	"github.com/ylallemant/githooks-butler/pkg/cli/commit/validate"
 )
 
@@ -21,6 +22,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(validate.Command())
+	rootCmd.AddCommand(commitType.Command())
 }
 
 func Command() *cobra.Command {
