@@ -116,6 +116,12 @@ func TestEnsureFormat(t *testing.T) {
 			expected:   "feat: Some Heads-UP changes",
 		},
 		{
+			name:       "ignore missing colon on existing prefix",
+			message:    "FEAT  Some Heads-UP FEAT changes",
+			commitType: "FEAT",
+			expected:   "feat: Some Heads-UP FEAT changes",
+		},
+		{
 			name:       "only change first commit type name occurance",
 			message:    "FEAT : Some Heads-UP FEAT changes",
 			commitType: "FEAT",
