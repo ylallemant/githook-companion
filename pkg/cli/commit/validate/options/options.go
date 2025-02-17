@@ -11,5 +11,6 @@ func NewOptions() *Options {
 }
 
 type Options struct {
-	Message string
+	Message        string
+	OutputFilePath string
 }

@@ -2,6 +2,7 @@ package validate
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
@@ -61,13 +62,28 @@ var rootCmd = &cobra.Command{
 		// ensure commit type prefix format (lower-case)
 		message = commit.EnsureFormat(message, commitType)
 
-		fmt.Println(message)
+		if options.Current.OutputFilePath == "" {
+			// output to terminal
+			fmt.Println(message)
+		} else {
+			// output to file
+			file, err := os.OpenFile(options.Current.OutputFilePath, os.O_RDWR|os.O_CREATE, 0755)
+			if err != nil {
+				return errors.Wrapf(err, "failed to write to output file &s", options.Current.OutputFilePath)
+			}
+
+			defer file.Close()
+
+			file.WriteString(message)
+		}
+
 		return nil
 	},
 }
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
+	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 }
 
