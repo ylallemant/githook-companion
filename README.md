@@ -13,7 +13,7 @@ Provides a set of tools to make git-hook configuration and utilisation easy.
 ## Install
 
 ```sh
-curl -fsSL https://github.com/ylallemant/githooks-butler/raw/0.0.1/install.sh | bash
+curl -fsSL https://github.com/ylallemant/githooks-butler/raw/0.2.0/install.sh | bash
 ```
 
 ## Tests
