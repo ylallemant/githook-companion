@@ -81,6 +81,16 @@ func load(path string, strict bool) (*api.Config, error) {
 	return nil, nil
 }
 
+func GetCommitTypes(config *api.Config) []string {
+	commitTypes := make([]string, 0)
+
+	for _, commitType := range config.Commit.Types {
+		commitTypes = append(commitTypes, commitType.Type)
+	}
+
+	return commitTypes
+}
+
 func ToYAML(config *api.Config) ([]byte, error) {
 	return yaml.Marshal(config)
 }

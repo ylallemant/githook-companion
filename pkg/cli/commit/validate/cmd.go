@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/manifoldco/promptui"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githooks-butler/pkg/cli/commit/validate/options"
@@ -22,22 +23,43 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		message, validated := commit.Validate(options.Current.Message, configuration)
+		message := options.Current.Message
+
+		validated, commitType, dictionary := commit.Validate(message, configuration)
+
+		if dictionary != nil {
+			// commit type found through dictionary match on first word
+			// ensure that the dictionary value is used in the message
+			message = commit.EnsureDictionaryValue(message, dictionary)
+		}
 
 		if !validated {
+			// message does not have a commit type prefix
+			// and no commit type could be correlated through dictionaries
+			// request user input through interactive commit type selection
+			templates := &promptui.SelectTemplates{
+				Active:   fmt.Sprintf("%s {{ .Type | underline }} : {{ .Description | underline }}", promptui.IconSelect),
+				Inactive: "  {{ .Type }} : {{ .Description }}",
+				Selected: fmt.Sprintf(`{{ "%s" | green }} {{ .Type | faint }}`, promptui.IconGood),
+			}
+
 			prompt := promptui.Select{
-				Label: "Select Commit Type",
-				Items: config.CommitTypes(configuration),
+				Label:     "Select Commit Type",
+				Items:     configuration.Commit.Types,
+				Templates: templates,
 			}
 
-			_, result, err := prompt.Run()
-
+			idx, _, err := prompt.Run()
 			if err != nil {
-				return err
+				return errors.Wrap(err, "interactive commit type user selection failed")
 			}
 
-			message = fmt.Sprintf("%s: %s", result, message)
+			// commit type from user input
+			commitType = configuration.Commit.Types[idx].Type
 		}
+
+		// ensure commit type prefix format (lower-case)
+		message = commit.EnsureFormat(message, commitType)
 
 		fmt.Println(message)
 		return nil
