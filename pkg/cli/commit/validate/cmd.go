@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githooks-butler/pkg/cli/commit/validate/options"
 	"github.com/ylallemant/githooks-butler/pkg/config"
+	"github.com/ylallemant/githooks-butler/pkg/environment"
 	"github.com/ylallemant/githooks-butler/pkg/git/commit"
 	"github.com/ylallemant/githooks-butler/pkg/globals"
 )
@@ -19,6 +20,13 @@ var rootCmd = &cobra.Command{
 	Short: "validates interactively Git commit messages",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		// assess if binary was called in a terminal or from some editor/git client
+		calledFromTerminal, err := environment.CalledFromTerminal()
+		if err != nil {
+			return errors.Wrap(err, "failed to assess if called from terminal")
+		}
+
 		configuration, err := config.Get(globals.Current.ConfigPath)
 		if err != nil {
 			return err
@@ -34,10 +42,11 @@ var rootCmd = &cobra.Command{
 			message = commit.EnsureDictionaryValue(message, dictionary)
 		}
 
-		if !validated {
+		if !validated && calledFromTerminal {
 			// message does not have a commit type prefix
 			// and no commit type could be correlated through dictionaries
 			// request user input through interactive commit type selection
+			// this can only work in a terminal
 			templates := &promptui.SelectTemplates{
 				Active:   fmt.Sprintf("%s {{ .Type | underline }} : {{ .Description | underline }}", promptui.IconSelect),
 				Inactive: "  {{ .Type }} : {{ .Description }}",
@@ -57,6 +66,20 @@ var rootCmd = &cobra.Command{
 
 			// commit type from user input
 			commitType = configuration.Commit.Types[idx].Type
+		} else if !validated {
+			// binary has not been called from a terminal
+			// no user interaction possible
+			// output invalidity information and throw error
+			fmt.Println("-- error cause --------------------------------------")
+			fmt.Println("commit message malformed : add a commit type prefix")
+			fmt.Println("format: \"<commit-type>: <commit-message>\"")
+			fmt.Println("available commit types:")
+			for _, commitType := range configuration.Commit.Types {
+				fmt.Println("  - ", commitType.Type, ": ", commitType.Description)
+			}
+			fmt.Println("-- error --------------------------------------------")
+
+			return errors.New("message is missing commit type - see \"error cause\" block for more information")
 		}
 
 		// ensure commit type prefix format (lower-case)

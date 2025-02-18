@@ -13,7 +13,7 @@ repo="githooks-butler"
 exe_name="githooks-butler"
 githubUrl=""
 githubApiUrl=""
-version="0.3.1"
+version="0.3.2"
 separator="-"
 
 get_arch() {
