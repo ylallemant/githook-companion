@@ -1,3 +1,6 @@
+# dario.cat/mergo v1.0.1 => github.com/ylallemant/mergo v1.0.2
+## explicit; go 1.13
+dario.cat/mergo
 # github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
 ## explicit
 github.com/chzyer/readline
@@ -62,3 +65,4 @@ golang.org/x/text/width
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
+# dario.cat/mergo => github.com/ylallemant/mergo v1.0.2

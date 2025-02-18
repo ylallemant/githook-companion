@@ -3,6 +3,7 @@ module github.com/ylallemant/githooks-butler
 go 1.23
 
 require (
+	dario.cat/mergo v1.0.1
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/hbollon/go-edlib v1.6.0
 	github.com/jedib0t/go-pretty/v6 v6.6.6
@@ -14,6 +15,8 @@ require (
 	golang.org/x/text v0.22.0
 	gopkg.in/yaml.v3 v3.0.1
 )
+
+replace dario.cat/mergo => github.com/ylallemant/mergo v1.0.2
 
 require (
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect

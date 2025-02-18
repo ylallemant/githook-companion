@@ -13,13 +13,19 @@ import (
 func Get(path string) (*api.Config, error) {
 	var err error
 
-	if path != "" {
-		path, err = ensureAbsolutePath(path)
+	if path == "" {
+		// set path to home directory
+		home, err := homeDir()
 		if err != nil {
 			return nil, err
 		}
 
-		return load(path, true)
+		path = filepath.Join(home, api.ConfigDirectory, api.ConfigFile)
+	}
+
+	mainConfig, err := load(path, false)
+	if err != nil {
+		return nil, err
 	}
 
 	local, err := localDir()
@@ -28,26 +34,26 @@ func Get(path string) (*api.Config, error) {
 	}
 
 	path = filepath.Join(local, api.ConfigDirectory, api.ConfigFile)
-	config, err := load(path, false)
-	if err != nil {
-		return nil, err
-	}
-	if config != nil {
-		return config, nil
-	}
-
-	home, err := homeDir()
+	localConfig, err := load(path, false)
 	if err != nil {
 		return nil, err
 	}
 
-	path = filepath.Join(home, api.ConfigDirectory, api.ConfigFile)
-	config, err = load(path, false)
-	if err != nil {
-		return nil, err
+	if mainConfig != nil && localConfig != nil {
+		merged, err := Merge(mainConfig, localConfig)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to merge global and local configurations")
+		}
+
+		return merged, nil
 	}
-	if config != nil {
-		return config, nil
+
+	if localConfig != nil {
+		return localConfig, nil
+	}
+
+	if mainConfig != nil {
+		return mainConfig, nil
 	}
 
 	return Default(), nil
