@@ -7,6 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githooks-butler/pkg/api"
+	"github.com/ylallemant/githooks-butler/pkg/environment"
 	"gopkg.in/yaml.v3"
 )
 
@@ -15,7 +16,7 @@ func Get(path string) (*api.Config, error) {
 
 	if path == "" {
 		// set path to home directory
-		home, err := homeDir()
+		home, err := environment.Home()
 		if err != nil {
 			return nil, err
 		}
@@ -28,7 +29,7 @@ func Get(path string) (*api.Config, error) {
 		return nil, err
 	}
 
-	local, err := localDir()
+	local, err := environment.CurrentDirectory()
 	if err != nil {
 		return nil, err
 	}

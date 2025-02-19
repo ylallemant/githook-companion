@@ -74,7 +74,7 @@ func removeTypeDuplicates(cfg *api.Config) {
 }
 
 func removeDependencyDuplicates(cfg *api.Config) {
-	uniques := make([]*api.Tool, 0)
+	uniques := make([]*api.Dependency, 0)
 	slices.Reverse(cfg.Dependencies)
 	for _, element := range cfg.Dependencies {
 		found := false

@@ -37,7 +37,7 @@ func TestValidate(t *testing.T) {
 					},
 					Dictionaries: []*api.CommitTypeDictionary{},
 				},
-				Dependencies: []*api.Tool{},
+				Dependencies: []*api.Dependency{},
 			},
 		},
 		{
@@ -61,7 +61,7 @@ func TestValidate(t *testing.T) {
 					},
 					Dictionaries: []*api.CommitTypeDictionary{},
 				},
-				Dependencies: []*api.Tool{},
+				Dependencies: []*api.Dependency{},
 			},
 		},
 		{
@@ -103,7 +103,7 @@ func TestValidate(t *testing.T) {
 					Dictionaries: []*api.CommitTypeDictionary{},
 					DefaultType:  "docs",
 				},
-				Dependencies: []*api.Tool{},
+				Dependencies: []*api.Dependency{},
 			},
 		},
 		{
@@ -133,7 +133,7 @@ func TestValidate(t *testing.T) {
 					},
 					DefaultType: "docs",
 				},
-				Dependencies: []*api.Tool{},
+				Dependencies: []*api.Dependency{},
 			},
 			expected: &api.Config{
 				Commit: &api.Commit{
@@ -150,7 +150,7 @@ func TestValidate(t *testing.T) {
 					Dictionaries: []*api.CommitTypeDictionary{},
 					DefaultType:  "docs",
 				},
-				Dependencies: []*api.Tool{},
+				Dependencies: []*api.Dependency{},
 			},
 		},
 	}

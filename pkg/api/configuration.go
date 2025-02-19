@@ -5,14 +5,18 @@ const ConfigFile = "config.yaml"
 
 type Config struct {
 	*Commit      `yaml:"commit" json:"commit"`
-	Dependencies []*Tool `yaml:"dependencies" json:"dependencies"`
+	Dependencies []*Dependency `yaml:"dependencies" json:"dependencies"`
 }
 
-type Tool struct {
+type Dependency struct {
 	Name                string   `yaml:"name" json:"name"`
 	Version             string   `yaml:"version" json:"version"`
+	SemverPrefix        string   `yaml:"semver_prefix" json:"semver_prefix"`
 	Args                []string `yaml:"args" json:"args"`
-	DownloadUrlTemplate string   `yaml:"download_url_template" json:"download_url_template"`
+	ForceReplace        bool     `yaml:"force-replace" json:"force-replace"`
+	ChecksumUrlTemplate string   `yaml:"checksum_url_template" json:"checksum_url_template"`
+	ChecksumAlgorithm   string   `yaml:"checksum_algorithm" json:"checksum_algorithm"`
+	ArchiveUrlTemplate  string   `yaml:"archive_url_template" json:"archive_url_template"`
 }
 
 type Commit struct {
