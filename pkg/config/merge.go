@@ -5,7 +5,7 @@ import (
 
 	"dario.cat/mergo"
 	"github.com/pkg/errors"
-	"github.com/ylallemant/githooks-butler/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
 func Merge(cfgA, cfgB *api.Config) (*api.Config, error) {

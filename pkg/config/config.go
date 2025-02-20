@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
-	"github.com/ylallemant/githooks-butler/pkg/api"
-	"github.com/ylallemant/githooks-butler/pkg/environment"
+	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/environment"
 	"gopkg.in/yaml.v3"
 )
 

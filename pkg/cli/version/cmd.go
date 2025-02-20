@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githooks-butler/pkg/cli/version/options"
-	"github.com/ylallemant/githooks-butler/pkg/version"
+	"github.com/ylallemant/githook-companion/pkg/cli/version/options"
+	"github.com/ylallemant/githook-companion/pkg/version"
 )
 
 var rootCmd = &cobra.Command{

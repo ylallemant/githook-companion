@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/ylallemant/githooks-butler/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
 func TestValidate(t *testing.T) {

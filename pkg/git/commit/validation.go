@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ylallemant/githooks-butler/pkg/api"
-	"github.com/ylallemant/githooks-butler/pkg/config"
+	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/config"
 )
 
 func Validate(message string, cfg *api.Config) (bool, string, *api.CommitTypeDictionary) {

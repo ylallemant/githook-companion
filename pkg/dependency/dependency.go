@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
-	"github.com/ylallemant/githooks-butler/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
 func Available(dependency *api.Dependency, directory string) (bool, error) {

@@ -4,17 +4,17 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/ylallemant/githooks-butler/pkg/cli/commit"
-	"github.com/ylallemant/githooks-butler/pkg/cli/config"
-	"github.com/ylallemant/githooks-butler/pkg/cli/install"
-	"github.com/ylallemant/githooks-butler/pkg/cli/server"
-	"github.com/ylallemant/githooks-butler/pkg/cli/update"
-	"github.com/ylallemant/githooks-butler/pkg/cli/version"
+	"github.com/ylallemant/githook-companion/pkg/cli/commit"
+	"github.com/ylallemant/githook-companion/pkg/cli/config"
+	"github.com/ylallemant/githook-companion/pkg/cli/install"
+	"github.com/ylallemant/githook-companion/pkg/cli/server"
+	"github.com/ylallemant/githook-companion/pkg/cli/update"
+	"github.com/ylallemant/githook-companion/pkg/cli/version"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "githooks-butler",
-	Short: "githooks-butler provides a toolset facilitating complex git-hook workflows",
+	Use:   "githook-companion",
+	Short: "githook-companion provides a toolset facilitating complex git-hook workflows",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("please use a subcommand...")

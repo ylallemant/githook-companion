@@ -2,7 +2,7 @@ package commit
 
 import (
 	edlib "github.com/hbollon/go-edlib"
-	"github.com/ylallemant/githooks-butler/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
 func fuzzyDictionaryMatch(token string, config *api.Config) *api.CommitTypeDictionary {

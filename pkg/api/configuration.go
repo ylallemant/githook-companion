@@ -1,6 +1,6 @@
 package api
 
-const ConfigDirectory = ".githooks-butler"
+const ConfigDirectory = ".githook-companion"
 const ConfigFile = "config.yaml"
 
 type Config struct {

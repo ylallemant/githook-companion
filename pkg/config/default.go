@@ -1,6 +1,6 @@
 package config
 
-import "github.com/ylallemant/githooks-butler/pkg/api"
+import "github.com/ylallemant/githook-companion/pkg/api"
 
 const (
 	typeFeature  = "feat"

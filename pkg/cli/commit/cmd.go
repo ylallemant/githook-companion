@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	commitType "github.com/ylallemant/githooks-butler/pkg/cli/commit/type"
-	"github.com/ylallemant/githooks-butler/pkg/cli/commit/validate"
+	commitType "github.com/ylallemant/githook-companion/pkg/cli/commit/type"
+	"github.com/ylallemant/githook-companion/pkg/cli/commit/validate"
 )
 
 var rootCmd = &cobra.Command{

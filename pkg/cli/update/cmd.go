@@ -19,14 +19,14 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githooks-butler/pkg/cli/update/options"
-	"github.com/ylallemant/githooks-butler/pkg/version"
+	"github.com/ylallemant/githook-companion/pkg/cli/update/options"
+	"github.com/ylallemant/githook-companion/pkg/version"
 )
 
 var (
 	owner      = "ylallemant"
-	repo       = "githooks-butler"
-	binaryName = "githooks-butler"
+	repo       = "githook-companion"
+	binaryName = "githook-companion"
 )
 
 var rootCmd = &cobra.Command{

@@ -8,11 +8,11 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githooks-butler/pkg/cli/install/dependencies/options"
-	"github.com/ylallemant/githooks-butler/pkg/config"
-	"github.com/ylallemant/githooks-butler/pkg/dependency"
-	"github.com/ylallemant/githooks-butler/pkg/environment"
-	"github.com/ylallemant/githooks-butler/pkg/globals"
+	"github.com/ylallemant/githook-companion/pkg/cli/install/dependencies/options"
+	"github.com/ylallemant/githook-companion/pkg/config"
+	"github.com/ylallemant/githook-companion/pkg/dependency"
+	"github.com/ylallemant/githook-companion/pkg/environment"
+	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 var rootCmd = &cobra.Command{

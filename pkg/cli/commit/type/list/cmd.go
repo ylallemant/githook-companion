@@ -6,9 +6,9 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githooks-butler/pkg/cli/commit/validate"
-	"github.com/ylallemant/githooks-butler/pkg/config"
-	"github.com/ylallemant/githooks-butler/pkg/globals"
+	"github.com/ylallemant/githook-companion/pkg/cli/commit/validate"
+	"github.com/ylallemant/githook-companion/pkg/config"
+	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 var rootCmd = &cobra.Command{

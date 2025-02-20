@@ -1,19 +1,18 @@
-githooks-butler
+githook-companion
 ====
 
-Provides a set of tools to make git-hook configuration and utilisation easy.
+Provides a set of commands to make git-hook configuration and utilisation easy.
 
 ## Features
 
-- init git-hooks in a repository or globally
-- lists and installs tools needed inside the git-hooks
+- lists and installs dependencies needed inside the git-hooks
 - retrieves information from the Git configuration - like origin server hostname
-- interactive commit message standardisation
+- commit message standardisation through configuration
 
 ## Install
 
 ```sh
-curl -fsSL https://github.com/ylallemant/githooks-butler/raw/0.3.2/install.sh | bash
+curl -fsSL https://github.com/ylallemant/githook-companion/raw/0.5.0/install.sh | bash
 ```
 
 ## Tests

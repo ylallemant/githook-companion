@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/ylallemant/githooks-butler/pkg/cli"
+	"github.com/ylallemant/githook-companion/pkg/cli"
 )
 
 func main() {

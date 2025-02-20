@@ -4,8 +4,8 @@ import (
 	"net/url"
 
 	"github.com/pkg/errors"
-	"github.com/ylallemant/githooks-butler/pkg/api"
-	"github.com/ylallemant/githooks-butler/pkg/command"
+	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/command"
 )
 
 func Hostname() (string, error) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/ylallemant/githooks-butler/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
 func Version(dependency *api.Dependency) string {

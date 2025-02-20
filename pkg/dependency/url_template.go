@@ -6,7 +6,7 @@ import (
 	"runtime"
 
 	"github.com/pkg/errors"
-	"github.com/ylallemant/githooks-butler/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
 func templateDataFromDependency(dependency *api.Dependency) *archiveContext {
