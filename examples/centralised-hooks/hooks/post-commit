@@ -1,0 +1,30 @@
+#!/usr/bin/sh
+set -eu
+
+CURRENT_DIRECTORY="$(pwd)"
+GITHOOKS_DIRECTORY="$(dirname $(dirname $0))"
+GITHOOKS_BIN_DIRECTORY="$GITHOOKS_DIRECTORY/bin/$(uname -s)/$(uname -m)"
+CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/hooks"
+
+# post-commit can enter a loop if you perform a commit in it
+# using a lock is a workaround
+LOCK=".git/post-commit.lock"
+
+if [ ! -f "$LOCK" ]
+then
+echo "apply generic post-commit"
+touch "$LOCK"
+
+git add "CHANGELOG.md"
+
+# --no-verifiy disables pre-commit, but not post-ommit : without a lock you get a loop
+git commit --amend -C HEAD --no-verify
+
+if [ -d "$CUSTOM_GITHOOKS_DIRECTORY" ] && [ -f "$CUSTOM_GITHOOKS_DIRECTORY/post-commit" ]
+then
+  echo "apply custom post-commit"
+  "$CUSTOM_GITHOOKS_DIRECTORY"/post-commit
+fi
+
+rm "$LOCK"
+fi

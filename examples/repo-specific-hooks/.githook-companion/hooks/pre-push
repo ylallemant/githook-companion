@@ -1,0 +1,6 @@
+#!/usr/bin/sh
+set -eu
+
+echo "CUSTOM pre-push"
+
+

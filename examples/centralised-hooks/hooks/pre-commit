@@ -1,0 +1,41 @@
+#!/usr/bin/sh
+set -eu
+
+CURRENT_DIRECTORY="$(pwd)"
+GITHOOKS_DIRECTORY="$(dirname $(dirname $0))"
+GITHOOKS_BIN_DIRECTORY="$GITHOOKS_DIRECTORY/bin/$(uname -s)/$(uname -m)"
+CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/hooks"
+TEMPLATE_NAME=$("$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-3-2 server name --default default)
+
+echo "apply generic pre-commit"
+
+# Make sure an email is set properly
+if [ -z "$(git config user.email)" ]
+then
+	cat "\nError: user.email not set\n\n"
+	exit 1
+fi
+
+# Make sure a name is set properly
+if [ -z "$(git config user.name)" ]
+then
+	cat "\nError: user.name not set\n\n"
+	exit 1
+fi
+
+# add the generated changelog to the commit
+# with a git server provider specific template (or only a default)
+git fetch origin --prune --tags
+"$GITHOOKS_BIN_DIRECTORY"/git-chglog-0-15-4 \
+    --next-tag 'Unreleased' \
+    -o "$CURRENT_DIRECTORY/CHANGELOG.md" \
+    -c "$GITHOOKS_DIRECTORY/.chglog/config.yml" \
+    -t "$GITHOOKS_DIRECTORY/.chglog/templates/$TEMPLATE_NAME.tpl.md" 
+
+
+# check for existing project specific hooks
+if [ -d "$CUSTOM_GITHOOKS_DIRECTORY" ] && [ -f "$CUSTOM_GITHOOKS_DIRECTORY/pre-commit" ]
+then
+  echo "apply custom pre-commit"
+  "$CUSTOM_GITHOOKS_DIRECTORY"/pre-commit
+fi

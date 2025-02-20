@@ -1,0 +1,20 @@
+#!/usr/bin/sh
+#; C:/Program\ Files/Git/usr/bin/sh.exe
+set -eu
+
+CURRENT_DIRECTORY="$(pwd)"
+GITHOOKS_DIRECTORY="$(dirname $(dirname $0))"
+GITHOOKS_BIN_DIRECTORY="$GITHOOKS_DIRECTORY/bin/$(uname -s)/$(uname -m)"
+CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/hooks"
+
+echo "apply generic prepare-commit-msg"
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+env > ~/githook-butler.log
+
+# output githook-companion configuration
+#"$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-3-2 config show -c "$GITHOOKS_DIRECTORY"/.githook-companion/config.yaml
+
+"$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-3-2 commit validate -c "$GITHOOKS_DIRECTORY"/.githook-companion/config.yaml  -m "$(cat $COMMIT_MSG_FILE)" -o "$COMMIT_MSG_FILE" < /dev/tty

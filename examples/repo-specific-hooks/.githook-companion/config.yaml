@@ -1,0 +1,15 @@
+dependencies:
+  - name: terraform
+    version: 1.5.4
+    #checksum_algorithm: sha256
+    #checksum_url_template: https://releases.hashicorp.com/terraform/{{.Version}}/terraform_{{.Version}}_SHA256SUMS
+    archive_url_template: https://releases.hashicorp.com/terraform/{{.Version}}/terraform_{{.Version}}_{{.Os}}_{{.Arch}}.zip
+
+  - name: terraform-docs
+    version: 0.19.0
+    semver_prefix: v
+    archive_url_template: https://github.com/terraform-docs/terraform-docs/releases/download/v{{.Version}}/terraform-docs-v{{.Version}}-{{.Os}}-{{.Arch}}.{{.Ext}}
+
+  - name: tflint
+    version: 0.55.1
+    archive_url_template: https://github.com/terraform-linters/tflint/releases/download/v{{.Version}}/tflint_{{.Os}}_{{.Arch}}.zip
