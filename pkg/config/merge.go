@@ -10,12 +10,12 @@ import (
 
 func Merge(cfgA, cfgB *api.Config) (*api.Config, error) {
 	merged := &api.Config{}
-	err := mergo.Merge(merged, cfgA, mergo.WithOverride, mergo.WithAppendSliceNonRepeated)
+	err := mergo.Merge(merged, cfgA, mergo.WithOverride, mergo.WithAppendSlice)
 	if err != nil {
 		return nil, errors.New("failed to merge first provided config")
 	}
 
-	err = mergo.Merge(merged, cfgB, mergo.WithOverride, mergo.WithAppendSliceNonRepeated)
+	err = mergo.Merge(merged, cfgB, mergo.WithOverride, mergo.WithAppendSlice)
 	if err != nil {
 		return nil, errors.New("failed to merge first provided config")
 	}

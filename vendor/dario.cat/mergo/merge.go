@@ -42,7 +42,6 @@ type Config struct {
 	Overwrite                    bool
 	ShouldNotDereference         bool
 	AppendSlice                  bool
-	deduplicateSliceAppending    bool
 	TypeCheck                    bool
 	overwriteWithEmptyValue      bool
 	overwriteSliceWithEmptyValue bool
@@ -173,31 +172,7 @@ func deepMerge(dst, src reflect.Value, visited map[uintptr]*visit, depth int, co
 						if srcSlice.Type() != dstSlice.Type() {
 							return fmt.Errorf("cannot append two slices with different type (%s, %s)", srcSlice.Type(), dstSlice.Type())
 						}
-						if !config.deduplicateSliceAppending {
-							dstSlice = reflect.AppendSlice(dstSlice, srcSlice)
-						} else {
-							for i := 0; i < srcSlice.Len(); i++ {
-								srcElement := srcSlice.Index(i)
-								if srcElement.CanInterface() {
-									srcElement = reflect.ValueOf(srcElement.Interface())
-								}
-								var found bool
-								for j := 0; j < dstSlice.Len(); j++ {
-									dstElement := dstSlice.Index(j)
-									if dstElement.CanInterface() {
-										dstElement = reflect.ValueOf(dstElement.Interface())
-									}
-									found = reflect.DeepEqual(srcElement.Interface(), dstElement.Interface())
-									if found {
-										break
-									}
-								}
-								if found {
-									continue
-								}
-								dstSlice = reflect.Append(dstSlice, srcSlice.Index(i))
-							}
-						}
+						dstSlice = reflect.AppendSlice(dstSlice, srcSlice)
 					} else if sliceDeepCopy {
 						i := 0
 						for ; i < srcSlice.Len() && i < dstSlice.Len(); i++ {
@@ -257,31 +232,7 @@ func deepMerge(dst, src reflect.Value, visited map[uintptr]*visit, depth int, co
 			if src.Type() != dst.Type() {
 				return fmt.Errorf("cannot append two slice with different type (%s, %s)", src.Type(), dst.Type())
 			}
-			if !config.deduplicateSliceAppending {
-				dst.Set(reflect.AppendSlice(dst, src))
-			} else {
-				for i := 0; i < src.Len(); i++ {
-					srcElement := src.Index(i)
-					if srcElement.CanInterface() {
-						srcElement = reflect.ValueOf(srcElement.Interface())
-					}
-					var found bool
-					for j := 0; j < dst.Len(); j++ {
-						dstElement := dst.Index(j)
-						if dstElement.CanInterface() {
-							dstElement = reflect.ValueOf(dstElement.Interface())
-						}
-						found = reflect.DeepEqual(srcElement.Interface(), dstElement.Interface())
-						if found {
-							break
-						}
-					}
-					if found {
-						continue
-					}
-					dst.Set(reflect.Append(dst, src.Index(i)))
-				}
-			}
+			dst.Set(reflect.AppendSlice(dst, src))
 		} else if sliceDeepCopy {
 			for i := 0; i < src.Len() && i < dst.Len(); i++ {
 				srcElement := src.Index(i)
@@ -407,13 +358,6 @@ func WithoutDereference(config *Config) {
 // WithAppendSlice will make merge append slices instead of overwriting it.
 func WithAppendSlice(config *Config) {
 	config.AppendSlice = true
-}
-
-// WithAppendSliceNonRepeated will make merge append slices instead of overwriting it,
-// and deduplicate the slices.
-func WithAppendSliceNonRepeated(config *Config) {
-	config.AppendSlice = true
-	config.deduplicateSliceAppending = true
 }
 
 // WithTypeCheck will make merge check types while overwriting it (must be used with WithOverride).
