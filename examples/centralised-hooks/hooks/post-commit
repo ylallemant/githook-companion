@@ -1,9 +1,13 @@
 #!/usr/bin/sh
 set -eu
 
+# directory where the hook was triggered (your project)
 CURRENT_DIRECTORY="$(pwd)"
+# directory where the hook is running (your centralised hooks project)
 GITHOOKS_DIRECTORY="$(dirname $(dirname $0))"
+# bin directory depending on OS and ARCH
 GITHOOKS_BIN_DIRECTORY="$GITHOOKS_DIRECTORY/bin/$(uname -s)/$(uname -m)"
+# where custom hook are located in other projects (see repo-specific-hooks example)
 CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/hooks"
 
 # post-commit can enter a loop if you perform a commit in it
