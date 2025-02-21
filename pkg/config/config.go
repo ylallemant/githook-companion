@@ -61,6 +61,13 @@ func Get(path string) (*api.Config, error) {
 }
 
 func load(path string, strict bool) (*api.Config, error) {
+	var err error
+
+	path, err = environment.EnsureAbsolutePath(path)
+	if err != nil {
+		return nil, err
+	}
+
 	_, stats, err := fileExists(path)
 	if err != nil {
 		return nil, err

@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMessageType(t *testing.T) {
+func TestCommand(t *testing.T) {
 	cases := []struct {
 		name         string
 		message      string

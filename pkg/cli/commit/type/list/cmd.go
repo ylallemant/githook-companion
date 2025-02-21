@@ -1,12 +1,9 @@
 package list
 
 import (
-	"os"
-
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githook-companion/pkg/cli/commit/validate"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/globals"
 )
@@ -23,7 +20,7 @@ var rootCmd = &cobra.Command{
 
 		t := table.NewWriter()
 		t.SetStyle(table.StyleLight)
-		t.SetOutputMirror(os.Stdout)
+		t.SetOutputMirror(cmd.OutOrStdout())
 
 		t.SetTitle("Commit Types")
 		t.AppendHeader(table.Row{"Type", "Description"})
@@ -42,7 +39,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(validate.Command())
+	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 }
 
 func Command() *cobra.Command {
