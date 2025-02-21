@@ -1,0 +1,8 @@
+data
+vendor
+.vscode
+# Testing and benchmarks
+*.out
+*.test
+pprof
+.DS_Store
