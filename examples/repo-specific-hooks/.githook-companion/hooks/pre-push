@@ -1,6 +1,14 @@
 #!/usr/bin/sh
 set -eu
 
-echo "CUSTOM pre-push"
+CURRENT_DIRECTORY="$(pwd)"
+CURRENT_BIN_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/bin"
 
+echo "CUSTOM pre-commit"
 
+# those are longer running tasks that will only be executed before pushing
+"$CURRENT_BIN_DIRECTORY"/terraform init
+"$CURRENT_BIN_DIRECTORY"/terraform validate
+
+# do also the pre-commit tasks
+./pre-commit

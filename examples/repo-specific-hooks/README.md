@@ -11,3 +11,15 @@ We added more dependencies to the configuration:
 - terraform: in order to init and validate the module (at push time, because it takes time)
 - terraform-docs: to generate information about the module (at pre-commit time)
 - tflint: to ensure code quality standards (at pre-commit time)
+
+Once the configuration is in place, you can install the dependencies:
+
+- locally if the tools may have different verions in different projects (used in the example)
+```shell
+githook-companion install dependencies -d ./.githook-companion/bin
+```
+
+- "globally" in your Home directory (`<HOME>/.local/bin`)
+```shell
+githook-companion install dependencies
+```

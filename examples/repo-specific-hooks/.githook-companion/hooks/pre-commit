@@ -1,6 +1,11 @@
 #!/usr/bin/sh
 set -eu
 
+CURRENT_DIRECTORY="$(pwd)"
+CURRENT_BIN_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/bin"
+
 echo "CUSTOM pre-commit"
 
-terraform fmt
+"$CURRENT_BIN_DIRECTORY"/terraform fmt
+"$CURRENT_BIN_DIRECTORY"/tflint
+"$CURRENT_BIN_DIRECTORY"/terraform-docs markdown .
