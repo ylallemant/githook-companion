@@ -70,16 +70,20 @@ var rootCmd = &cobra.Command{
 			// binary has not been called from a terminal
 			// no user interaction possible
 			// output invalidity information and throw error
-			fmt.Println("-- error cause --------------------------------------")
-			fmt.Println("commit message malformed : add a commit type prefix")
-			fmt.Println("format: \"<commit-type>: <commit-message>\"")
-			fmt.Println("available commit types:")
+			typeList := ""
 			for _, commitType := range configuration.Commit.Types {
-				fmt.Println("  - ", commitType.Type, ": ", commitType.Description)
+				typeList = typeList + fmt.Sprintf("    - %s: %s\n", commitType.Type, commitType.Description)
 			}
-			fmt.Println("-- error --------------------------------------------")
 
-			return errors.New("message is missing commit type - see \"error cause\" block for more information")
+			nonInteractiveErrorMessage := fmt.Sprintf(`commit message malformed
+  you didn't commit on the command line, commit type can not be added interactively
+  please make sure to provide a commit type prefix in your message
+  format: "<commit-type-prefix>: <commit-message>"
+  available commit types:
+%s
+			`, typeList)
+
+			return errors.Errorf(nonInteractiveErrorMessage)
 		}
 
 		// ensure commit type prefix format (lower-case)
@@ -87,7 +91,7 @@ var rootCmd = &cobra.Command{
 
 		if options.Current.OutputFilePath == "" {
 			// output to terminal
-			fmt.Println(message)
+			fmt.Fprintln(cmd.OutOrStdout(), message)
 		} else {
 			// output to file
 			file, err := os.OpenFile(options.Current.OutputFilePath, os.O_RDWR|os.O_CREATE, 0755)
@@ -108,6 +112,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
+	rootCmd.SetOutput(os.Stderr)
 }
 
 func Command() *cobra.Command {
