@@ -27,20 +27,6 @@ var rootCmd = &cobra.Command{
 
 		installationDirectory := options.Current.Directory
 
-		if installationDirectory == "" {
-			home, err := environment.Home()
-			if err != nil {
-				return err
-			}
-
-			err = environment.EnsureDirectory(filepath.Join(home, ".local"))
-			if err != nil {
-				return err
-			}
-
-			installationDirectory = filepath.Join(home, ".local", "bin")
-		}
-
 		err = environment.EnsureDirectory(installationDirectory)
 		if err != nil {
 			return err

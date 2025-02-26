@@ -3,6 +3,7 @@ package environment
 import (
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -26,12 +27,20 @@ func CurrentDirectory() (string, error) {
 
 func EnsureAbsolutePath(path string) (string, error) {
 	if !filepath.IsAbs(path) {
-		current, err := CurrentDirectory()
-		if err != nil {
-			return "", err
+		var pathPrefix string
+		var err error
+
+		if strings.HasPrefix(path, "~") {
+			pathPrefix, err = Home()
+		} else {
+			pathPrefix, err = CurrentDirectory()
 		}
 
-		path = filepath.Join(current, path)
+		if err != nil {
+			return "", errors.Wrapf(err, "failed to ensure absolute path for %s", path)
+		}
+
+		path = filepath.Join(pathPrefix, path)
 	}
 
 	return path, nil
