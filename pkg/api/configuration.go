@@ -1,5 +1,7 @@
 package api
 
+import "regexp"
+
 const ConfigDirectory = ".githook-companion"
 const ConfigFile = "config.yaml"
 
@@ -20,9 +22,11 @@ type Dependency struct {
 }
 
 type Commit struct {
-	Dictionaries []*CommitTypeDictionary `yaml:"dictionaries" json:"dictionaries"`
-	Types        []*CommitType           `yaml:"types" json:"types"`
-	DefaultType  string                  `yaml:"defaut_type" json:"defaut_type"`
+	Dictionaries    []*CommitTypeDictionary `yaml:"dictionaries" json:"dictionaries"`
+	Types           []*CommitType           `yaml:"types" json:"types"`
+	Tokens          []*CommitToken          `yaml:"tokens" json:"tokens"`
+	DefaultType     string                  `yaml:"defaut_type" json:"defaut_type"`
+	MessageTemplate string                  `yaml:"message_template" json:"message_template"`
 }
 
 type CommitType struct {
@@ -35,4 +39,9 @@ type CommitTypeDictionary struct {
 	Value    string   `yaml:"value" json:"value"`
 	Type     string   `yaml:"type" json:"type"`
 	Synonyms []string `yaml:"synonyms" json:"synonyms"`
+}
+
+type CommitToken struct {
+	Name    string
+	Lexemes []*regexp.Regexp
 }
