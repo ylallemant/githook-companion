@@ -16,7 +16,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "validate",
+	Use:   "validate [message]",
 	Short: "validates interactively Git commit messages",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -32,7 +32,19 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		message := options.Current.Message
+		if os.Args[3] != "" && options.Current.Message != "" {
+			return errors.Errorf("too many messages provided, choose whether per argument or flag")
+		}
+
+		message := os.Args[3]
+
+		if options.Current.Message != "" {
+			message = options.Current.Message
+		}
+
+		if message == "" {
+			return errors.Errorf("providing a commit message by argument or flag is mendatory")
+		}
 
 		validated, commitType, dictionary := commit.Validate(message, configuration)
 

@@ -2,7 +2,6 @@ style: none
 template: CHANGELOG.tpl.md
 info:
   title: CHANGELOG
-  repository_url: https://dev.azure.com/GEA-CLOUD/Modules/_git/Template_K8S
 options:
   commits:
     # filters:
