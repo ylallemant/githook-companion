@@ -32,7 +32,7 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		if len(os.Args[3]) > 2 && options.Current.Message != "" {
+		if !environment.IsAnArgument(os.Args[3]) && options.Current.Message != "" {
 			return errors.Errorf("too many messages provided, choose whether per argument or flag")
 		}
 

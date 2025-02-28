@@ -11,7 +11,7 @@ import (
 
 var _ api.Lemmatizer = &lemmatizer{}
 
-func New(i18n string) (api.Lemmatizer, error) {
+func Lemmatizer(i18n string) (api.Lemmatizer, error) {
 	l := new(lemmatizer)
 	var langpack golem.LanguagePack
 	var err error
