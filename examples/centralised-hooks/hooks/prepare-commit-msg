@@ -19,6 +19,6 @@ COMMIT_SOURCE=$2
 env > ~/githook-butler.log
 
 # output githook-companion configuration
-#"$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-3-2 config show -c "$GITHOOKS_DIRECTORY"/.githook-companion/config.yaml
+#"$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-6-0 config show -c "$GITHOOKS_DIRECTORY"/.githook-companion/config.yaml
 
-"$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-3-2 commit validate -c "$GITHOOKS_DIRECTORY"/.githook-companion/config.yaml  -m "$(cat $COMMIT_MSG_FILE)" -o "$COMMIT_MSG_FILE" < /dev/tty
+"$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-6-0 commit validate -c "$GITHOOKS_DIRECTORY"/.githook-companion/config.yaml  -m "$(cat $COMMIT_MSG_FILE)" -o "$COMMIT_MSG_FILE" < /dev/tty

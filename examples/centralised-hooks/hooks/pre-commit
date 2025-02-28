@@ -11,7 +11,8 @@ GITHOOKS_BIN_DIRECTORY="$GITHOOKS_DIRECTORY/bin/$(uname -s)/$(uname -m)"
 CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/hooks"
 # you can have multiple changelog templates depending on the repo git server (GitHub, Azure DevOps, ...)
 # look in the tool config directory .chglog
-TEMPLATE_NAME=$("$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-3-2 server name --default default)
+TEMPLATE_NAME=$("$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-6-0 server name --default default)
+REPOSITORY_URL=$("$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-6-0 server repository)
 
 echo "apply generic pre-commit"
 
@@ -34,6 +35,7 @@ fi
 git fetch origin --prune --tags
 "$GITHOOKS_BIN_DIRECTORY"/git-chglog-0-15-4 \
     --next-tag 'Unreleased' \
+    --repository-url "$REPOSITORY_URL" \
     -o "$CURRENT_DIRECTORY/CHANGELOG.md" \
     -c "$GITHOOKS_DIRECTORY/.chglog/config.yml" \
     -t "$GITHOOKS_DIRECTORY/.chglog/templates/$TEMPLATE_NAME.tpl.md" 
