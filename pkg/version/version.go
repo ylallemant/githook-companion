@@ -1,6 +1,9 @@
 package version
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 var Version string
 var GitCommit string
@@ -20,6 +23,10 @@ func Commit() string {
 
 func Semver() string {
 	return getOr(Version, defaultVersion)
+}
+
+func SemverWithSeparator(sep string) string {
+	return strings.ReplaceAll(Semver(), ".", sep)
 }
 
 func getOr(this, or string) string {

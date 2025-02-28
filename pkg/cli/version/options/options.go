@@ -12,6 +12,7 @@ func NewOptions() *Options {
 }
 
 type Options struct {
-	Semver bool
-	Commit bool
+	Semver    bool
+	Commit    bool
+	Separator string
 }

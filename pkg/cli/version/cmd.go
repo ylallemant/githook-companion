@@ -25,6 +25,11 @@ var rootCmd = &cobra.Command{
 			return nil
 		}
 
+		if options.Current.Separator != "" {
+			fmt.Println(version.SemverWithSeparator(options.Current.Separator))
+			return nil
+		}
+
 		fmt.Println(version.GetInfo())
 
 		return nil
@@ -34,6 +39,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&options.Current.Commit, "commit", options.Current.Commit, "print only the commit hash")
 	rootCmd.PersistentFlags().BoolVar(&options.Current.Semver, "semver", options.Current.Semver, "print only the semver string")
+	rootCmd.PersistentFlags().StringVarP(&options.Current.Separator, "separator", "s", options.Current.Separator, "replace the point in the semver notation")
 }
 
 func Command() *cobra.Command {
