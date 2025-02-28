@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/cli/server/hostname"
 	"github.com/ylallemant/githook-companion/pkg/cli/server/name"
+	"github.com/ylallemant/githook-companion/pkg/cli/server/repository"
 )
 
 var rootCmd = &cobra.Command{
@@ -22,6 +23,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(hostname.Command())
+	rootCmd.AddCommand(repository.Command())
 	rootCmd.AddCommand(name.Command())
 }
 

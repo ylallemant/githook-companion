@@ -1,7 +1,9 @@
 package server
 
 import (
+	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/api"
@@ -42,4 +44,25 @@ func Name(OptionalDefaultValue string) (string, error) {
 	}
 
 	return hostname, nil
+}
+
+func Repository() (string, error) {
+	cmd := command.New("git")
+	cmd.AddArg("config")
+	cmd.AddArg("--get")
+	cmd.AddArg("remote.origin.url")
+
+	origin, err := cmd.Execute()
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to retrieve origin from config")
+	}
+
+	uri, err := url.Parse(origin)
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to parse origin uri %s", origin)
+	}
+
+	path := strings.ReplaceAll(uri.Path, ".git", "")
+
+	return fmt.Sprintf("https://%s%s", uri.Host, path), nil
 }
