@@ -11,4 +11,4 @@ Natural Language Processing
 - https://github.com/gorgonia/gorgonia (machine learning)
 - https://github.com/sjwhitworth/golearn (machine learning)
 - https://github.com/jdkato/prose (archive NLP lib)
-- https://github.com/rylans/getlang (language detection)
+- https://github.com/pemistahl/lingua-go (language detection)

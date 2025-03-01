@@ -1,9 +1,26 @@
 package nlp
 
-import "github.com/rylans/getlang"
+import (
+	"strings"
 
-func DetectLanguage(sentence string) (string, string, float64) {
-	i18n := getlang.FromString(sentence)
+	"github.com/pemistahl/lingua-go"
+)
 
-	return i18n.LanguageCode(), i18n.LanguageName(), i18n.Confidence()
+const unknown = "unknown"
+
+func DetectLanguage(sentence string) (string, string, bool) {
+	detector := lingua.NewLanguageDetectorBuilder().
+		FromAllSpokenLanguages().
+		WithMinimumRelativeDistance(0.2).
+		Build()
+
+	language, known := detector.DetectLanguageOf(sentence)
+
+	code := strings.ToLower(language.IsoCode639_1().String())
+
+	if !known {
+		code = unknown
+	}
+
+	return code, strings.ToLower(language.String()), known
 }

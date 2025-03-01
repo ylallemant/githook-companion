@@ -12,8 +12,8 @@ require (
 	github.com/hbollon/go-edlib v1.6.0
 	github.com/jedib0t/go-pretty/v6 v6.6.6
 	github.com/manifoldco/promptui v0.9.0
+	github.com/pemistahl/lingua-go v1.4.0
 	github.com/pkg/errors v0.9.1
-	github.com/rylans/getlang v0.0.0-20201227074721-9e7f44ff8aa0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
@@ -30,6 +30,9 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/shopspring/decimal v1.3.1 // indirect
+	golang.org/x/exp v0.0.0-20221106115401-f9659909a136 // indirect
 	golang.org/x/sys v0.30.0 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 )
