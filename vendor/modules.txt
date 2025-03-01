@@ -10,9 +10,24 @@ github.com/aaaton/golem/v4/dicts/de
 # github.com/aaaton/golem/v4/dicts/en v1.0.1
 ## explicit; go 1.13
 github.com/aaaton/golem/v4/dicts/en
+# github.com/aaaton/golem/v4/dicts/es v1.0.1
+## explicit; go 1.13
+github.com/aaaton/golem/v4/dicts/es
 # github.com/aaaton/golem/v4/dicts/fr v1.0.1
 ## explicit; go 1.13
 github.com/aaaton/golem/v4/dicts/fr
+# github.com/aaaton/golem/v4/dicts/it v1.0.1
+## explicit; go 1.13
+github.com/aaaton/golem/v4/dicts/it
+# github.com/aaaton/golem/v4/dicts/ru v0.0.0-20221121100719-34023a0c192d
+## explicit; go 1.13
+github.com/aaaton/golem/v4/dicts/ru
+# github.com/aaaton/golem/v4/dicts/sv v1.0.1
+## explicit; go 1.13
+github.com/aaaton/golem/v4/dicts/sv
+# github.com/aaaton/golem/v4/dicts/uk v0.0.0-20221121100719-34023a0c192d
+## explicit; go 1.13
+github.com/aaaton/golem/v4/dicts/uk
 # github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
 ## explicit
 github.com/chzyer/readline

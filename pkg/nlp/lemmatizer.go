@@ -4,7 +4,12 @@ import (
 	"github.com/aaaton/golem/v4"
 	"github.com/aaaton/golem/v4/dicts/de"
 	"github.com/aaaton/golem/v4/dicts/en"
+	"github.com/aaaton/golem/v4/dicts/es"
 	"github.com/aaaton/golem/v4/dicts/fr"
+	"github.com/aaaton/golem/v4/dicts/it"
+	"github.com/aaaton/golem/v4/dicts/ru"
+	"github.com/aaaton/golem/v4/dicts/sv"
+	"github.com/aaaton/golem/v4/dicts/uk"
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
@@ -23,6 +28,16 @@ func Lemmatizer(i18n string) (api.Lemmatizer, error) {
 		langpack = fr.New()
 	case "de":
 		langpack = de.New()
+	case "sv":
+		langpack = sv.New()
+	case "es":
+		langpack = es.New()
+	case "it":
+		langpack = it.New()
+	case "ru":
+		langpack = ru.New()
+	case "uk":
+		langpack = uk.New()
 	default:
 		return nil, errors.Errorf("unsupported language \"%s\"", i18n)
 	}
