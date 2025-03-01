@@ -2,7 +2,6 @@ package validate
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"testing"
 
@@ -65,12 +64,9 @@ func TestCommand(t *testing.T) {
 
 			out, err := io.ReadAll(b)
 			assert.Nil(tt, err)
-			fmt.Println("out", string(out))
-			fmt.Println("err", err)
 
 			if c.expectError {
 				assert.NotNil(tt, cmdErr)
-				fmt.Println(err.Error())
 				assert.Equal(tt, c.errorMessage, cmdErr.Error(), "wrong error massage")
 			} else {
 				assert.Nil(tt, cmdErr)

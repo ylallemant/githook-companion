@@ -95,7 +95,9 @@ var rootCmd = &cobra.Command{
 %s
 			`, typeList)
 
-			return errors.Errorf(nonInteractiveErrorMessage)
+			//fmt.Fprintln(cmd.OutOrStderr(), nonInteractiveErrorMessage)
+			//os.Exit(1)
+			return errors.New(nonInteractiveErrorMessage)
 		}
 
 		// ensure commit type prefix format (lower-case)
