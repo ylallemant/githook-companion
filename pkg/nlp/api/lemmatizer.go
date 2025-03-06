@@ -1,5 +1,6 @@
 package api
 
 type Lemmatizer interface {
-	Lemma(word string) string
+	LanguageCode() string
+	Lemma(word *Word)
 }

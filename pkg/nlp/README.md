@@ -1,6 +1,26 @@
-Natural Language Processing
+Simple Natural Language Processing
 ====
 
+## Features
+
+- support for multiple languages
+- support for multiple scripts
+- all steps of the processing workflow are configurable and based on regular-expressions
+- splitting
+- cleaning
+- normalisation
+- lexeme based tokenisation
+- dictionary based tokenisation
+
+## Structure
+
+```
+Tokenizer
+   |_ LanguageCodes
+   |_ Splitter
+   |_ Dictionaries   # are applied on the normalised words
+   |_ Lexemes        # are applied on the raw sentence
+```
 
 ## Libs
 

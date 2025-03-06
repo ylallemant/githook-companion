@@ -1,32 +1,48 @@
 package api
 
-import "regexp"
+import (
+	"regexp"
+)
+
+var DefaultMatcherRegexp = regexp.MustCompile(".*")
 
 type Lexeme struct {
-	Name    string
-	Regexps []*Regexp
+	LanguageCode string               `yaml:"language_code" json:"language_code"`
+	TokenName    string               `yaml:"token" json:"token"`
+	Variants     []*Variant           `yaml:"variants" json:"variants"`
+	Normalisers  []*NormalisationStep `yaml:"normalisers" json:"normalisers"`
 }
 
-type Regexp struct {
-	*regexp.Regexp
+type Variant struct {
+	Matcher     *Matcher             `yaml:"matcher" json:"matcher"`
+	Normalisers []*NormalisationStep `yaml:"normalisers" json:"normalisers"`
+}
+
+type Matcher struct {
+	Regex *regexp.Regexp
 }
 
 // UnmarshalText unmarshals json into a regexp.Regexp
-func (r *Regexp) UnmarshalText(b []byte) error {
-	regex, err := regexp.Compile(string(b))
-	if err != nil {
-		return err
+func (r *Matcher) UnmarshalText(b []byte) error {
+	regex := DefaultMatcherRegexp
+	var err error
+
+	if len(b) > 0 {
+		regex, err = regexp.Compile(string(b))
+		if err != nil {
+			return err
+		}
 	}
 
-	r.Regexp = regex
+	r.Regex = regex
 
 	return nil
 }
 
 // MarshalText marshals regexp.Regexp as string
-func (r *Regexp) MarshalText() ([]byte, error) {
-	if r.Regexp != nil {
-		return []byte(r.Regexp.String()), nil
+func (r *Matcher) MarshalText() ([]byte, error) {
+	if r.Regex != nil {
+		return []byte(r.Regex.String()), nil
 	}
 
 	return nil, nil

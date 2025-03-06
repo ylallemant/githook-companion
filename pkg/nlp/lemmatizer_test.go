@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 func TestLemmatizer(t *testing.T) {
@@ -67,7 +68,13 @@ func TestLemmatizer_Lemma(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(tt *testing.T) {
+			word := new(api.Word)
+			word.LanguageCode = c.langCode
+			word.Raw = c.word
+			word.Cleaned = c.word
+
 			lemmatizer, err := Lemmatizer(c.langCode)
+			lemmatizer.Lemma(word)
 
 			if c.expectError {
 				assert.Nil(tt, lemmatizer)
@@ -76,7 +83,7 @@ func TestLemmatizer_Lemma(t *testing.T) {
 			} else {
 				assert.NotNil(tt, lemmatizer)
 				assert.Nil(tt, err)
-				assert.Equal(tt, c.expected, lemmatizer.Lemma(c.word), "wrong error massage")
+				assert.Equal(tt, c.expected, word.Normalised, "wrong error massage")
 			}
 		})
 	}

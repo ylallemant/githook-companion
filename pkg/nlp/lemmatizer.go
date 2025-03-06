@@ -51,9 +51,14 @@ func Lemmatizer(i18n string) (api.Lemmatizer, error) {
 }
 
 type lemmatizer struct {
-	tool *golem.Lemmatizer
+	languageCode string
+	tool         *golem.Lemmatizer
 }
 
-func (l *lemmatizer) Lemma(word string) string {
-	return l.tool.Lemma(word)
+func (l *lemmatizer) LanguageCode() string {
+	return l.languageCode
+}
+
+func (l *lemmatizer) Lemma(word *api.Word) {
+	word.Normalised = l.tool.Lemma(word.Cleaned)
 }

@@ -1,6 +1,9 @@
 package api
 
 type Word struct {
-	Raw     string
-	Cleaned string
+	LanguageCode string
+	Raw          string
+	Cleaned      string
+	FromLexeme   string
+	Normalised   string
 }

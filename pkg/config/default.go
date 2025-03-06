@@ -8,6 +8,7 @@ const (
 	typeFix      = "fix"
 	typeTest     = "test"
 	typeRefactor = "refactor"
+	typeBreaking = "breaking"
 )
 
 func Default() *api.Config {
@@ -17,6 +18,9 @@ func Default() *api.Config {
 	commit.DefaultType = typeFeature
 	commit.Dictionaries = commitDictionaries()
 	commit.Types = commitTypes()
+	commit.LanguageCodes = []string{
+		"en",
+	}
 
 	config.Commit = commit
 
@@ -44,6 +48,10 @@ func commitTypes() []*api.CommitType {
 		{
 			Type:        typeRefactor,
 			Description: "refactored code that neither fixes a bug nor adds a feature",
+		},
+		{
+			Type:        typeBreaking,
+			Description: "introducing a breaking change",
 		},
 	}
 }

@@ -27,6 +27,7 @@ type Commit struct {
 	Tokens          []*CommitToken          `yaml:"tokens" json:"tokens"`
 	DefaultType     string                  `yaml:"defaut_type" json:"defaut_type"`
 	MessageTemplate string                  `yaml:"message_template" json:"message_template"`
+	LanguageCodes   []string                `yaml:"language_codes" json:"language_codes"`
 }
 
 type CommitType struct {
