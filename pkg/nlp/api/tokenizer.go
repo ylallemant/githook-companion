@@ -8,8 +8,9 @@ type Tokenizer interface {
 }
 
 type TokenizerOptions struct {
-	LanguageCodes []string
-	Dictionaries  []*Dictionary
-	Lexemes       []*Lexeme
-	Normalisers   []*Normaliser
+	LanguageCodes        []string
+	Dictionaries         []*Dictionary
+	Lexemes              []*Lexeme
+	Normalisers          []*Normaliser
+	ConfidenceThresthold float64
 }

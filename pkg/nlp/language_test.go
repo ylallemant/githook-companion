@@ -39,7 +39,7 @@ func TestDetectLanguage(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(tt *testing.T) {
-			detector, _ := NewLanguageDetector([]string{"en", "de"})
+			detector, _ := NewLanguageDetector([]string{"en", "de"}, 0.8)
 
 			code, name, known := detector.DetectLanguage(c.sentence)
 

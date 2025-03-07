@@ -1,6 +1,7 @@
 package nlp
 
 import (
+	"math/big"
 	"strings"
 
 	"github.com/pemistahl/lingua-go"
@@ -9,8 +10,10 @@ import (
 
 const unknown = "unknown"
 
-func NewLanguageDetector(languageCodes []string) (*LanguageDetector, error) {
+func NewLanguageDetector(languageCodes []string, threshold float64) (*LanguageDetector, error) {
 	detector := new(LanguageDetector)
+	detector.threshold = threshold
+
 	languages := make([]lingua.Language, 0)
 
 	for _, languageCode := range languageCodes {
@@ -33,20 +36,26 @@ func NewLanguageDetector(languageCodes []string) (*LanguageDetector, error) {
 type LanguageDetector struct {
 	detector      lingua.LanguageDetector
 	languageCodes []string
+	threshold     float64
 }
 
 func (i *LanguageDetector) DetectLanguage(sentence string) (string, string, bool) {
 	confidenceValues := i.detector.ComputeLanguageConfidenceValues(sentence)
 
-	highestConfidence := confidenceValues[0]
+	highestConfidence := confidenceValues[0].Value()
 
-	if highestConfidence.Value() < 0.8 {
+	bigFloatHighest := big.NewFloat(highestConfidence)
+	bigFloatThreshold := big.NewFloat(i.threshold)
+	result := bigFloatThreshold.Cmp(bigFloatHighest)
+
+	if result > 0 {
 		return unknown, unknown, false
 	}
 
-	code := strings.ToLower(highestConfidence.Language().IsoCode639_1().String())
+	languageCode := confidenceValues[0].Language().IsoCode639_1().String()
+	languageName := confidenceValues[0].Language().String()
 
-	return code, strings.ToLower(highestConfidence.Language().String()), true
+	return strings.ToLower(languageCode), strings.ToLower(languageName), true
 }
 
 func languageFromCode(code string) (lingua.Language, error) {
