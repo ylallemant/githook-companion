@@ -22,6 +22,12 @@ Tokenizer
    |_ Lexemes        # are applied on the raw sentence
 ```
 
+## Sources
+
+- https://www.geeksforgeeks.org/token-patterns-and-lexems/
+- https://www.geeksforgeeks.org/dictionary-based-tokenization-in-nlp/
+
+
 ## Libs
 
 - https://github.com/aaaton/golem (lemmatizer)

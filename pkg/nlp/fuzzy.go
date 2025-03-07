@@ -1,8 +1,8 @@
 package nlp
 
 import (
-	"fmt"
 	"math"
+	"slices"
 	"strings"
 
 	edlib "github.com/hbollon/go-edlib"
@@ -18,19 +18,7 @@ func calculateConfidence(word, entry string) float64 {
 		return 0
 	}
 
-	position := positionDistance(word, entry)
-	characters := 1.1
-
-	if position > -1 {
-		characters = basicDistance(word, entry)
-	} else {
-		// no clear match
-		characters = charDistance(word, entry)
-	}
-
-	if characters > 1 {
-		return 0
-	}
+	characters := basicDistance(word, entry)
 
 	return float64(1 - characters)
 }
@@ -43,33 +31,8 @@ func absoluteDistance(word, entry string) float64 {
 	return math.Abs(float64(len(word) - len(entry)))
 }
 
-// not sure of this
-func basicDistance(word, entry string) float64 {
-	position := positionDistance(word, entry)
-	maximum := maxDistance(word, entry)
-	absolute := distance(word, entry)
-
-	if position < 0 {
-		return 1
-	}
-
-	lengthRatio := float64(absolute) / float64(maximum)
-	positionRatio := absolute
-
-	if absolute > 0 {
-		positionRatio = float64(position) / float64(absolute)
-	}
-
-	fmt.Println("  - position:           ", position)
-	fmt.Println("  - maximum:            ", maximum)
-	fmt.Println("  - absolute:           ", absolute)
-	fmt.Println("  - position / maxPos:  ", positionRatio)
-	fmt.Println("  - absolute / maximum:  ", float64(absolute)/float64(maximum))
-	fmt.Println("  - result:              ", lengthRatio-positionRatio)
-
-	return math.Abs(lengthRatio - positionRatio)
-}
-
+// maxDistance returns the maximum possible distance
+// between word and entry
 func maxDistance(word, entry string) float64 {
 	if len(word) < len(entry) {
 		return float64(len(entry))
@@ -80,43 +43,81 @@ func maxDistance(word, entry string) float64 {
 
 // positionDistance checks the position of the word in the entry
 // 0 is best, if not found -1 is returned
-func positionDistance(word, entry string) float64 {
+func positionDistance(word, entry string) int {
 	index := strings.Index(entry, word)
 
-	return float64(index)
+	if index < 0 {
+		return int(maxDistance(word, entry))
+	}
+
+	return index
 }
 
-// charDistance checks for the position of the individual characters
+/*
+basicDistance returns a float between 0 and 1.
+The lower the more the compared terms are similar.
+On strict equality returns 0.
+On complete difference returns 1.
+*/
+func basicDistance(word, entry string) float64 {
+	position := float64(positionDistance(word, entry))
+	distance := distance(word, entry)
+	maximum := maxDistance(word, entry)
+
+	return float64(position+distance) / float64(maximum*2)
+}
+
+// scatteredDistance checks for the position of the individual characters
 // of the word in the entry.
 // the lower the returned value, the better
-func charDistance(word, entry string) float64 {
+func scatteredDistance(word, entry string) float64 {
+	maxDistance := int(maxDistance(word, entry))
 	charPositions := make([][]int, 0)
 	maxPosition := len(entry) - 1
+
+	firstCharPositions := make(map[string]int)
+
+	cycles := 0
+	maxCycles := 5
 
 	for _, rune := range word {
 		char := string(rune)
 		position := 0
 		lastPosition := 0
 		positions := make([]int, 0)
+		firstMatch := true
 
-		for position > -1 && position < maxPosition {
+		if lastCharPosition, ok := firstCharPositions[char]; ok {
+			position = lastCharPosition
+			lastPosition = position
+		} else {
+			firstCharPositions[char] = 0
+		}
 
+		for position < maxDistance && position < maxPosition && cycles < maxCycles {
 			// position in truncated entry
-			position = strings.Index(entry[position:], char)
-
-			if position < 0 {
-				// char not found, stop search
-				break
-			}
+			position = positionDistance(char, entry[position:])
 
 			// calcule real position in entry
 			position = lastPosition + position
+
+			if position >= maxDistance {
+				// char not found, stop search
+				break
+			}
 
 			positions = append(positions, position)
 
 			// calculate next start position
 			position = position + 1
 			lastPosition = position
+
+			if firstMatch {
+				firstCharPositions[char] = lastPosition
+				firstMatch = false
+			}
+
+			cycles = cycles + 1
 		}
 
 		charPositions = append(charPositions, positions)
@@ -142,6 +143,8 @@ func charDistance(word, entry string) float64 {
 	index := 0
 	maxLength := 1
 
+	foundIndexes := make([]int, 0)
+
 	for index < maxLength {
 		lastPosition := 0
 		totalDinstance := 0
@@ -150,7 +153,9 @@ func charDistance(word, entry string) float64 {
 		information := make(map[string]int)
 
 		for _, positions := range charPositions {
-			if index < len(positions) {
+			maxIndex := len(positions)
+
+			if index < maxIndex {
 				totalSum = totalSum + positions[index]
 
 				if positions[index] == lastPosition+1 {
@@ -158,8 +163,14 @@ func charDistance(word, entry string) float64 {
 					continue
 				}
 
+				distance := int(math.Abs(float64(positions[index] - lastPosition)))
 				lastPosition = positions[index]
-				totalDinstance = totalDinstance + lastPosition
+
+				if slices.Contains(foundIndexes, lastPosition) {
+					continue
+				}
+
+				totalDinstance = totalDinstance + distance
 			} else if index == 0 {
 				totalMissed = totalMissed + 1
 			}
@@ -167,6 +178,8 @@ func charDistance(word, entry string) float64 {
 			if index == 0 && maxLength < len(positions) {
 				maxLength = len(positions)
 			}
+
+			foundIndexes = append(foundIndexes, positions...)
 		}
 
 		information["distance"] = totalDinstance
