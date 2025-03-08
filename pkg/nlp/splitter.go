@@ -135,23 +135,27 @@ func executeNormaliser(normaliser *api.NormalisationStep, text string) string {
 
 	if normaliser.Replacement != "" {
 		text = normaliser.Matcher.Regex.ReplaceAllString(text, normaliser.Replacement)
-	} else if normaliser.ReplaceAll {
-		text = matches[0]
 	}
 
-	if normaliser.Formatter != nil {
-		if normaliser.Formatter.Renderer == nil {
-			normaliser.Formatter.UnmarshalText([]byte{})
+	if len(matches) > 0 {
+		if normaliser.ReplaceAll {
+			text = matches[0]
 		}
 
-		for _, match := range matches {
-			var formatted bytes.Buffer
-			normaliser.Formatter.Renderer.Execute(&formatted, match)
+		if normaliser.Formatter != nil {
+			if normaliser.Formatter.Renderer == nil {
+				normaliser.Formatter.UnmarshalText([]byte{})
+			}
 
-			if normaliser.ReplaceAll {
-				text = formatted.String()
-			} else {
-				text = strings.ReplaceAll(text, match, formatted.String())
+			for _, match := range matches {
+				var formatted bytes.Buffer
+				normaliser.Formatter.Renderer.Execute(&formatted, match)
+
+				if normaliser.ReplaceAll {
+					text = formatted.String()
+				} else {
+					text = strings.ReplaceAll(text, match, formatted.String())
+				}
 			}
 		}
 	}

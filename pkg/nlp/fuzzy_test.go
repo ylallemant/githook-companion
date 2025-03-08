@@ -379,3 +379,36 @@ func Test_calculateConfidence(t *testing.T) {
 		})
 	}
 }
+
+func Test_customTest(t *testing.T) {
+	cases := []struct {
+		word     string
+		entry    string
+		expected float64
+	}{
+		{entry: "teller", word: "tes", expected: 0.8333333333333334},
+		{entry: "test", word: "es", expected: 0.375},
+		{entry: "testing", word: "es", expected: 0.42857142857142855},
+		{entry: "我愛你", word: "我叫你", expected: 0.5555555555555556},
+		{entry: "boxer", word: "rexob", expected: 0.9},
+		{entry: "boxer", word: "reoxb", expected: 0.9},
+		{entry: "boxer", word: "robex", expected: 0.8},
+		{entry: "butterfly", word: "cow", expected: 1},
+		{entry: "butterfly", word: "butterfly", expected: 0},
+		{entry: "butterfly", word: "butter", expected: 0.16666666666666666},
+		{entry: "butterfly", word: "fly", expected: 0.6666666666666666},
+		{entry: "butterfly", word: "terfly", expected: 0.3333333333333333},
+		{entry: "werl", word: "berl", expected: 0.625},
+		{entry: "berlin", word: "berl", expected: 0.16666666666666666},
+		{entry: "Bürger", word: "burger", expected: 0.6428571428571429},
+		{entry: "fly", word: "butterfly", expected: 0.8333333333333334},
+	}
+
+	for _, c := range cases {
+		t.Run(fmt.Sprintf("search %s in %s", c.word, c.entry), func(tt *testing.T) {
+			result := basicDistance(c.word, c.entry)
+
+			assert.Equal(tt, c.expected, result, "wrong result")
+		})
+	}
+}

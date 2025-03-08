@@ -51,7 +51,7 @@ func commitTypes() []*api.CommitType {
 		},
 		{
 			Type:        typeBreaking,
-			Description: "introducing a breaking change",
+			Description: "introducing a breaking change in input or output behaviour",
 		},
 	}
 }
