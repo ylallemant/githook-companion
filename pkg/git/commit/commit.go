@@ -12,10 +12,6 @@ const (
 	commitTypePrefixRegexpFmt = "^(?i)%s\\s*:{0,1}\\s*"
 )
 
-var (
-	fistWord = regexp.MustCompile(`^\w+`)
-)
-
 func messageType(message string, cfg *api.Config) (string, bool) {
 	message = strings.ToLower(message)
 
@@ -53,10 +49,4 @@ func EnsureFormat(message, commitType string) string {
 			message,
 		)
 	}
-}
-
-func EnsureDictionaryValue(message string, dictionary *api.CommitTypeDictionary) string {
-	message = strings.TrimSpace(message)
-
-	return fistWord.ReplaceAllString(message, dictionary.Value)
 }

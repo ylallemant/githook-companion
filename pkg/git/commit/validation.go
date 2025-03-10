@@ -7,19 +7,22 @@ import (
 
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/config"
+	"github.com/ylallemant/githook-companion/pkg/nlp"
+	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
-func Validate(message string, cfg *api.Config) (bool, string, *api.CommitTypeDictionary) {
+func Validate(message string, cfg *api.Config) (bool, string, *nlpapi.Dictionary) {
 	validationRegexp := validationExpression(cfg)
 	formatted := isMessageValid(message, validationRegexp)
 
 	if !formatted {
-		tokens := tonenize(message)
+		tokenizer, _ := nlp.NewTokenizer(cfg.Commit.TokenizerOptions)
+		tokens, _, _ := tokenizer.Tokenize(message)
 
-		dictionary := fuzzyDictionaryMatch(tokens[0], cfg)
+		fmt.Printf("Tokens :\n")
+		for _, token := range tokens {
+			fmt.Printf("   - token : %#+v\n", token)
 
-		if dictionary != nil {
-			return true, dictionary.Type, dictionary
 		}
 
 		return false, "", nil

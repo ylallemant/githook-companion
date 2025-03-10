@@ -1,9 +1,13 @@
 package config
 
-import "github.com/ylallemant/githook-companion/pkg/api"
+import (
+	"github.com/ylallemant/githook-companion/pkg/api"
+	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
+)
 
 const (
 	typeFeature  = "feat"
+	typeIgnore   = "ignore"
 	typeDocs     = "docs"
 	typeFix      = "fix"
 	typeTest     = "test"
@@ -16,10 +20,12 @@ func Default() *api.Config {
 
 	commit := new(api.Commit)
 	commit.DefaultType = typeFeature
-	commit.Dictionaries = commitDictionaries()
 	commit.Types = commitTypes()
-	commit.LanguageCodes = []string{
-		"en",
+	commit.TokenizerOptions = &nlpapi.TokenizerOptions{
+		LanguageCodes: []string{
+			"en",
+		},
+		Dictionaries: commitDictionaries(),
 	}
 
 	config.Commit = commit
@@ -32,6 +38,10 @@ func commitTypes() []*api.CommitType {
 		{
 			Type:        typeFeature,
 			Description: "a new feature is introduced with the changes",
+		},
+		{
+			Type:        typeIgnore,
+			Description: "commit can be ignored by other tools",
 		},
 		{
 			Type:        typeFix,
@@ -56,68 +66,45 @@ func commitTypes() []*api.CommitType {
 	}
 }
 
-func commitDictionaries() []*api.CommitTypeDictionary {
-	return []*api.CommitTypeDictionary{
+func commitDictionaries() []*nlpapi.Dictionary {
+	return []*nlpapi.Dictionary{
 		{
-			Name:  "add",
-			Value: "add",
-			Type:  typeFeature,
-			Synonyms: []string{
-				"adds",
-				"added",
-				"adding",
+			LanguageCode: "en",
+			Name:         "weak-feature-signals",
+			TokenName:    typeFeature,
+			Entries: []string{
+				"add",
+				"implement",
+				"use",
 				"new",
 			},
 		},
 		{
-			Name:  "use",
-			Value: "use",
-			Type:  typeFeature,
-			Synonyms: []string{
-				"used",
-				"uses",
+			LanguageCode: "en",
+			Name:         "ignore-signals",
+			TokenName:    typeIgnore,
+			Entries: []string{
+				"typo",
 			},
 		},
 		{
-			Name:  "update",
-			Value: "update",
-			Type:  typeRefactor,
-			Synonyms: []string{
-				"updated",
-				"updates",
-			},
-		},
-		{
-			Name:  typeRefactor,
-			Value: typeRefactor,
-			Type:  typeRefactor,
-			Synonyms: []string{
+			LanguageCode: "en",
+			Name:         typeRefactor,
+			TokenName:    typeRefactor,
+			Entries: []string{
+				"remove",
 				"change",
-				"changes",
-				"changed",
+				"update",
+				"upgrate",
 				"restructure",
-				"restructured",
-				"restructures",
 			},
 		},
 		{
-			Name:  "remove",
-			Value: "remove",
-			Type:  typeRefactor,
-			Synonyms: []string{
-				"removed",
-				"removes",
-			},
-		},
-		{
-			Name:  "fix",
-			Value: "fix",
-			Type:  typeFeature,
-			Synonyms: []string{
-				"fixes",
-				"fixed",
-				"fixing",
-				"correct",
+			LanguageCode: "en",
+			Name:         "fix",
+			TokenName:    typeFix,
+			Entries: []string{
+				"fix",
 			},
 		},
 	}

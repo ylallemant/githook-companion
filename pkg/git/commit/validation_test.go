@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/ylallemant/githook-companion/pkg/api"
+	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 func TestIsMessageValid(t *testing.T) {
@@ -115,6 +116,7 @@ func TestValidate(t *testing.T) {
 		name                     string
 		message                  string
 		config                   *api.Config
+		expectedTokens           []*nlpapi.Token
 		expectedDictionaryFound  bool
 		expectedCommitType       string
 		expectedValidationResult bool
@@ -145,16 +147,21 @@ func TestValidate(t *testing.T) {
 							Type: "feat",
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{
-						{
-							Name:  "add",
-							Value: "add",
-							Type:  "feat",
-							Synonyms: []string{
-								"adds",
-								"added",
-								"adding",
-								"new",
+					TokenizerOptions: &nlpapi.TokenizerOptions{
+						LanguageCodes: []string{
+							"en",
+						},
+						Dictionaries: []*nlpapi.Dictionary{
+							{
+								LanguageCode: "en",
+								Name:         "add",
+								TokenName:    "feat",
+								Entries: []string{
+									"adds",
+									"added",
+									"adding",
+									"new",
+								},
 							},
 						},
 					},
@@ -174,16 +181,21 @@ func TestValidate(t *testing.T) {
 							Type: "feat",
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{
-						{
-							Name:  "add",
-							Value: "add",
-							Type:  "feat",
-							Synonyms: []string{
-								"adds",
-								"added",
-								"adding",
-								"new",
+					TokenizerOptions: &nlpapi.TokenizerOptions{
+						LanguageCodes: []string{
+							"en",
+						},
+						Dictionaries: []*nlpapi.Dictionary{
+							{
+								LanguageCode: "en",
+								Name:         "add",
+								TokenName:    "feat",
+								Entries: []string{
+									"adds",
+									"added",
+									"adding",
+									"new",
+								},
 							},
 						},
 					},
@@ -203,14 +215,20 @@ func TestValidate(t *testing.T) {
 							Type: "feat",
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{
-						{
-							Name:  "nomatch",
-							Value: "no match",
-							Type:  "feat",
-							Synonyms: []string{
-								"nomatch",
-								"whatever",
+					TokenizerOptions: &nlpapi.TokenizerOptions{
+						ConfidenceThresthold: 0.8,
+						LanguageCodes: []string{
+							"en",
+						},
+						Dictionaries: []*nlpapi.Dictionary{
+							{
+								LanguageCode: "en",
+								Name:         "nomatch",
+								TokenName:    "feat",
+								Entries: []string{
+									"nomatch",
+									"whatever",
+								},
 							},
 						},
 					},
@@ -227,7 +245,7 @@ func TestValidate(t *testing.T) {
 			valid, commitType, dictionary := Validate(c.message, c.config)
 
 			if c.expectedDictionaryFound {
-				assert.Equal(tt, c.config.Commit.Dictionaries[0], dictionary, "wrong result")
+				assert.Equal(tt, c.config.Commit.TokenizerOptions.Dictionaries[0], dictionary, "wrong result")
 			} else {
 				assert.Nil(tt, dictionary)
 			}

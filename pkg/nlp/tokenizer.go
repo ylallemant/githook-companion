@@ -21,8 +21,14 @@ type tokenizer struct {
 func NewTokenizer(options *api.TokenizerOptions) (*tokenizer, error) {
 	instance := new(tokenizer)
 
+	if options == nil {
+		options = DefaultTokenizerOptions()
+	}
+
 	if options.ConfidenceThresthold > 0 {
 		instance.confidenceThresthold = options.ConfidenceThresthold
+	} else {
+		instance.confidenceThresthold = DefaultConfidenceThresthold
 	}
 
 	if len(options.LanguageCodes) < 2 {

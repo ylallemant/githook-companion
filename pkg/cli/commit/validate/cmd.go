@@ -51,7 +51,7 @@ var rootCmd = &cobra.Command{
 		if dictionary != nil {
 			// commit type found through dictionary match on first word
 			// ensure that the dictionary value is used in the message
-			message = commit.EnsureDictionaryValue(message, dictionary)
+			// TODO : message = commit.EnsureDictionaryValue(message, dictionary)
 		}
 
 		if !validated && calledFromTerminal {

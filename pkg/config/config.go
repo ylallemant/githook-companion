@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -46,16 +47,21 @@ func Get(path string) (*api.Config, error) {
 			return nil, errors.Wrap(err, "failed to merge global and local configurations")
 		}
 
+		fmt.Println("merged config")
 		return merged, nil
 	}
 
 	if localConfig != nil {
+		fmt.Println("local config")
 		return localConfig, nil
 	}
 
 	if mainConfig != nil {
+		fmt.Println("main config")
 		return mainConfig, nil
 	}
+
+	fmt.Println("default config")
 
 	return Default(), nil
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/ylallemant/githook-companion/pkg/api"
+	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 func TestValidate(t *testing.T) {
@@ -35,7 +36,12 @@ func TestValidate(t *testing.T) {
 							Type: typeFeature,
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{},
+					TokenizerOptions: &nlpapi.TokenizerOptions{
+						LanguageCodes: []string{
+							"en",
+						},
+						Dictionaries: []*nlpapi.Dictionary{},
+					},
 				},
 				Dependencies: []*api.Dependency{},
 			},
@@ -59,7 +65,12 @@ func TestValidate(t *testing.T) {
 							Type: typeFeature,
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{},
+					TokenizerOptions: &nlpapi.TokenizerOptions{
+						LanguageCodes: []string{
+							"en",
+						},
+						Dictionaries: []*nlpapi.Dictionary{},
+					},
 				},
 				Dependencies: []*api.Dependency{},
 			},
@@ -100,8 +111,13 @@ func TestValidate(t *testing.T) {
 							Description: "updates to documentation such as a the README or other markdown files",
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{},
-					DefaultType:  "docs",
+					TokenizerOptions: &nlpapi.TokenizerOptions{
+						LanguageCodes: []string{
+							"en",
+						},
+						Dictionaries: []*nlpapi.Dictionary{},
+					},
+					DefaultType: "docs",
 				},
 				Dependencies: []*api.Dependency{},
 			},
@@ -147,8 +163,13 @@ func TestValidate(t *testing.T) {
 							Description: "updates to documentation such as a the README or other markdown files",
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{},
-					DefaultType:  "docs",
+					TokenizerOptions: &nlpapi.TokenizerOptions{
+						LanguageCodes: []string{
+							"en",
+						},
+						Dictionaries: []*nlpapi.Dictionary{},
+					},
+					DefaultType: "docs",
 				},
 				Dependencies: []*api.Dependency{},
 			},
