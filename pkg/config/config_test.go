@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/ylallemant/githook-companion/pkg/api"
-	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 func TestValidate(t *testing.T) {
@@ -36,12 +35,6 @@ func TestValidate(t *testing.T) {
 							Type: typeFeature,
 						},
 					},
-					TokenizerOptions: &nlpapi.TokenizerOptions{
-						LanguageCodes: []string{
-							"en",
-						},
-						Dictionaries: []*nlpapi.Dictionary{},
-					},
 				},
 				Dependencies: []*api.Dependency{},
 			},
@@ -64,12 +57,6 @@ func TestValidate(t *testing.T) {
 						{
 							Type: typeFeature,
 						},
-					},
-					TokenizerOptions: &nlpapi.TokenizerOptions{
-						LanguageCodes: []string{
-							"en",
-						},
-						Dictionaries: []*nlpapi.Dictionary{},
 					},
 				},
 				Dependencies: []*api.Dependency{},
@@ -110,12 +97,6 @@ func TestValidate(t *testing.T) {
 							Type:        typeDocs,
 							Description: "updates to documentation such as a the README or other markdown files",
 						},
-					},
-					TokenizerOptions: &nlpapi.TokenizerOptions{
-						LanguageCodes: []string{
-							"en",
-						},
-						Dictionaries: []*nlpapi.Dictionary{},
 					},
 					DefaultType: "docs",
 				},
@@ -163,12 +144,6 @@ func TestValidate(t *testing.T) {
 							Description: "updates to documentation such as a the README or other markdown files",
 						},
 					},
-					TokenizerOptions: &nlpapi.TokenizerOptions{
-						LanguageCodes: []string{
-							"en",
-						},
-						Dictionaries: []*nlpapi.Dictionary{},
-					},
 					DefaultType: "docs",
 				},
 				Dependencies: []*api.Dependency{},
@@ -185,9 +160,8 @@ func TestValidate(t *testing.T) {
 				assert.Equal(tt, c.errorMessage, err.Error(), "wrong error massage")
 			} else {
 				assert.Nil(tt, err)
+				assert.Equal(tt, *c.expected, *merged, "wrong result")
 			}
-
-			assert.Equal(tt, *c.expected, *merged, "wrong result")
 		})
 	}
 }

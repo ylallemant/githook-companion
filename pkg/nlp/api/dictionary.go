@@ -1,9 +1,12 @@
 package api
 
 type Dictionary struct {
-	LanguageCode         string   `yaml:"language_code" json:"language_code"`
 	Name                 string   `yaml:"name" json:"name"`
-	TokenName            string   `yaml:"token" json:"token"`
+	Description          string   `yaml:"description" json:"description"`
+	LanguageCode         string   `yaml:"language_code" json:"language_code"`
+	TokenName            string   `yaml:"token_name" json:"token_name"`
+	TokenValue           string   `yaml:"token_value" json:"token_value"`
+	TokenValueIsMatch    bool     `yaml:"token_value_is_match" json:"token_value_is_match"`
 	Entries              []string `yaml:"synonyms" json:"synonyms"`
-	ConfidenceThresthold float64
+	ConfidenceThresthold float64  `yaml:"confidence_thresthold" json:"confidence_thresthold"`
 }

@@ -57,7 +57,7 @@ func (i *normaliser) Clean(word *api.Word) {
 }
 
 func (i *normaliser) Normalise(word *api.Word) {
-	if word.FromLexeme != "" {
+	if word.Source == api.WordSourceLexeme {
 		return
 	}
 

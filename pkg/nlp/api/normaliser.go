@@ -20,7 +20,8 @@ type Normaliser interface {
 // the modification affects the text in parts or completly
 type NormalisationStep struct {
 	// Name of the normalisation step
-	Name string `yaml:"name" json:"name"`
+	Name        string `yaml:"name" json:"name"`
+	Description string `yaml:"description" json:"description"`
 	// Matcher a regular-exception to select the part[s]
 	// of the text subjected to the normalisation step
 	// it returns a list of strings
@@ -67,5 +68,8 @@ func (r *Formatter) UnmarshalText(b []byte) error {
 
 // MarshalText marshals regexp.Regexp as string
 func (r *Formatter) MarshalText() ([]byte, error) {
+	if r.Template != "" {
+		return []byte(r.Template), nil
+	}
 	return nil, nil
 }

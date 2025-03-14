@@ -218,7 +218,8 @@ func TestNormaliser_NormaliseAll(t *testing.T) {
 				},
 				{
 					LanguageCode: api.LanguageCodeWildcard,
-					FromLexeme:   "issue-tracker-reference",
+					Source:       api.WordSourceLexeme,
+					SourceName:   "issue-tracker-reference",
 					Raw:          "[ECOM_2345]",
 					Cleaned:      "ECOM-2345",
 					Normalised:   "ECOM-2345",
@@ -251,7 +252,8 @@ func TestNormaliser_NormaliseAll(t *testing.T) {
 				},
 				{
 					LanguageCode: api.LanguageCodeWildcard,
-					FromLexeme:   "issue-tracker-reference",
+					Source:       api.WordSourceLexeme,
+					SourceName:   "issue-tracker-reference",
 					Raw:          "[ECOM_2345]",
 					Cleaned:      "ECOM-2345",
 					Normalised:   "ECOM-2345",

@@ -29,26 +29,28 @@ func Merge(cfgA, cfgB *api.Config) (*api.Config, error) {
 }
 
 func removeDictionaryDuplicates(cfg *api.Config) {
-	uniques := make([]*nlpapi.Dictionary, 0)
-	slices.Reverse(cfg.Commit.TokenizerOptions.Dictionaries)
-	for _, element := range cfg.Commit.TokenizerOptions.Dictionaries {
-		found := false
-		for _, unique := range uniques {
-			if unique.TokenName == element.TokenName {
-				found = true
-				break
+	if cfg.Commit.TokenizerOptions != nil {
+		uniques := make([]*nlpapi.Dictionary, 0)
+		slices.Reverse(cfg.Commit.TokenizerOptions.Dictionaries)
+		for _, element := range cfg.Commit.TokenizerOptions.Dictionaries {
+			found := false
+			for _, unique := range uniques {
+				if unique.TokenName == element.TokenName {
+					found = true
+					break
+				}
 			}
+
+			if found {
+				continue
+			}
+
+			uniques = append(uniques, element)
 		}
 
-		if found {
-			continue
-		}
-
-		uniques = append(uniques, element)
+		slices.Reverse(uniques)
+		cfg.Commit.TokenizerOptions.Dictionaries = uniques
 	}
-
-	slices.Reverse(uniques)
-	cfg.Commit.TokenizerOptions.Dictionaries = uniques
 }
 
 func removeTypeDuplicates(cfg *api.Config) {

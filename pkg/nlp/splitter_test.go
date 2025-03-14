@@ -22,7 +22,7 @@ func TestSplitter_clean(t *testing.T) {
 			sentence:         "neues - schöneres - Döner Shop, implementiert !",
 			languageCode:     "de",
 			lexemes:          []*api.Lexeme{},
-			expectedSentence: "neues  schöneres  Döner Shop implementiert",
+			expectedSentence: "neues schöneres Döner Shop implementiert",
 			expectedWords:    []*api.Word{},
 		},
 	}
@@ -92,11 +92,12 @@ func TestSplitter_ExtractLexemes(t *testing.T) {
 					},
 				},
 			},
-			expectedSentence: "neues Döner Shop implementiert lexeme:0",
+			expectedSentence: "neues Döner Shop implementiert lexeme~0",
 			expectedWords: map[string]*api.Word{
-				"lexeme:0": {
+				"lexeme~0": {
 					LanguageCode: api.LanguageCodeWildcard,
-					FromLexeme:   "issue-tracker-reference",
+					Source:       api.WordSourceLexeme,
+					SourceName:   "issue-tracker-reference",
 					Raw:          "(gh-2345)",
 					Cleaned:      "(gh-2345)",
 					Normalised:   "(gh-2345)",
@@ -131,18 +132,20 @@ func TestSplitter_ExtractLexemes(t *testing.T) {
 					},
 				},
 			},
-			expectedSentence: "neues Döner Shop implementiert lexeme:1 and lexeme:0",
+			expectedSentence: "neues Döner Shop implementiert lexeme~1 and lexeme~0",
 			expectedWords: map[string]*api.Word{
-				"lexeme:0": {
+				"lexeme~0": {
 					LanguageCode: api.LanguageCodeWildcard,
-					FromLexeme:   "issue-tracker-reference",
+					Source:       api.WordSourceLexeme,
+					SourceName:   "issue-tracker-reference",
 					Raw:          "[ECOM_2345]",
 					Cleaned:      "ECOM-2345",
 					Normalised:   "ECOM-2345",
 				},
-				"lexeme:1": {
+				"lexeme~1": {
 					LanguageCode: api.LanguageCodeWildcard,
-					FromLexeme:   "issue-tracker-reference",
+					Source:       api.WordSourceLexeme,
+					SourceName:   "issue-tracker-reference",
 					Raw:          "(#789)",
 					Cleaned:      "#789",
 					Normalised:   "#789",
@@ -177,23 +180,31 @@ func TestSplitter_Split(t *testing.T) {
 			sentence:         " neues Döner Shop, implementiert !\n",
 			languageCode:     "de",
 			lexemes:          []*api.Lexeme{},
-			expectedTemplate: "word:0 word:1 word:2, word:3 !",
+			expectedTemplate: "word~0 word~1 word~2, word~3 !",
 			expectedWords: []*api.Word{
 				{
 					LanguageCode: "de",
 					Raw:          "neues",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: "de",
 					Raw:          "Döner",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: "de",
 					Raw:          "Shop",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: "de",
 					Raw:          "implementiert",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 			},
 		},
@@ -244,27 +255,36 @@ func TestSplitter_Split(t *testing.T) {
 					},
 				},
 			},
-			expectedTemplate: "word:0 word:1 word:2 word:3 word:4 word:5 word:6",
+			expectedTemplate: "word~0 word~1 word~2 word~3 word~4 word~5 word~6",
 			expectedWords: []*api.Word{
 				{
 					LanguageCode: "de",
 					Raw:          "neues",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: "de",
 					Raw:          "Döner",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: "de",
 					Raw:          "Shop",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: "de",
 					Raw:          "implementiert",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: api.LanguageCodeWildcard,
-					FromLexeme:   "issue-tracker-reference",
+					Source:       api.WordSourceLexeme,
+					SourceName:   "issue-tracker-reference",
 					Raw:          "(#789)",
 					Cleaned:      "gh-789",
 					Normalised:   "gh-789",
@@ -272,13 +292,72 @@ func TestSplitter_Split(t *testing.T) {
 				{
 					LanguageCode: "de",
 					Raw:          "and",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: api.LanguageCodeWildcard,
-					FromLexeme:   "issue-tracker-reference",
+					Source:       api.WordSourceLexeme,
+					SourceName:   "issue-tracker-reference",
 					Raw:          "[ecom_2345]",
 					Cleaned:      "ECOM-2345",
 					Normalised:   "ECOM-2345",
+				},
+			},
+		},
+		{
+			name:         "komplex lexeme matching",
+			sentence:     "FEaT   :  a new decoration",
+			languageCode: "de",
+			lexemes: []*api.Lexeme{
+				{
+					LanguageCode: api.LanguageCodeWildcard,
+					Name:         "commit-type",
+					Description:  "commit type lexeme to be retrieved from well formatted messages",
+					TokenName:    "commit-type",
+					Variants: []*api.Variant{
+						{
+							Matcher: &api.Matcher{Regex: regexp.MustCompile(`^(?i)(feat|fix)\s*:`)},
+							Normalisers: []*api.NormalisationStep{
+								{
+									Matcher:    &api.Matcher{Regex: regexp.MustCompile(`^(?i)(feat|fix)`)},
+									ReplaceAll: true,
+									Formatter: &api.Formatter{
+										Template: "{{ upper . }}",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			expectedTemplate: "word~0  word~1 word~2 word~3",
+			expectedWords: []*api.Word{
+				{
+					LanguageCode: api.LanguageCodeWildcard,
+					Source:       api.WordSourceLexeme,
+					SourceName:   "commit-type",
+					Raw:          "FEaT   :",
+					Cleaned:      "FEAT",
+					Normalised:   "FEAT",
+				},
+				{
+					LanguageCode: "de",
+					Raw:          "a",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
+				},
+				{
+					LanguageCode: "de",
+					Raw:          "new",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
+				},
+				{
+					LanguageCode: "de",
+					Raw:          "decoration",
+					Source:       api.WordSourceSplitter,
+					SourceName:   api.WordSourceSplitter,
 				},
 			},
 		},

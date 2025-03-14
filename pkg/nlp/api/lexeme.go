@@ -7,6 +7,8 @@ import (
 var DefaultMatcherRegexp = regexp.MustCompile(".*")
 
 type Lexeme struct {
+	Name         string               `yaml:"name" json:"name"`
+	Description  string               `yaml:"description" json:"description"`
 	LanguageCode string               `yaml:"language_code" json:"language_code"`
 	TokenName    string               `yaml:"token" json:"token"`
 	Variants     []*Variant           `yaml:"variants" json:"variants"`
@@ -14,6 +16,8 @@ type Lexeme struct {
 }
 
 type Variant struct {
+	Name        string               `yaml:"name" json:"name"`
+	Description string               `yaml:"description" json:"description"`
 	Matcher     *Matcher             `yaml:"matcher" json:"matcher"`
 	Normalisers []*NormalisationStep `yaml:"normalisers" json:"normalisers"`
 }

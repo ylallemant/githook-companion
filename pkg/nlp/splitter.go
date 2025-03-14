@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	whitespaceRegexp = regexp.MustCompile(`\s+`)
-	puntuationRegexp = regexp.MustCompile(`[^\w](\s+|$)`)
+	nonScriptCharRegexp = regexp.MustCompile(`[^\p{L}]`)
+	whitespaceRegexp    = regexp.MustCompile(`\s+`)
+	puntuationRegexp    = regexp.MustCompile(`([^0-9\p{L}\s_-~])`)
 )
 
 func DefaultSplitter(languageCode string, lexemes []*api.Lexeme) *splitter {
@@ -41,35 +42,41 @@ func (i *splitter) LanguageCode() string {
 }
 
 func (i *splitter) Split(sentence string) (string, []*api.Word) {
-	sentenceTemplate := strings.TrimSpace(sentence)
+	sentence = strings.TrimSpace(sentence)
 
 	// extract complex lexemes and replace them with position information
-	sentence, wordsFromLexemes := i.ExtractLexemes(sentence)
+	sentenceTemplate, wordsFromLexemes := i.ExtractLexemes(sentence)
 
 	// clean sentence without messing with diacritics
-	sentence = i.clean(sentence)
+	splitTemplate := i.clean(sentenceTemplate)
 
 	words := make([]*api.Word, 0)
 
-	parts := whitespaceRegexp.Split(sentence, -1)
+	parts := whitespaceRegexp.Split(splitTemplate, -1)
 	for _, part := range parts {
 		var word *api.Word
+		var rawWord string
 
 		if api.LexemeKeyRegexp.MatchString(part) {
 			// keep words from lexemes at the same position in the sentence
 			// check if sentence part is a lexeme index reference
 			word = wordsFromLexemes[part]
+			rawWord = part
 		} else {
 			// add new word
 			word = new(api.Word)
 
 			word.LanguageCode = i.languageCode
 			word.Raw = part
+			word.Source = api.WordSourceSplitter
+			word.SourceName = api.WordSourceSplitter
+
+			rawWord = word.Raw
 		}
 
 		// replace raw word by key in the sentence template
 		key := fmt.Sprintf(api.WordReferenceFmt, len(words))
-		sentenceTemplate = strings.ReplaceAll(sentenceTemplate, word.Raw, key)
+		sentenceTemplate = secureReplaceAllString(sentenceTemplate, rawWord, key)
 
 		words = append(words, word)
 	}
@@ -90,7 +97,8 @@ func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word
 
 					word.LanguageCode = lexeme.LanguageCode
 					word.Raw = match
-					word.FromLexeme = lexeme.TokenName
+					word.Source = api.WordSourceLexeme
+					word.SourceName = lexeme.TokenName
 
 					key := fmt.Sprintf(api.LexemeReferenceFmt, len(words))
 
@@ -99,7 +107,7 @@ func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word
 					words[key] = word
 
 					// replace lexeme with index information
-					sentence = strings.ReplaceAll(sentence, match, key)
+					sentence = secureReplaceAllString(sentence, word.Raw, key)
 				}
 			}
 		}
@@ -127,6 +135,7 @@ func (i *splitter) normaliseLexeme(word *api.Word, matcher *api.Variant, lexeme 
 
 func (i *splitter) clean(sentence string) string {
 	sentence = puntuationRegexp.ReplaceAllString(sentence, " ")
+	sentence = whitespaceRegexp.ReplaceAllString(sentence, " ")
 	return strings.TrimSpace(sentence)
 }
 

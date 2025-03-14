@@ -60,6 +60,9 @@ github.com/hbollon/go-edlib/internal/utils
 # github.com/huandu/xstrings v1.3.2
 ## explicit; go 1.12
 github.com/huandu/xstrings
+# github.com/iancoleman/strcase v0.3.0
+## explicit; go 1.16
+github.com/iancoleman/strcase
 # github.com/imdario/mergo v0.3.11
 ## explicit; go 1.13
 github.com/imdario/mergo

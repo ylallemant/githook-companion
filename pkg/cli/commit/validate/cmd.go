@@ -46,13 +46,7 @@ var rootCmd = &cobra.Command{
 			return errors.Errorf("providing a commit message by argument or flag is mendatory")
 		}
 
-		validated, commitType, dictionary := commit.Validate(message, configuration)
-
-		if dictionary != nil {
-			// commit type found through dictionary match on first word
-			// ensure that the dictionary value is used in the message
-			// TODO : message = commit.EnsureDictionaryValue(message, dictionary)
-		}
+		languageCode, validated, commitTypeToken, tokens := commit.Validate(message, configuration)
 
 		if !validated && calledFromTerminal {
 			// message does not have a commit type prefix
@@ -77,7 +71,7 @@ var rootCmd = &cobra.Command{
 			}
 
 			// commit type from user input
-			commitType = configuration.Commit.Types[idx].Type
+			commitTypeToken = commit.CommitTypeTokenFromString(configuration.Commit.Types[idx].Type, languageCode)
 		} else if !validated {
 			// binary has not been called from a terminal
 			// no user interaction possible
@@ -101,7 +95,10 @@ var rootCmd = &cobra.Command{
 		}
 
 		// ensure commit type prefix format (lower-case)
-		message = commit.EnsureFormat(message, commitType)
+		message, err = commit.EnsureFormat(message, configuration.Commit.MessageTemplate, commitTypeToken, tokens)
+		if err != nil {
+			return errors.Wrap(err, "failed to format commit message")
+		}
 
 		if options.Current.OutputFilePath == "" {
 			// output to terminal

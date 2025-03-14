@@ -4,8 +4,12 @@ import (
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
-const ConfigDirectory = ".githook-companion"
-const ConfigFile = "config.yaml"
+const (
+	ConfigDirectory     = ".githook-companion"
+	ConfigFile          = "config.yaml"
+	CommitTypeTokenName = "commit_type"
+	CommitMessageKey    = "message"
+)
 
 type Config struct {
 	*Commit      `yaml:"commit" json:"commit"`

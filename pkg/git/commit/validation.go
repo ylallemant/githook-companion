@@ -2,8 +2,6 @@ package commit
 
 import (
 	"fmt"
-	"regexp"
-	"strings"
 
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/config"
@@ -11,39 +9,36 @@ import (
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
-func Validate(message string, cfg *api.Config) (bool, string, *nlpapi.Dictionary) {
-	validationRegexp := validationExpression(cfg)
-	formatted := isMessageValid(message, validationRegexp)
+// TODO: return error too
+func Validate(message string, cfg *api.Config) (string, bool, *nlpapi.Token, []*nlpapi.Token) {
+	tokenizer, _ := nlp.NewTokenizer(cfg.Commit.TokenizerOptions)
+
+	// TODO: get dictionary from function to test its structure
+	tokenizer.AddDictionary(&nlpapi.Dictionary{
+		LanguageCode:      nlpapi.LanguageCodeWildcard,
+		Name:              fmt.Sprintf("%s_dictionary", api.CommitTypeTokenName),
+		TokenName:         api.CommitTypeTokenName,
+		TokenValueIsMatch: true,
+		Entries:           config.CommitTypeList(cfg),
+	})
+
+	tokens, languageCode, _, _ := tokenizer.Tokenize(message)
+
+	//validationRegexp := validationExpression(cfg)
+	commitTypeToken, formatted := hasCommitTypeToken(tokens)
 
 	if !formatted {
-		tokenizer, _ := nlp.NewTokenizer(cfg.Commit.TokenizerOptions)
-		tokens, _, _ := tokenizer.Tokenize(message)
+		token, found := assessMessageType(tokens, cfg)
 
-		fmt.Printf("Tokens :\n")
-		for _, token := range tokens {
-			fmt.Printf("   - token : %#+v\n", token)
-
+		if found {
+			tokens = append(tokens, token)
+			commitTypeToken = token
 		}
-
-		return false, "", nil
 	}
 
-	commitType, _ := messageType(message, cfg)
+	if commitTypeToken == nil {
+		return languageCode, false, nil, tokens
+	}
 
-	return true, commitType, nil
-}
-
-func validationExpression(cfg *api.Config) *regexp.Regexp {
-	expression := fmt.Sprintf(
-		commitTypePrefixRegexpFmt,
-		strings.Join(config.GetCommitTypes(cfg), "|"),
-	)
-
-	formatted, _ := regexp.Compile(expression)
-
-	return formatted
-}
-
-func isMessageValid(message string, validationRegexp *regexp.Regexp) bool {
-	return validationRegexp.MatchString(message)
+	return languageCode, true, commitTypeToken, tokens
 }

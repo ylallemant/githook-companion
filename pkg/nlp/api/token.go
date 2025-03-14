@@ -8,9 +8,12 @@ const (
 )
 
 type Token struct {
-	Word       *Word
-	Name       string
-	Source     string
-	Value      string
-	Confidence float64
+	Word        *Word
+	Name        string
+	Source      string
+	SourceName  string
+	SourceMatch string
+	Value       string
+	Confidence  float64
+	Index       int64
 }

@@ -1,6 +1,10 @@
 package config
 
 import (
+	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/ylallemant/githook-companion/pkg/api"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
@@ -19,6 +23,7 @@ func Default() *api.Config {
 	config := new(api.Config)
 
 	commit := new(api.Commit)
+	commit.MessageTemplate = "{{ .CommitType | upper }}: {{ if .IssueTrackerReference }}({{ .IssueTrackerReference }}){{ end }} {{ .Message | lower }}"
 	commit.DefaultType = typeFeature
 	commit.Types = commitTypes()
 	commit.TokenizerOptions = &nlpapi.TokenizerOptions{
@@ -26,6 +31,7 @@ func Default() *api.Config {
 			"en",
 		},
 		Dictionaries: commitDictionaries(),
+		Lexemes:      commitLexemes(),
 	}
 
 	config.Commit = commit
@@ -66,12 +72,100 @@ func commitTypes() []*api.CommitType {
 	}
 }
 
+func CommitTypeList(cfg *api.Config) []string {
+	types := make([]string, 0)
+	for _, current := range cfg.Commit.Types {
+		types = append(types, current.Type)
+	}
+	return types
+}
+
+func commitLexemes() []*nlpapi.Lexeme {
+	typeNames := make([]string, 0)
+
+	for _, commitType := range commitTypes() {
+		typeNames = append(typeNames, commitType.Type)
+	}
+
+	expression := fmt.Sprintf(
+		"^(?i)(%s)",
+		strings.Join(typeNames, "|"),
+	)
+
+	commitTypeReplaceExpression, _ := regexp.Compile(expression)
+	commitTypeExpression, _ := regexp.Compile(fmt.Sprintf(
+		"%s\\b\\s*:{0,1}",
+		expression,
+	))
+
+	return []*nlpapi.Lexeme{
+		{
+			LanguageCode: nlpapi.LanguageCodeWildcard,
+			Name:         api.CommitTypeTokenName,
+			Description:  "commit type lexeme to be retrieved from well formatted messages",
+			TokenName:    api.CommitTypeTokenName,
+			Variants: []*nlpapi.Variant{
+				{
+					Matcher: &nlpapi.Matcher{Regex: commitTypeExpression},
+					Normalisers: []*nlpapi.NormalisationStep{
+						{
+							Matcher:    &nlpapi.Matcher{Regex: commitTypeReplaceExpression},
+							ReplaceAll: true,
+							Formatter: &nlpapi.Formatter{
+								Template: "{{ upper . }}",
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			LanguageCode: nlpapi.LanguageCodeWildcard,
+			Name:         "issue_tracker_reference",
+			Description:  "lexeme to identify issue tracker references from different providers",
+			TokenName:    "issue_tracker_reference",
+			Variants: []*nlpapi.Variant{
+				{
+					Name:    "JIRA like issue reference",
+					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile("[\\(\\[]{0,1}([\\w]{0,6})[-_]([\\d]+)[\\)\\]]{0,1}")},
+					Normalisers: []*nlpapi.NormalisationStep{
+						{
+							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile("([\\w]{0,6})[-_]([\\d]+)")},
+							ReplaceAll: true,
+							Formatter: &nlpapi.Formatter{
+								Template: "{{ upper . }}",
+							},
+						},
+						{
+							Matcher:     &nlpapi.Matcher{Regex: regexp.MustCompile("[-_]")},
+							Replacement: "-",
+						},
+					},
+				},
+				{
+					Name:    "GitHub issue reference",
+					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile("[\\(\\[]{0,1}(#|gh-|GH-)([\\d]+)[\\)\\]]{0,1}")},
+					Normalisers: []*nlpapi.NormalisationStep{
+						{
+							Name:        "github issue reference",
+							Matcher:     &nlpapi.Matcher{Regex: regexp.MustCompile("(#)")},
+							Replacement: "gh-",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
 func commitDictionaries() []*nlpapi.Dictionary {
 	return []*nlpapi.Dictionary{
 		{
 			LanguageCode: "en",
 			Name:         "weak-feature-signals",
-			TokenName:    typeFeature,
+			Description:  "a collection of words that can imply a new feature",
+			TokenName:    api.CommitTypeTokenName,
+			TokenValue:   typeFeature,
 			Entries: []string{
 				"add",
 				"implement",
@@ -82,15 +176,18 @@ func commitDictionaries() []*nlpapi.Dictionary {
 		{
 			LanguageCode: "en",
 			Name:         "ignore-signals",
-			TokenName:    typeIgnore,
+			TokenName:    api.CommitTypeTokenName,
+			TokenValue:   typeIgnore,
 			Entries: []string{
 				"typo",
+				"wip",
 			},
 		},
 		{
 			LanguageCode: "en",
-			Name:         typeRefactor,
-			TokenName:    typeRefactor,
+			Name:         "refactor-signals",
+			TokenName:    api.CommitTypeTokenName,
+			TokenValue:   typeRefactor,
 			Entries: []string{
 				"remove",
 				"change",
@@ -101,10 +198,13 @@ func commitDictionaries() []*nlpapi.Dictionary {
 		},
 		{
 			LanguageCode: "en",
-			Name:         "fix",
-			TokenName:    typeFix,
+			Name:         "fix-signals",
+			TokenName:    api.CommitTypeTokenName,
+			TokenValue:   typeFix,
 			Entries: []string{
 				"fix",
+				"bugfix",
+				"bug",
 			},
 		},
 	}

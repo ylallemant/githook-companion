@@ -31,17 +31,30 @@ func NewTokenizer(options *api.TokenizerOptions) (*tokenizer, error) {
 		instance.confidenceThresthold = DefaultConfidenceThresthold
 	}
 
+	if len(options.Lexemes) > 0 {
+		instance.lexemes = options.Lexemes
+	}
+
 	if len(options.LanguageCodes) < 2 {
 		options.LanguageCodes = append(options.LanguageCodes, []string{"en", "de"}...)
 	}
 
-	languageDetector, err := NewLanguageDetector(options.LanguageCodes, 0.8)
+	languageDetector, err := NewLanguageDetector(options.LanguageCodes, 0.7)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initiate the Tokenizer")
 	}
 
 	instance.languageDetector = languageDetector
 
+	instance.lexemes = make([]*api.Lexeme, 0)
+	for _, lexeme := range options.Lexemes {
+		err = instance.AddLexeme(lexeme)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to import lexemes")
+		}
+	}
+
+	instance.dictionaries = make([]*api.Dictionary, 0)
 	for _, dictionary := range options.Dictionaries {
 		err = instance.AddDictionary(dictionary)
 		if err != nil {
@@ -66,6 +79,26 @@ func NewTokenizer(options *api.TokenizerOptions) (*tokenizer, error) {
 	return instance, nil
 }
 
+func (i *tokenizer) ValidateTokenName(name string) bool {
+	return api.TokenNameRegexp.MatchString(name)
+}
+
+func (i *tokenizer) AddLexeme(lexeme *api.Lexeme) error {
+	for _, current := range i.lexemes {
+		if current.TokenName == lexeme.TokenName {
+			return errors.Errorf("failed to add lexeme, \"%s\" already registered", lexeme.TokenName)
+		}
+	}
+
+	if !i.ValidateTokenName(lexeme.TokenName) {
+		return errors.Errorf("provided token name is not valid %s", lexeme.TokenName)
+	}
+
+	i.lexemes = append(i.lexemes, lexeme)
+
+	return nil
+}
+
 func (i *tokenizer) AddDictionary(dictionary *api.Dictionary) error {
 	for _, current := range i.dictionaries {
 		if current.Name == dictionary.Name {
@@ -73,42 +106,49 @@ func (i *tokenizer) AddDictionary(dictionary *api.Dictionary) error {
 		}
 	}
 
+	if !i.ValidateTokenName(dictionary.TokenName) {
+		return errors.Errorf("provided token name is not valid %s", dictionary.TokenName)
+	}
+
 	i.dictionaries = append(i.dictionaries, dictionary)
 
 	return nil
 }
 
-func (i *tokenizer) Tokenize(sentence string) ([]*api.Token, string, error) {
+func (i *tokenizer) Tokenize(sentence string) ([]*api.Token, string, string, error) {
 	if sentence == "" {
-		return []*api.Token{}, "", nil
+		return []*api.Token{}, "", "", nil
 	}
 
-	lagnCode, _, known := i.languageDetector.DetectLanguage(sentence)
+	languageCode, _, known := i.languageDetector.DetectLanguage(sentence)
 
 	if !known {
-		return []*api.Token{}, "", errors.Errorf("failed to detect language from sentence : \"%s\"", sentence)
+		return []*api.Token{}, "", "", errors.Errorf("failed to detect language from sentence : \"%s\"", sentence)
 	}
 
-	template, words := i.split(sentence, lagnCode)
+	template, words := i.split(sentence, languageCode)
 
-	i.normalise(words, lagnCode)
+	i.normalise(words, languageCode)
 
 	tokens := i.matchTokens(words)
 
-	return tokens, template, nil
+	return tokens, languageCode, template, nil
 }
 
 func (i *tokenizer) matchTokens(words []*api.Word) []*api.Token {
 	tokens := make([]*api.Token, 0)
 
-	for _, word := range words {
+	for index, word := range words {
 		token := new(api.Token)
+		token.Index = int64(index)
 		token.Word = word
 
-		if word.FromLexeme != "" {
-			token.Name = word.FromLexeme
+		if word.Source == api.WordSourceLexeme {
+			token.Name = word.SourceName
 			token.Value = word.Normalised
 			token.Source = api.TokenSourceLexeme
+			token.SourceName = word.SourceName
+			token.SourceMatch = word.Raw
 			token.Confidence = 1
 		} else {
 			dictionary, match, confidence := i.fuzzyDictionaryMatch(word)
@@ -119,10 +159,19 @@ func (i *tokenizer) matchTokens(words []*api.Word) []*api.Token {
 				token.Name = api.TokenUnknown
 				token.Value = word.Normalised
 				token.Source = api.TokenSourceNone
+				token.SourceName = api.TokenSourceNone
+				token.SourceMatch = api.TokenSourceNone
 			} else {
 				token.Name = dictionary.TokenName
-				token.Value = match
 				token.Source = api.TokenSourceDictionary
+				token.SourceName = dictionary.Name
+				token.SourceMatch = match
+
+				if dictionary.TokenValueIsMatch {
+					token.Value = match
+				} else {
+					token.Value = dictionary.TokenValue
+				}
 			}
 		}
 

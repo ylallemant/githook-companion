@@ -18,7 +18,7 @@ func TestCommand(t *testing.T) {
 	}{
 		{
 			name:        "not able to detect commit type",
-			message:     "some changes",
+			message:     "not even in your dreams",
 			expected:    "",
 			expectError: true,
 			errorMessage: `commit message malformed
@@ -27,6 +27,7 @@ func TestCommand(t *testing.T) {
   format: "<commit-type-prefix>: <commit-message>"
   available commit types:
     - feat: a new feature is introduced with the changes
+    - ignore: commit can be ignored by other tools
     - fix: a bug fix has occurred
     - docs: updates to documentation such as a the README or other markdown files
     - test: including new or correcting previous tests
@@ -38,19 +39,25 @@ func TestCommand(t *testing.T) {
 		{
 			name:        "detect commit type from dictionary with plain value",
 			message:     "add some changes",
-			expected:    "feat: add some changes\n",
+			expected:    "REFACTOR: add some changes\n",
 			expectError: false,
 		},
 		{
 			name:        "detect commit type from dictionary with synonym",
-			message:     "added some changes",
-			expected:    "feat: add some changes\n",
+			message:     "fixes little output problem",
+			expected:    "FIX: fixes little output problem\n",
 			expectError: false,
 		},
 		{
 			name:        "detect commit type from existsing type",
 			message:     "refactor: some changes",
-			expected:    "refactor: some changes\n",
+			expected:    "REFACTOR: some changes\n",
+			expectError: false,
+		},
+		{
+			name:        "message with issue tracker reference",
+			message:     "implemented new inbox layout [TEST_123]",
+			expected:    "FEAT: (TEST-123) implemented new inbox layout\n",
 			expectError: false,
 		},
 	}
@@ -68,7 +75,9 @@ func TestCommand(t *testing.T) {
 
 			if c.expectError {
 				assert.NotNil(tt, cmdErr)
-				assert.Equal(tt, c.errorMessage, cmdErr.Error(), "wrong error massage")
+				if cmdErr != nil {
+					assert.Equal(tt, c.errorMessage, cmdErr.Error(), "wrong error massage")
+				}
 			} else {
 				assert.Nil(tt, cmdErr)
 				assert.Equal(tt, c.expected, string(out), "wrong result")
