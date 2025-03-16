@@ -251,6 +251,7 @@ func TestTokenizer_Tokenize(t *testing.T) {
 		name                 string
 		options              *api.TokenizerOptions
 		sentence             string
+		expectedLanguage     string
 		expectedTemplate     string
 		expectedTokens       []*api.Token
 		expectError          bool
@@ -313,9 +314,10 @@ func TestTokenizer_Tokenize(t *testing.T) {
 				},
 				Dictionaries: []*api.Dictionary{
 					{
-						LanguageCode: "en",
-						Name:         "Git commit type feature",
-						TokenName:    "feat",
+						LanguageCode:      "en",
+						Name:              "Git commit type feature",
+						TokenName:         "feat",
+						TokenValueIsMatch: true,
 						Entries: []string{
 							"add",
 							"implement",
@@ -325,11 +327,12 @@ func TestTokenizer_Tokenize(t *testing.T) {
 					},
 				},
 			},
+			expectedLanguage: "en",
 			expectedTemplate: "word~0 word~1 word~2, word~3, word~4",
 			expectedTokens: []*api.Token{
 				{
-					Name:       api.TokenUnknown,
-					Source:     api.TokenSourceNone,
+					Name:       "issue-tracker-reference",
+					Source:     api.TokenSourceLexeme,
 					Value:      "GDT-3564",
 					Confidence: 1,
 				},
@@ -379,7 +382,7 @@ func TestTokenizer_Tokenize(t *testing.T) {
 			} else {
 				assert.Nil(tt, err)
 				assert.Equal(tt, c.expectedTemplate, template, "wrong template")
-				assert.Equal(tt, "en", languageCode, "wrong language code")
+				assert.Equal(tt, c.expectedLanguage, languageCode, "wrong language code")
 				for idx, token := range tokens {
 					assert.Equal(tt, c.expectedTokens[idx].Name, token.Name, "wrong tokens")
 					assert.Equal(tt, c.expectedTokens[idx].Source, token.Source, "wrong tokens")

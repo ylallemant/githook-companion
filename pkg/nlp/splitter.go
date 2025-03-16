@@ -96,7 +96,7 @@ func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word
 					word := new(api.Word)
 
 					word.LanguageCode = lexeme.LanguageCode
-					word.Raw = match
+					word.Raw = strings.TrimSpace(match)
 					word.Source = api.WordSourceLexeme
 					word.SourceName = lexeme.TokenName
 
@@ -107,13 +107,24 @@ func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word
 					words[key] = word
 
 					// replace lexeme with index information
-					sentence = secureReplaceAllString(sentence, word.Raw, key)
+					// add spaces as prefix and suffix to make sure
+					// the splitter will be able to split
+					sentence = secureReplaceAllString(sentence, word.Raw, fmt.Sprintf(" %s ", key))
 				}
 			}
 		}
 	}
 
+	sentence = whitespaceRegexp.ReplaceAllString(sentence, " ")
+	sentence = strings.TrimSpace(sentence)
+
 	return sentence, words
+}
+
+func (i *splitter) clean(sentence string) string {
+	sentence = puntuationRegexp.ReplaceAllString(sentence, " ")
+	sentence = whitespaceRegexp.ReplaceAllString(sentence, " ")
+	return strings.TrimSpace(sentence)
 }
 
 func (i *splitter) normaliseLexeme(word *api.Word, matcher *api.Variant, lexeme *api.Lexeme) {
@@ -131,12 +142,6 @@ func (i *splitter) normaliseLexeme(word *api.Word, matcher *api.Variant, lexeme 
 
 	word.Normalised = strings.TrimSpace(text)
 	word.Cleaned = word.Normalised
-}
-
-func (i *splitter) clean(sentence string) string {
-	sentence = puntuationRegexp.ReplaceAllString(sentence, " ")
-	sentence = whitespaceRegexp.ReplaceAllString(sentence, " ")
-	return strings.TrimSpace(sentence)
 }
 
 func executeNormaliser(normaliser *api.NormalisationStep, text string) string {

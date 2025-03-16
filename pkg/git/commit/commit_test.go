@@ -13,12 +13,11 @@ func TestEnsureFormat(t *testing.T) {
 		message  string
 		expected string
 	}{
-		// {
-		// 	name:       "add commit type prefix",
-		// 	message:    "some changes",
-		// 	commitType: "feat",
-		// 	expected:   "feat: some changes",
-		// },
+		{
+			name:     "add commit type prefix",
+			message:  "some changes",
+			expected: "REFACTOR: some changes",
+		},
 		{
 			name:     "ensure lower case commit message",
 			message:  "Some Heads-UP added",

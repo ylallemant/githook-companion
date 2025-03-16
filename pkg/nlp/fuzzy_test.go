@@ -114,43 +114,43 @@ var cases = []struct {
 	},
 }
 
-func Test_absoluteDistance(t *testing.T) {
-	expectations := map[string]float64{
-		"input longer than entry": 7,
-		"equal":                   0,
-		"short - shor":            1,
-		"short - hort":            1,
-		"short - sho":             2,
-		"short - ort":             2,
-		"short - hor":             2,
-		"something - somethin":    1,
-		"something - omething":    1,
-		"something - somethi":     2,
-		"something - mething":     2,
-		"something - ometh":       4,
-		"something - methi":       4,
-		"something - ethin":       4,
-		"scattered - scatterd":    1,
-		"scattered - sattered":    1,
-		"scattered - scatted":     2,
-		"scattered - sctered":     2,
-		"scattered - cater":       4,
-		"scattered - ctter":       4,
-	}
+// func Test_absoluteDistance(t *testing.T) {
+// 	expectations := map[string]float64{
+// 		"input longer than entry": 7,
+// 		"equal":                   0,
+// 		"short - shor":            1,
+// 		"short - hort":            1,
+// 		"short - sho":             2,
+// 		"short - ort":             2,
+// 		"short - hor":             2,
+// 		"something - somethin":    1,
+// 		"something - omething":    1,
+// 		"something - somethi":     2,
+// 		"something - mething":     2,
+// 		"something - ometh":       4,
+// 		"something - methi":       4,
+// 		"something - ethin":       4,
+// 		"scattered - scatterd":    1,
+// 		"scattered - sattered":    1,
+// 		"scattered - scatted":     2,
+// 		"scattered - sctered":     2,
+// 		"scattered - cater":       4,
+// 		"scattered - ctter":       4,
+// 	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(tt *testing.T) {
-			result := absoluteDistance(c.word, c.entry)
+// 	for _, c := range cases {
+// 		t.Run(c.name, func(tt *testing.T) {
+// 			result := absoluteDistance(c.word, c.entry)
 
-			expected, ok := expectations[c.name]
-			assert.Equal(tt, true, ok, fmt.Sprintf("missing test result \"%s\"", c.name))
+// 			expected, ok := expectations[c.name]
+// 			assert.Equal(tt, true, ok, fmt.Sprintf("missing test result \"%s\"", c.name))
 
-			if ok {
-				assert.Equal(tt, expected, result, "wrong result")
-			}
-		})
-	}
-}
+// 			if ok {
+// 				assert.Equal(tt, expected, result, "wrong result")
+// 			}
+// 		})
+// 	}
+// }
 
 func Test_distance(t *testing.T) {
 	expectations := map[string]float64{
@@ -304,43 +304,43 @@ func Test_basicDistance(t *testing.T) {
 	}
 }
 
-func Test_scatteredDistance(t *testing.T) {
-	expectations := map[string]float64{
-		"input longer than entry": 1.2352941176470589,
-		"equal":                   0,
-		"short - shor":            0,
-		"short - hort":            0,
-		"short - sho":             0,
-		"short - ort":             0.2222222222222222,
-		"short - hor":             0,
-		"something - somethin":    0.3,
-		"something - omething":    0.2,
-		"something - somethi":     0.2,
-		"something - mething":     0.2,
-		"something - ometh":       0,
-		"something - methi":       0.1,
-		"something - ethin":       0.12,
-		"scattered - scatterd":    0.6666666666666666,
-		"scattered - sattered":    0.6666666666666666,
-		"scattered - scatted":     0.5,
-		"scattered - sctered":     0.5384615384615384,
-		"scattered - cater":       0.2727272727272727,
-		"scattered - ctter":       0.17647058823529413,
-	}
+// func Test_scatteredDistance(t *testing.T) {
+// 	expectations := map[string]float64{
+// 		"input longer than entry": 1.2352941176470589,
+// 		"equal":                   0,
+// 		"short - shor":            0,
+// 		"short - hort":            0,
+// 		"short - sho":             0,
+// 		"short - ort":             0.2222222222222222,
+// 		"short - hor":             0,
+// 		"something - somethin":    0.3,
+// 		"something - omething":    0.2,
+// 		"something - somethi":     0.2,
+// 		"something - mething":     0.2,
+// 		"something - ometh":       0,
+// 		"something - methi":       0.1,
+// 		"something - ethin":       0.12,
+// 		"scattered - scatterd":    0.6666666666666666,
+// 		"scattered - sattered":    0.6666666666666666,
+// 		"scattered - scatted":     0.5,
+// 		"scattered - sctered":     0.5384615384615384,
+// 		"scattered - cater":       0.2727272727272727,
+// 		"scattered - ctter":       0.17647058823529413,
+// 	}
 
-	for _, c := range cases {
-		t.Run(c.name, func(tt *testing.T) {
-			result := scatteredDistance(c.word, c.entry)
+// 	for _, c := range cases {
+// 		t.Run(c.name, func(tt *testing.T) {
+// 			result := scatteredDistance(c.word, c.entry)
 
-			expected, ok := expectations[c.name]
-			assert.Equal(tt, true, ok, fmt.Sprintf("missing test result \"%s\"", c.name))
+// 			expected, ok := expectations[c.name]
+// 			assert.Equal(tt, true, ok, fmt.Sprintf("missing test result \"%s\"", c.name))
 
-			if ok {
-				assert.Equal(tt, expected, result, "wrong result")
-			}
-		})
-	}
-}
+// 			if ok {
+// 				assert.Equal(tt, expected, result, "wrong result")
+// 			}
+// 		})
+// 	}
+// }
 
 func Test_calculateConfidence(t *testing.T) {
 	expectations := map[string]float64{

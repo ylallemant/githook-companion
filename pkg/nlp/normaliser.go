@@ -57,12 +57,10 @@ func (i *normaliser) Clean(word *api.Word) {
 }
 
 func (i *normaliser) Normalise(word *api.Word) {
-	if word.Source == api.WordSourceLexeme {
-		return
+	if word.Source != api.WordSourceLexeme {
+		i.Clean(word)
+		i.lemmatizer.Lemma(word)
 	}
-
-	i.Clean(word)
-	i.lemmatizer.Lemma(word)
 }
 
 func removeDiacritics(text string) string {

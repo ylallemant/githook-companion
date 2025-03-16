@@ -13,6 +13,7 @@ const unknown = "unknown"
 func NewLanguageDetector(languageCodes []string, threshold float64) (*LanguageDetector, error) {
 	detector := new(LanguageDetector)
 	detector.threshold = threshold
+	detector.languageCodes = languageCodes
 
 	languages := make([]lingua.Language, 0)
 

@@ -331,7 +331,7 @@ func TestSplitter_Split(t *testing.T) {
 					},
 				},
 			},
-			expectedTemplate: "word~0  word~1 word~2 word~3",
+			expectedTemplate: "word~0 word~1 word~2 word~3",
 			expectedWords: []*api.Word{
 				{
 					LanguageCode: api.LanguageCodeWildcard,
