@@ -60,6 +60,12 @@ func TestCommand(t *testing.T) {
 			expected:    "FEAT: (TEST-123) implemented new inbox layout\n",
 			expectError: false,
 		},
+		{
+			name:        "ignore message of type IGNORE",
+			message:     "typo in title",
+			expected:    "IGNORE: typo in title\n",
+			expectError: false,
+		},
 	}
 
 	for _, c := range cases {

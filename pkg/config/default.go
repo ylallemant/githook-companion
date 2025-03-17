@@ -11,7 +11,7 @@ import (
 
 const (
 	typeFeature  = "feat"
-	typeIgnore   = "ignore"
+	TypeIgnore   = "ignore"
 	typeDocs     = "docs"
 	typeFix      = "fix"
 	typeTest     = "test"
@@ -46,7 +46,7 @@ func commitTypes() []*api.CommitType {
 			Description: "a new feature is introduced with the changes",
 		},
 		{
-			Type:        typeIgnore,
+			Type:        TypeIgnore,
 			Description: "commit can be ignored by other tools",
 		},
 		{
@@ -177,7 +177,7 @@ func commitDictionaries() []*nlpapi.Dictionary {
 			LanguageCode: "en",
 			Name:         "ignore-signals",
 			TokenName:    api.CommitTypeTokenName,
-			TokenValue:   typeIgnore,
+			TokenValue:   TypeIgnore,
 			Entries: []string{
 				"typo",
 				"wip",
