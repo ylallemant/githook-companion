@@ -1,11 +1,16 @@
 package commit
 
 import (
-	"fmt"
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"regexp"
 	"strings"
+	"text/template"
 
-	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/Masterminds/sprig/v3"
+	"github.com/pkg/errors"
+	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 const (
@@ -13,50 +18,37 @@ const (
 )
 
 var (
-	fistWord = regexp.MustCompile(`^\w+`)
+	whitespaceRegexp = regexp.MustCompile(`\s+`)
 )
 
-func messageType(message string, cfg *api.Config) (string, bool) {
-	message = strings.ToLower(message)
+func EnsureFormat(message, tpl string, commitTypeToken *nlpapi.Token, tokens []*nlpapi.Token) (string, error) {
+	binaryTemplate := []byte(tpl)
 
-	for _, commitType := range cfg.Commit.Types {
-		expression, _ := regexp.Compile(fmt.Sprintf(
-			commitTypePrefixRegexpFmt,
-			commitType.Type,
-		))
+	hasher := sha256.New()
+	hasher.Write(binaryTemplate)
 
-		if expression.MatchString(message) {
-			return strings.ToLower(commitType.Type), true
-		}
+	templateName := hex.EncodeToString(hasher.Sum(nil))
+
+	renderer := template.New(templateName).Funcs(sprig.FuncMap())
+
+	var err error
+	if renderer, err = renderer.Parse(string(binaryTemplate)); err != nil {
+		return "", errors.Wrapf(err, "failed to parse template \"%s\"", string(binaryTemplate))
 	}
 
-	return "", false
-}
+	referencedTokens := templateReferencedTokens(tpl)
+	cleanedMessage := cleanRawMessage(message, referencedTokens, tokens)
+	templateStruct := dynamicTemplateStruct(referencedTokens)
+	templateData := dynamicTemplateData(templateStruct, cleanedMessage, commitTypeToken.SourceName, referencedTokens, tokens)
 
-func EnsureFormat(message, commitType string) string {
-	expression, _ := regexp.Compile(fmt.Sprintf(
-		commitTypePrefixRegexpFmt,
-		commitType,
-	))
-
-	if expression.MatchString(message) {
-		// format commit type prefix
-		return expression.ReplaceAllString(
-			message,
-			fmt.Sprintf("%s: ", strings.ToLower(commitType)),
-		)
-	} else {
-		// add commit type prefix to message
-		return fmt.Sprintf(
-			"%s: %s",
-			strings.ToLower(commitType),
-			message,
-		)
+	formatted := bytes.NewBuffer([]byte{})
+	err = renderer.Execute(formatted, templateData)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to render template")
 	}
-}
 
-func EnsureDictionaryValue(message string, dictionary *api.CommitTypeDictionary) string {
-	message = strings.TrimSpace(message)
+	result := strings.TrimSpace(formatted.String())
+	result = whitespaceRegexp.ReplaceAllString(result, " ")
 
-	return fistWord.ReplaceAllString(message, dictionary.Value)
+	return result, nil
 }

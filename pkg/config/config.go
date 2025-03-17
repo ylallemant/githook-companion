@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -46,16 +47,21 @@ func Get(path string) (*api.Config, error) {
 			return nil, errors.Wrap(err, "failed to merge global and local configurations")
 		}
 
+		fmt.Println("merged config")
 		return merged, nil
 	}
 
 	if localConfig != nil {
+		fmt.Println("local config")
 		return localConfig, nil
 	}
 
 	if mainConfig != nil {
+		fmt.Println("main config")
 		return mainConfig, nil
 	}
+
+	fmt.Println("default config")
 
 	return Default(), nil
 }
@@ -95,10 +101,10 @@ func load(path string, strict bool) (*api.Config, error) {
 	return nil, nil
 }
 
-func GetCommitTypes(config *api.Config) []string {
+func GetCommitTypes(types []*api.CommitType) []string {
 	commitTypes := make([]string, 0)
 
-	for _, commitType := range config.Commit.Types {
+	for _, commitType := range types {
 		commitTypes = append(commitTypes, commitType.Type)
 	}
 

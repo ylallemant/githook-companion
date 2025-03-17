@@ -25,10 +25,12 @@ func TestCommand(t *testing.T) {
 │ TYPE     │ DESCRIPTION                                                           │
 ├──────────┼───────────────────────────────────────────────────────────────────────┤
 │ feat     │ a new feature is introduced with the changes                          │
+│ ignore   │ commit can be ignored by other tools                                  │
 │ fix      │ a bug fix has occurred                                                │
 │ docs     │ updates to documentation such as a the README or other markdown files │
 │ test     │ including new or correcting previous tests                            │
 │ refactor │ refactored code that neither fixes a bug nor adds a feature           │
+│ breaking │ introducing a breaking change in input or output behaviour            │
 └──────────┴───────────────────────────────────────────────────────────────────────┘
 `,
 			expectError: false,

@@ -6,6 +6,7 @@ import (
 	"dario.cat/mergo"
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/api"
+	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 func Merge(cfgA, cfgB *api.Config) (*api.Config, error) {
@@ -28,26 +29,28 @@ func Merge(cfgA, cfgB *api.Config) (*api.Config, error) {
 }
 
 func removeDictionaryDuplicates(cfg *api.Config) {
-	uniques := make([]*api.CommitTypeDictionary, 0)
-	slices.Reverse(cfg.Commit.Dictionaries)
-	for _, element := range cfg.Commit.Dictionaries {
-		found := false
-		for _, unique := range uniques {
-			if unique.Type == element.Type {
-				found = true
-				break
+	if cfg.Commit.TokenizerOptions != nil {
+		uniques := make([]*nlpapi.Dictionary, 0)
+		slices.Reverse(cfg.Commit.TokenizerOptions.Dictionaries)
+		for _, element := range cfg.Commit.TokenizerOptions.Dictionaries {
+			found := false
+			for _, unique := range uniques {
+				if unique.TokenName == element.TokenName {
+					found = true
+					break
+				}
 			}
+
+			if found {
+				continue
+			}
+
+			uniques = append(uniques, element)
 		}
 
-		if found {
-			continue
-		}
-
-		uniques = append(uniques, element)
+		slices.Reverse(uniques)
+		cfg.Commit.TokenizerOptions.Dictionaries = uniques
 	}
-
-	slices.Reverse(uniques)
-	cfg.Commit.Dictionaries = uniques
 }
 
 func removeTypeDuplicates(cfg *api.Config) {

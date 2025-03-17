@@ -35,7 +35,6 @@ func TestValidate(t *testing.T) {
 							Type: typeFeature,
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{},
 				},
 				Dependencies: []*api.Dependency{},
 			},
@@ -59,7 +58,6 @@ func TestValidate(t *testing.T) {
 							Type: typeFeature,
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{},
 				},
 				Dependencies: []*api.Dependency{},
 			},
@@ -100,8 +98,7 @@ func TestValidate(t *testing.T) {
 							Description: "updates to documentation such as a the README or other markdown files",
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{},
-					DefaultType:  "docs",
+					DefaultType: "docs",
 				},
 				Dependencies: []*api.Dependency{},
 			},
@@ -147,8 +144,7 @@ func TestValidate(t *testing.T) {
 							Description: "updates to documentation such as a the README or other markdown files",
 						},
 					},
-					Dictionaries: []*api.CommitTypeDictionary{},
-					DefaultType:  "docs",
+					DefaultType: "docs",
 				},
 				Dependencies: []*api.Dependency{},
 			},
@@ -164,9 +160,8 @@ func TestValidate(t *testing.T) {
 				assert.Equal(tt, c.errorMessage, err.Error(), "wrong error massage")
 			} else {
 				assert.Nil(tt, err)
+				assert.Equal(tt, *c.expected, *merged, "wrong result")
 			}
-
-			assert.Equal(tt, *c.expected, *merged, "wrong result")
 		})
 	}
 }

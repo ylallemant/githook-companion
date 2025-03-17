@@ -1,7 +1,15 @@
 package api
 
-const ConfigDirectory = ".githook-companion"
-const ConfigFile = "config.yaml"
+import (
+	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
+)
+
+const (
+	ConfigDirectory     = ".githook-companion"
+	ConfigFile          = "config.yaml"
+	CommitTypeTokenName = "commit_type"
+	CommitMessageKey    = "message"
+)
 
 type Config struct {
 	*Commit      `yaml:"commit" json:"commit"`
@@ -20,19 +28,13 @@ type Dependency struct {
 }
 
 type Commit struct {
-	Dictionaries []*CommitTypeDictionary `yaml:"dictionaries" json:"dictionaries"`
-	Types        []*CommitType           `yaml:"types" json:"types"`
-	DefaultType  string                  `yaml:"defaut_type" json:"defaut_type"`
+	Types            []*CommitType            `yaml:"types" json:"types"`
+	DefaultType      string                   `yaml:"defaut_type" json:"defaut_type"`
+	MessageTemplate  string                   `yaml:"message_template" json:"message_template"`
+	TokenizerOptions *nlpapi.TokenizerOptions `yaml:"tokenizer_options" json:"tokenizer_options"`
 }
 
 type CommitType struct {
 	Type        string `yaml:"type" json:"type"`
 	Description string `yaml:"description" json:"description"`
-}
-
-type CommitTypeDictionary struct {
-	Name     string   `yaml:"name" json:"name"`
-	Value    string   `yaml:"value" json:"value"`
-	Type     string   `yaml:"type" json:"type"`
-	Synonyms []string `yaml:"synonyms" json:"synonyms"`
 }
