@@ -12,6 +12,64 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func GetLocalPath() (string, error) {
+	local, err := environment.CurrentDirectory()
+	if err != nil {
+		return "", err
+	}
+
+	path := filepath.Join(local, api.ConfigDirectory, api.ConfigFile)
+
+	return path, nil
+}
+
+func GetLocally() (*api.Config, error) {
+	path, err := GetLocalPath()
+	if err != nil {
+		return nil, err
+	}
+
+	localConfig, err := load(path, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if localConfig == nil {
+		return nil, errors.Wrapf(api.ConfigurationNotFound, "no local configuration at %s", path)
+	}
+
+	return localConfig, nil
+}
+
+func GetGlobalPath() (string, error) {
+	home, err := environment.Home()
+	if err != nil {
+		return "", err
+	}
+
+	path := filepath.Join(home, api.ConfigDirectory, api.ConfigFile)
+
+	return path, nil
+}
+
+func GetGlobally() (*api.Config, error) {
+	path, err := GetGlobalPath()
+	if err != nil {
+		return nil, err
+	}
+
+	mainConfig, err := load(path, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if mainConfig == nil {
+		return nil, errors.Wrapf(api.ConfigurationNotFound, "no global configuration at %s", path)
+	}
+
+	return mainConfig, nil
+}
+
 func Get(path string) (*api.Config, error) {
 	var err error
 

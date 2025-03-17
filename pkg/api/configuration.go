@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/pkg/errors"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
@@ -11,9 +12,19 @@ const (
 	CommitMessageKey    = "message"
 )
 
+var (
+	ConfigurationNotFound = errors.New("configuration not found")
+)
+
 type Config struct {
-	*Commit      `yaml:"commit" json:"commit"`
-	Dependencies []*Dependency `yaml:"dependencies" json:"dependencies"`
+	*ConfigReference `yaml:"reference" json:"reference"`
+	*Commit          `yaml:"commit" json:"commit"`
+	Dependencies     []*Dependency `yaml:"dependencies" json:"dependencies"`
+}
+
+type ConfigReference struct {
+	Path          string `yaml:"path" json:"path"`
+	GitRepository string `yaml:"repository" json:"repository"`
 }
 
 type Dependency struct {

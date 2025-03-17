@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/ylallemant/githook-companion/pkg/cli/commit"
 	"github.com/ylallemant/githook-companion/pkg/cli/config"
+	initCmd "github.com/ylallemant/githook-companion/pkg/cli/init"
 	"github.com/ylallemant/githook-companion/pkg/cli/install"
 	"github.com/ylallemant/githook-companion/pkg/cli/server"
 	"github.com/ylallemant/githook-companion/pkg/cli/update"
@@ -24,6 +25,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.AddCommand(initCmd.Command())
 	rootCmd.AddCommand(config.Command())
 	rootCmd.AddCommand(install.Command())
 	rootCmd.AddCommand(commit.Command())
