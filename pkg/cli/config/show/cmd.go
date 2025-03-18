@@ -14,9 +14,19 @@ var rootCmd = &cobra.Command{
 	Short: "show config",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg, err := config.Get(globals.Current.ConfigPath)
-		if err != nil {
-			return err
+		var err error
+		cfg := config.Default()
+
+		if globals.Current.ConfigPath != "" {
+			cfg, err = config.Load(globals.Current.ConfigPath, true)
+			if err != nil {
+				return err
+			}
+		} else {
+			cfg, err = config.Get()
+			if err != nil {
+				return err
+			}
 		}
 
 		yaml, err := config.ToYAML(cfg)

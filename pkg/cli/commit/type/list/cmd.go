@@ -13,9 +13,19 @@ var rootCmd = &cobra.Command{
 	Short: "list commit message types",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		configuration, err := config.Get(globals.Current.ConfigPath)
-		if err != nil {
-			return err
+		var err error
+		configuration := config.Default()
+
+		if globals.Current.ConfigPath != "" {
+			configuration, err = config.Load(globals.Current.ConfigPath, true)
+			if err != nil {
+				return err
+			}
+		} else {
+			configuration, err = config.Get()
+			if err != nil {
+				return err
+			}
 		}
 
 		t := table.NewWriter()

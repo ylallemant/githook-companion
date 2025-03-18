@@ -1,14 +1,16 @@
 package init
 
 import (
-	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/cli/init/options"
+	"github.com/ylallemant/githook-companion/pkg/command"
 	"github.com/ylallemant/githook-companion/pkg/config"
 )
 
@@ -17,21 +19,58 @@ var rootCmd = &cobra.Command{
 	Short: "initialize configuration locally or globally",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var cfg *api.Config
 		var err error
+		var path string
 
 		if options.Current.Global {
-			cfg, err = config.GetGlobally()
+			path, err = config.GetGlobalBasePath()
 		} else {
-			cfg, err = config.GetLocally()
+			path, err = config.GetLocalBasePath()
 		}
 
-		if err != nil && !errors.Is(err, api.ConfigurationNotFound) {
+		if err != nil {
+			return errors.Wrap(err, "failed to get base path")
+		}
+
+		err = config.EnsureConfiguration(path)
+
+		configurationFile := filepath.Join(path, api.ConfigDirectory, api.ConfigFile)
+
+		cfg, err := config.Load(configurationFile, true)
+		if err != nil {
 			return err
 		}
 
-		if cfg == nil {
-			fmt.Println("no config found", err.Error())
+		if cfg.ConfigReference != nil {
+			// check and handle configuration reference
+			err = config.EnsureReference(cfg.ConfigReference)
+			if err != nil {
+				return err
+			}
+
+			// set path to the right directory
+			path = filepath.Join(path, cfg.ConfigReference.Path)
+		}
+
+		// check for the existance of the hooks directory
+		hooksDirectory := filepath.Join(path, api.GithooksDirectory)
+		exists, _, err := config.DirectoryExists(hooksDirectory)
+		if err != nil {
+			return err
+		}
+
+		if exists {
+			// set githook property in local git configuration
+			fmt.Printf("git config core.hooksPath %s\n", hooksDirectory)
+			git := command.New("git")
+			git.AddArg("config")
+			git.AddArg("core.hooksPath")
+			git.AddArg(hooksDirectory)
+
+			_, err = git.Execute()
+			if err != nil {
+				return errors.Wrapf(err, "failed to set core.hooksPath git config to %s", hooksDirectory)
+			}
 		}
 
 		return nil

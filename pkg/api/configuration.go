@@ -8,6 +8,7 @@ import (
 const (
 	ConfigDirectory     = ".githook-companion"
 	ConfigFile          = "config.yaml"
+	GithooksDirectory   = "hooks"
 	CommitTypeTokenName = "commit_type"
 	CommitMessageKey    = "message"
 )

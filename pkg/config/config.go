@@ -12,8 +12,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func GetLocalPath() (string, error) {
+func GetLocalBasePath() (string, error) {
 	local, err := environment.CurrentDirectory()
+	if err != nil {
+		return "", err
+	}
+
+	return local, nil
+}
+
+func GetLocalPath() (string, error) {
+	local, err := GetLocalBasePath()
 	if err != nil {
 		return "", err
 	}
@@ -29,7 +38,7 @@ func GetLocally() (*api.Config, error) {
 		return nil, err
 	}
 
-	localConfig, err := load(path, false)
+	localConfig, err := Load(path, false)
 	if err != nil {
 		return nil, err
 	}
@@ -41,8 +50,17 @@ func GetLocally() (*api.Config, error) {
 	return localConfig, nil
 }
 
-func GetGlobalPath() (string, error) {
+func GetGlobalBasePath() (string, error) {
 	home, err := environment.Home()
+	if err != nil {
+		return "", err
+	}
+
+	return home, nil
+}
+
+func GetGlobalPath() (string, error) {
+	home, err := GetGlobalBasePath()
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +76,7 @@ func GetGlobally() (*api.Config, error) {
 		return nil, err
 	}
 
-	mainConfig, err := load(path, false)
+	mainConfig, err := Load(path, false)
 	if err != nil {
 		return nil, err
 	}
@@ -70,37 +88,39 @@ func GetGlobally() (*api.Config, error) {
 	return mainConfig, nil
 }
 
-func Get(path string) (*api.Config, error) {
-	var err error
+func Get() (*api.Config, error) {
+	cfg, err := GetLocally()
+	if err != nil && !errors.Is(err, api.ConfigurationNotFound) {
+		return nil, err
+	}
 
-	if path == "" {
-		// set path to home directory
-		home, err := environment.Home()
+	if cfg == nil {
+		cfg, err = GetGlobally()
+		if err != nil && !errors.Is(err, api.ConfigurationNotFound) {
+			return nil, err
+		}
+	}
+
+	if cfg == nil {
+		return nil, errors.Wrap(api.ConfigurationNotFound, "failed to find a local or global configuration. use the \"init\" command to create one")
+	}
+
+	var referenceCfg *api.Config
+	if cfg.ConfigReference != nil {
+		path := filepath.Join(cfg.ConfigReference.Path, api.ConfigDirectory, api.ConfigFile)
+		path, err := environment.EnsureAbsolutePath(path)
 		if err != nil {
 			return nil, err
 		}
 
-		path = filepath.Join(home, api.ConfigDirectory, api.ConfigFile)
+		referenceCfg, err = Load(path, true)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	mainConfig, err := load(path, false)
-	if err != nil {
-		return nil, err
-	}
-
-	local, err := environment.CurrentDirectory()
-	if err != nil {
-		return nil, err
-	}
-
-	path = filepath.Join(local, api.ConfigDirectory, api.ConfigFile)
-	localConfig, err := load(path, false)
-	if err != nil {
-		return nil, err
-	}
-
-	if mainConfig != nil && localConfig != nil {
-		merged, err := Merge(mainConfig, localConfig)
+	if cfg != nil && referenceCfg != nil {
+		merged, err := Merge(referenceCfg, cfg)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to merge global and local configurations")
 		}
@@ -109,14 +129,8 @@ func Get(path string) (*api.Config, error) {
 		return merged, nil
 	}
 
-	if localConfig != nil {
-		fmt.Println("local config")
-		return localConfig, nil
-	}
-
-	if mainConfig != nil {
-		fmt.Println("main config")
-		return mainConfig, nil
+	if cfg != nil {
+		return cfg, nil
 	}
 
 	fmt.Println("default config")
@@ -124,7 +138,7 @@ func Get(path string) (*api.Config, error) {
 	return Default(), nil
 }
 
-func load(path string, strict bool) (*api.Config, error) {
+func Load(path string, strict bool) (*api.Config, error) {
 	var err error
 
 	path, err = environment.EnsureAbsolutePath(path)

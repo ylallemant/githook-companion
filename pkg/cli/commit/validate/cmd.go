@@ -27,9 +27,18 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to assess if called from terminal")
 		}
 
-		configuration, err := config.Get(globals.Current.ConfigPath)
-		if err != nil {
-			return err
+		configuration := config.Default()
+
+		if globals.Current.ConfigPath != "" {
+			configuration, err = config.Load(globals.Current.ConfigPath, true)
+			if err != nil {
+				return err
+			}
+		} else {
+			configuration, err = config.Get()
+			if err != nil {
+				return err
+			}
 		}
 
 		if !environment.IsAnArgument(os.Args[3]) && options.Current.Message != "" {
