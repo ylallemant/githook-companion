@@ -59,7 +59,10 @@ var rootCmd = &cobra.Command{
 			return errors.Errorf("providing a commit message by argument or flag is mendatory")
 		}
 
-		languageCode, validated, commitTypeToken, tokens := commit.Validate(message, configuration)
+		languageCode, validated, commitTypeToken, tokens, err := commit.Validate(message, configuration)
+		if err != nil {
+			return errors.Wrap(err, "failed validation")
+		}
 
 		if !validated && calledFromTerminal {
 			// message does not have a commit type prefix

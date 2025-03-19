@@ -66,6 +66,13 @@ func TestCommand(t *testing.T) {
 			expected:    "typo in title\n",
 			expectError: false,
 		},
+		{
+			name:         "unallowed language used",
+			message:      "Impresionante nueva característica para la tienda",
+			expected:     "typo in title\n",
+			expectError:  true,
+			errorMessage: "failed validation: language detected in the commit message is not allowed (\"es\")",
+		},
 	}
 
 	for _, c := range cases {

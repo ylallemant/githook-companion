@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/nlp"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
@@ -30,6 +31,7 @@ func Default() *api.Config {
 		TypeIgnore,
 	}
 	commit.TokenizerOptions = &nlpapi.TokenizerOptions{
+		LanguageDetectionOptions: nlp.DefaultLanguageDetectionOptions(),
 		LanguageCodes: []string{
 			"en",
 		},

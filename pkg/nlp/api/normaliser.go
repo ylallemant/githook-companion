@@ -28,7 +28,7 @@ type NormalisationStep struct {
 	Matcher *Matcher `yaml:"matcher" json:"matcher"`
 	// ReplaceAll specifies if the whole text has to be replaced
 	// by the first part returned by the Matcher
-	ReplaceAll bool `yaml:"selective" json:"selective"`
+	ReplaceAll bool `yaml:"replace_all" json:"replace_all"`
 	// Replacement will replace all parts returned by Matcher
 	Replacement string `yaml:"replacement" json:"replacement"`
 	// Formatter allows the usage of go-templates to format the selected parts

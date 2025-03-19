@@ -268,6 +268,9 @@ func TestTokenizer_Tokenize(t *testing.T) {
 			name:     "ignore empty dictionary",
 			sentence: "(GDT-3564) added new, cool, feature",
 			options: &api.TokenizerOptions{
+				LanguageCodes: []string{
+					"en",
+				},
 				ConfidenceThresthold: 0.8,
 				Lexemes: []*api.Lexeme{
 					{

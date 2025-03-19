@@ -2,16 +2,17 @@ package commit
 
 import (
 	"fmt"
+	"slices"
 
+	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/nlp"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
-// TODO: return error too
-func Validate(message string, cfg *api.Config) (string, bool, *nlpapi.Token, []*nlpapi.Token) {
-	tokenizer, _ := nlp.NewTokenizer(cfg.Commit.TokenizerOptions)
+func Validate(message string, configuration *api.Config) (string, bool, *nlpapi.Token, []*nlpapi.Token, error) {
+	tokenizer, _ := nlp.NewTokenizer(configuration.Commit.TokenizerOptions)
 
 	// TODO: get dictionary from function to test its structure
 	tokenizer.AddDictionary(&nlpapi.Dictionary{
@@ -19,16 +20,29 @@ func Validate(message string, cfg *api.Config) (string, bool, *nlpapi.Token, []*
 		Name:              fmt.Sprintf("%s_dictionary", api.CommitTypeTokenName),
 		TokenName:         api.CommitTypeTokenName,
 		TokenValueIsMatch: true,
-		Entries:           config.CommitTypeList(cfg),
+		Entries:           config.CommitTypeList(configuration),
 	})
 
-	tokens, languageCode, _, _ := tokenizer.Tokenize(message)
+	languageCode, _, known := tokenizer.LanguageDetector().DetectLanguage(message, false)
+
+	if !known {
+		return languageCode, false, nil, []*nlpapi.Token{}, errors.Errorf("unknown language")
+	}
+
+	if !slices.Contains(configuration.Commit.TokenizerOptions.LanguageCodes, languageCode) {
+		return languageCode, false, nil, []*nlpapi.Token{}, errors.Errorf("language detected in the commit message is not allowed (\"%s\")", languageCode)
+	}
+
+	tokens, languageCode, _, err := tokenizer.Tokenize(message)
+	if err != nil {
+		return languageCode, false, nil, tokens, errors.Wrap(err, "failed to tokenize commit message")
+	}
 
 	//validationRegexp := validationExpression(cfg)
 	commitTypeToken, formatted := hasCommitTypeToken(tokens)
 
 	if !formatted {
-		token, found := assessMessageType(tokens, cfg)
+		token, found := assessMessageType(tokens, configuration)
 
 		if found {
 			tokens = append(tokens, token)
@@ -37,8 +51,8 @@ func Validate(message string, cfg *api.Config) (string, bool, *nlpapi.Token, []*
 	}
 
 	if commitTypeToken == nil {
-		return languageCode, false, nil, tokens
+		return languageCode, false, nil, tokens, nil
 	}
 
-	return languageCode, true, commitTypeToken, tokens
+	return languageCode, true, commitTypeToken, tokens, nil
 }

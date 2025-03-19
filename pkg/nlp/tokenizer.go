@@ -10,7 +10,7 @@ import (
 var _ api.Tokenizer = &tokenizer{}
 
 type tokenizer struct {
-	languageDetector     *LanguageDetector
+	languageDetector     api.LanguageDetector
 	splitters            map[string]*splitter
 	normalisers          map[string]*normaliser
 	dictionaries         []*api.Dictionary
@@ -35,11 +35,7 @@ func NewTokenizer(options *api.TokenizerOptions) (*tokenizer, error) {
 		instance.lexemes = options.Lexemes
 	}
 
-	if len(options.LanguageCodes) < 2 {
-		options.LanguageCodes = append(options.LanguageCodes, []string{"en", "de"}...)
-	}
-
-	languageDetector, err := NewLanguageDetector(options.LanguageCodes, 0.7)
+	languageDetector, err := NewLanguageDetector(options.LanguageDetectionOptions)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initiate the Tokenizer")
 	}
@@ -77,6 +73,10 @@ func NewTokenizer(options *api.TokenizerOptions) (*tokenizer, error) {
 	}
 
 	return instance, nil
+}
+
+func (i *tokenizer) LanguageDetector() api.LanguageDetector {
+	return i.languageDetector
 }
 
 func (i *tokenizer) ValidateTokenName(name string) bool {
@@ -120,7 +120,7 @@ func (i *tokenizer) Tokenize(sentence string) ([]*api.Token, string, string, err
 		return []*api.Token{}, "", "", nil
 	}
 
-	languageCode, _, known := i.languageDetector.DetectLanguage(sentence)
+	languageCode, _, known := i.languageDetector.DetectLanguage(sentence, false)
 
 	if !known {
 		return []*api.Token{}, "", "", errors.Errorf("failed to detect language from sentence : \"%s\"", sentence)
