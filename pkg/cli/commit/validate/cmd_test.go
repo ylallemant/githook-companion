@@ -63,7 +63,7 @@ func TestCommand(t *testing.T) {
 		{
 			name:        "ignore message of type IGNORE",
 			message:     "typo in title",
-			expected:    "IGNORE: typo in title\n",
+			expected:    "typo in title\n",
 			expectError: false,
 		},
 	}
@@ -73,7 +73,7 @@ func TestCommand(t *testing.T) {
 			b := bytes.NewBufferString("")
 
 			rootCmd.SetOut(b)
-			rootCmd.SetArgs([]string{"-m", c.message})
+			rootCmd.SetArgs([]string{"--fallback", "-m", c.message})
 			cmdErr := rootCmd.Execute()
 
 			out, err := io.ReadAll(b)

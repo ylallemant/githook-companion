@@ -41,6 +41,7 @@ type Dependency struct {
 
 type Commit struct {
 	Types            []*CommitType            `yaml:"types" json:"types"`
+	NoFormatting     []string                 `yaml:"no_formatting" json:"no_formatting"`
 	DefaultType      string                   `yaml:"defaut_type" json:"defaut_type"`
 	MessageTemplate  string                   `yaml:"message_template" json:"message_template"`
 	TokenizerOptions *nlpapi.TokenizerOptions `yaml:"tokenizer_options" json:"tokenizer_options"`

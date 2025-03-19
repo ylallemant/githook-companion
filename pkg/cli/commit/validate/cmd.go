@@ -3,6 +3,7 @@ package validate
 import (
 	"fmt"
 	"os"
+	"slices"
 
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
@@ -36,8 +37,12 @@ var rootCmd = &cobra.Command{
 			}
 		} else {
 			configuration, err = config.Get()
-			if err != nil {
+			if err != nil && !options.Current.DefaultConfigFallback {
 				return err
+			}
+
+			if configuration == nil {
+				configuration = config.Default()
 			}
 		}
 
@@ -103,10 +108,12 @@ var rootCmd = &cobra.Command{
 			return errors.New(nonInteractiveErrorMessage)
 		}
 
-		// ensure commit type prefix format (lower-case)
-		message, err = commit.EnsureFormat(message, configuration.Commit.MessageTemplate, commitTypeToken, tokens)
-		if err != nil {
-			return errors.Wrap(err, "failed to format commit message")
+		if !slices.Contains(configuration.Commit.NoFormatting, commitTypeToken.Value) {
+			// ensure commit type prefix format (lower-case)
+			message, err = commit.EnsureFormat(message, configuration.Commit.MessageTemplate, commitTypeToken, tokens)
+			if err != nil {
+				return errors.Wrap(err, "failed to format commit message")
+			}
 		}
 
 		if options.Current.OutputFilePath == "" {
@@ -131,6 +138,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
+	rootCmd.PersistentFlags().BoolVar(&options.Current.DefaultConfigFallback, "fallback", options.Current.DefaultConfigFallback, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 	rootCmd.SetOutput(os.Stderr)
 }

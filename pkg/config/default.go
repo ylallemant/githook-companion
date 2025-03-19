@@ -26,6 +26,9 @@ func Default() *api.Config {
 	commit.MessageTemplate = "{{ .CommitType | upper }}: {{ if .IssueTrackerReference }}({{ .IssueTrackerReference }}){{ end }} {{ .Message | lower }}"
 	commit.DefaultType = typeFeature
 	commit.Types = commitTypes()
+	commit.NoFormatting = []string{
+		TypeIgnore,
+	}
 	commit.TokenizerOptions = &nlpapi.TokenizerOptions{
 		LanguageCodes: []string{
 			"en",

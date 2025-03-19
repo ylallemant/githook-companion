@@ -11,6 +11,7 @@ func NewOptions() *Options {
 }
 
 type Options struct {
-	Message        string
-	OutputFilePath string
+	Message               string
+	OutputFilePath        string
+	DefaultConfigFallback bool
 }
