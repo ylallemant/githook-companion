@@ -18,9 +18,11 @@ var (
 )
 
 type Config struct {
-	*ConfigReference `yaml:"reference" json:"reference"`
-	*Commit          `yaml:"commit" json:"commit"`
-	Dependencies     []*Dependency `yaml:"dependencies" json:"dependencies"`
+	*ConfigReference    `yaml:"reference" json:"reference"`
+	*Commit             `yaml:"commit" json:"commit"`
+	Dependencies        []*Dependency `yaml:"dependencies" json:"dependencies"`
+	DependencyDirectory string        `yaml:"dependency_directory" json:"dependency_directory"`
+	GithooksDirectory   string        `yaml:"githook_directory" json:"githook_directory"`
 }
 
 type ConfigReference struct {

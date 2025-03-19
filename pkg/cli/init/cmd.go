@@ -11,6 +11,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/cli/init/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
+	"github.com/ylallemant/githook-companion/pkg/dependency"
 	gitConfig "github.com/ylallemant/githook-companion/pkg/git/config"
 )
 
@@ -70,6 +71,14 @@ var rootCmd = &cobra.Command{
 		if exists {
 			// set githook property in local git configuration
 			err = gitConfig.SetProperty("core.hooksPath", hooksDirectory, options.Current.Global)
+			if err != nil {
+				return err
+			}
+		}
+
+		if len(cfg.Dependencies) > 0 {
+			directory := dependency.InstallDirectoryFromConfig(cfg)
+			err = dependency.InstallAll(directory, cfg)
 			if err != nil {
 				return err
 			}

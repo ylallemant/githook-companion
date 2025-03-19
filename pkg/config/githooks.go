@@ -23,3 +23,33 @@ func GithooksExist(path string) (bool, error) {
 
 	return exists, nil
 }
+
+func GithooksPathFromConfig(configuration *api.Config) string {
+	if configuration.GithooksDirectory != "" {
+		path, err := environment.EnsureAbsolutePath(configuration.GithooksDirectory)
+		if err != nil {
+			panic(err)
+		}
+
+		return path
+	}
+
+	if configuration.ConfigReference != nil {
+		if configuration.ConfigReference.Path != "" {
+			relativePath := filepath.Join(configuration.ConfigReference.Path, api.GithooksDirectory)
+			path, err := environment.EnsureAbsolutePath(relativePath)
+			if err != nil {
+				panic(err)
+			}
+
+			return path
+		}
+	}
+
+	path, err := environment.EnsureAbsolutePath(filepath.Join(".", api.GithooksDirectory))
+	if err != nil {
+		panic(err)
+	}
+
+	return path
+}
