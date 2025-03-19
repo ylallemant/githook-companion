@@ -11,13 +11,13 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/environment"
 )
 
-func EnsureConfiguration(path string) error {
+func EnsureConfiguration(path string, reference *api.ConfigReference, minimalistic bool) error {
 	err := ensureConfigurationDirectory(path)
 	if err != nil {
 		return err
 	}
 
-	err = ensureConfigurationFile(path)
+	err = ensureConfigurationFile(path, reference, minimalistic)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func ensureConfigurationDirectory(path string) error {
 	return nil
 }
 
-func ensureConfigurationFile(path string) error {
+func ensureConfigurationFile(path string, reference *api.ConfigReference, minimalistic bool) error {
 	configurationFile := filepath.Join(path, api.ConfigDirectory, api.ConfigFile)
 
 	exists, _, err := DirectoryExists(configurationFile)
@@ -52,7 +52,16 @@ func ensureConfigurationFile(path string) error {
 	}
 
 	if !exists {
-		cfg := Default()
+		cfg := Minimalistic()
+
+		if !minimalistic {
+			cfg = Default()
+		}
+
+		if reference != nil {
+			cfg.ConfigReference = reference
+		}
+
 		content, err := ToYAML(cfg)
 		if err != nil {
 			return errors.Wrap(err, "failed to marshal default config")
@@ -73,15 +82,13 @@ func EnsureReference(reference *api.ConfigReference) error {
 		return err
 	}
 
-	fmt.Println("path", path)
-
 	exists, _, err := DirectoryExists(path)
 	if err != nil {
 		return errors.Wrapf(err, "failed to check existance of %s", path)
 	}
 
 	if !exists {
-		fmt.Println("clone", reference.GitRepository)
+		fmt.Println("clone reference repository", reference.GitRepository)
 		git := command.New("git")
 		git.AddArg("clone")
 		git.AddArg(reference.GitRepository)

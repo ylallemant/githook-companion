@@ -173,6 +173,22 @@ func Load(path string, strict bool) (*api.Config, error) {
 	return nil, nil
 }
 
+func Remove(path string) error {
+	exists, _, err := DirectoryExists(path)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		err = os.RemoveAll(path)
+		if err != nil {
+			return errors.Wrapf(err, "failed to remove configuration at %s", path)
+		}
+	}
+
+	return nil
+}
+
 func GetCommitTypes(types []*api.CommitType) []string {
 	commitTypes := make([]string, 0)
 
