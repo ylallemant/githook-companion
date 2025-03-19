@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/globals"
 )
@@ -15,21 +16,23 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
-		cfg := config.Default()
+		var configuration *api.Config
 
 		if globals.Current.ConfigPath != "" {
-			cfg, err = config.Load(globals.Current.ConfigPath, true)
-			if err != nil {
-				return err
-			}
+			configuration, err = config.Load(globals.Current.ConfigPath, true)
 		} else {
-			cfg, err = config.Get()
-			if err != nil {
-				return err
-			}
+			configuration, err = config.Get()
 		}
 
-		yaml, err := config.ToYAML(cfg)
+		if err != nil && !globals.Current.FallbackConfig {
+			return err
+		}
+
+		if configuration == nil {
+			configuration = config.Default()
+		}
+
+		yaml, err := config.ToYAML(configuration)
 		if err != nil {
 			return err
 		}
@@ -40,6 +43,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 }
 

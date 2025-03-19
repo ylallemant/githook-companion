@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/cli/commit/validate/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/environment"
@@ -28,22 +29,20 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to assess if called from terminal")
 		}
 
-		configuration := config.Default()
+		var configuration *api.Config
 
 		if globals.Current.ConfigPath != "" {
 			configuration, err = config.Load(globals.Current.ConfigPath, true)
-			if err != nil {
-				return err
-			}
 		} else {
 			configuration, err = config.Get()
-			if err != nil && !options.Current.DefaultConfigFallback {
-				return err
-			}
+		}
 
-			if configuration == nil {
-				configuration = config.Default()
-			}
+		if err != nil && !globals.Current.FallbackConfig {
+			return err
+		}
+
+		if configuration == nil {
+			configuration = config.Default()
 		}
 
 		if !environment.IsAnArgument(os.Args[3]) && options.Current.Message != "" {
@@ -138,7 +137,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
-	rootCmd.PersistentFlags().BoolVar(&options.Current.DefaultConfigFallback, "fallback", options.Current.DefaultConfigFallback, "if no configuration was found, fallback to the default one")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 	rootCmd.SetOutput(os.Stderr)
 }

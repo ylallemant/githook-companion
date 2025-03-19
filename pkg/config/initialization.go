@@ -96,7 +96,7 @@ func EnsureReference(reference *api.ConfigReference) error {
 
 		_, err = git.Execute()
 		if err != nil {
-			return errors.Wrapf(err, "failed to clone reference repository", reference.GitRepository)
+			return errors.Wrapf(err, "failed to clone reference repository %s", reference.GitRepository)
 		}
 	}
 
