@@ -24,6 +24,13 @@ jobs:
             goos: windows
     steps:
     - uses: actions/checkout@v4
+
+    - name: ensure vendor files
+      run: go mod tidy && go mod vendor
+
+    - name: list files
+      run: ls -al vendor/github.com/pemistahl/lingua-go
+    
     - uses: wangyoucao577/go-release-action@v1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
