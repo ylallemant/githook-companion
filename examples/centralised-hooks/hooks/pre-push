@@ -6,10 +6,10 @@ set -eu
 CURRENT_DIRECTORY="$(pwd)"
 # directory where the hook is running (your centralised hooks project)
 GITHOOKS_DIRECTORY="$(dirname $(dirname $0))"
-# bin directory depending on OS and ARCH
-GITHOOKS_BIN_DIRECTORY="$GITHOOKS_DIRECTORY/bin/$(uname -s)/$(uname -m)"
+# get the dependency installation directory
+CURRENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
 # where custom hook are located in other projects (see repo-specific-hooks example)
-CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/hooks"
+CUSTOM_GITHOOKS_DIRECTORY="$(githook-companion config hook path)"
 
 echo "apply generic pre-push"
 

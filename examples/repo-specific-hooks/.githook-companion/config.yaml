@@ -1,3 +1,6 @@
+reference:
+    path: ../githooks
+    repository: https://github.com/ylallemant/githook-companion/tree/main/examples/centralised-hooks
 dependencies:
   - name: terraform
     version: 1.5.4
