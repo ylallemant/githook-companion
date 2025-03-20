@@ -19,7 +19,7 @@ Provides a set of commands to make git-hook configuration and utilisation easy.
 ### Binary
 
 ```sh
-curl -fsSL https://github.com/ylallemant/githook-companion/raw/0.5.0/install.sh | bash
+curl -fsSL https://github.com/ylallemant/githook-companion/raw/0.7.0/install.sh | bash
 ```
 
 ### Initialize

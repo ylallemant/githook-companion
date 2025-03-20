@@ -13,7 +13,7 @@ repo="githook-companion"
 exe_name="githook-companion"
 githubUrl=""
 githubApiUrl=""
-version="0.5.0"
+version="0.7.0"
 separator="-"
 
 get_arch() {
