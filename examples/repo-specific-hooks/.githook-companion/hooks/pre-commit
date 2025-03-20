@@ -2,7 +2,7 @@
 set -eu
 
 CURRENT_DIRECTORY="$(pwd)"
-CURRENT_BIN_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/bin"
+CURRENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
 
 echo "CUSTOM pre-commit"
 

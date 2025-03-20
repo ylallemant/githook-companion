@@ -19,33 +19,33 @@ func TestCommand(t *testing.T) {
 		{
 			name:       "with default config",
 			configPath: "",
-			expected: `┌──────────────────────────────────────────────────────────────────────────────────┐
-│ Commit Types                                                                     │
-├──────────┬───────────────────────────────────────────────────────────────────────┤
-│ TYPE     │ DESCRIPTION                                                           │
-├──────────┼───────────────────────────────────────────────────────────────────────┤
-│ feat     │ a new feature is introduced with the changes                          │
-│ ignore   │ commit can be ignored by other tools                                  │
-│ fix      │ a bug fix has occurred                                                │
-│ docs     │ updates to documentation such as a the README or other markdown files │
-│ test     │ including new or correcting previous tests                            │
-│ refactor │ refactored code that neither fixes a bug nor adds a feature           │
-│ breaking │ introducing a breaking change in input or output behaviour            │
-└──────────┴───────────────────────────────────────────────────────────────────────┘
+			expected: `┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Commit Types                                                                                   │
+├──────────┬───────────────────────────────────────────────────────────────────────┬─────────────┤
+│ TYPE     │ DESCRIPTION                                                           │ AUTO-FORMAT │
+├──────────┼───────────────────────────────────────────────────────────────────────┼─────────────┤
+│ feat     │ a new feature is introduced with the changes                          │ true        │
+│ ignore   │ commit can be ignored by other tools                                  │ false       │
+│ fix      │ a bug fix has occurred                                                │ true        │
+│ docs     │ updates to documentation such as a the README or other markdown files │ true        │
+│ test     │ including new or correcting previous tests                            │ true        │
+│ refactor │ refactored code that neither fixes a bug nor adds a feature           │ true        │
+│ breaking │ introducing a breaking change in input or output behaviour            │ true        │
+└──────────┴───────────────────────────────────────────────────────────────────────┴─────────────┘
 `,
 			expectError: false,
 		},
 		{
 			name:       "with simple config",
 			configPath: "../../../../../test/configs/simple.yaml",
-			expected: `┌─────────────────────────────────────────────────────┐
-│ Commit Types                                        │
-├──────┬──────────────────────────────────────────────┤
-│ TYPE │ DESCRIPTION                                  │
-├──────┼──────────────────────────────────────────────┤
-│ feat │ a new feature is introduced with the changes │
-│ fix  │ a bug fix has occurred                       │
-└──────┴──────────────────────────────────────────────┘
+			expected: `┌───────────────────────────────────────────────────────────────────┐
+│ Commit Types                                                      │
+├──────┬──────────────────────────────────────────────┬─────────────┤
+│ TYPE │ DESCRIPTION                                  │ AUTO-FORMAT │
+├──────┼──────────────────────────────────────────────┼─────────────┤
+│ feat │ a new feature is introduced with the changes │ true        │
+│ fix  │ a bug fix has occurred                       │ true        │
+└──────┴──────────────────────────────────────────────┴─────────────┘
 `,
 			expectError: false,
 		},
@@ -54,11 +54,14 @@ func TestCommand(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(tt *testing.T) {
 			b := bytes.NewBufferString("")
+			args := []string{"--fallback"}
 
 			rootCmd.SetOut(b)
 			if c.configPath != "" {
-				rootCmd.SetArgs([]string{"-c", c.configPath})
+				args = append(args, []string{"-c", c.configPath}...)
 			}
+
+			rootCmd.SetArgs(args)
 
 			cmdErr := rootCmd.Execute()
 

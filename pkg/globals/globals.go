@@ -5,5 +5,6 @@ var (
 )
 
 type Globals struct {
-	ConfigPath string
+	ConfigPath     string
+	FallbackConfig bool
 }

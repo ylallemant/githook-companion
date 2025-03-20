@@ -6,41 +6,61 @@ import (
 
 	"github.com/pemistahl/lingua-go"
 	"github.com/pkg/errors"
+	"github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 const unknown = "unknown"
 
-func NewLanguageDetector(languageCodes []string, threshold float64) (*LanguageDetector, error) {
-	detector := new(LanguageDetector)
-	detector.threshold = threshold
-	detector.languageCodes = languageCodes
-
-	languages := make([]lingua.Language, 0)
-
-	for _, languageCode := range languageCodes {
-		language, err := languageFromCode(languageCode)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to initiate language detector")
-		}
-
-		languages = append(languages, language)
+func NewLanguageDetector(options *api.LanguageDetectionOptions) (api.LanguageDetector, error) {
+	if options == nil {
+		options = DefaultLanguageDetectionOptions()
 	}
 
+	detector := new(languageDetector)
+	detector.threshold = options.ConfidenceThresthold
+	detector.defaultLanguageCode = options.DefautLanguageCode
+	detector.defaultLanguageName = options.DefautLanguageName
+
+	detector.minimumWordCount = options.MinimumWordCount
+
 	detector.detector = lingua.NewLanguageDetectorBuilder().
-		FromLanguages(languages...).
-		WithMinimumRelativeDistance(0.1).
+		FromAllLanguages().
+		WithPreloadedLanguageModels().
+		WithLowAccuracyMode().
 		Build()
 
 	return detector, nil
 }
 
-type LanguageDetector struct {
-	detector      lingua.LanguageDetector
-	languageCodes []string
-	threshold     float64
+func DefaultLanguageDetectionOptions() *api.LanguageDetectionOptions {
+	return &api.LanguageDetectionOptions{
+		DefautLanguageCode:   "en",
+		DefautLanguageName:   "english",
+		ConfidenceThresthold: 0.7,
+		MinimumWordCount:     5,
+	}
 }
 
-func (i *LanguageDetector) DetectLanguage(sentence string) (string, string, bool) {
+var _ api.LanguageDetector = &languageDetector{}
+
+type languageDetector struct {
+	detector            lingua.LanguageDetector
+	defaultLanguageCode string
+	defaultLanguageName string
+	minimumWordCount    int
+	threshold           float64
+}
+
+func (i *languageDetector) DetectLanguage(sentence string, strict bool) (string, string, bool) {
+	simpleWordCount := whitespaceRegexp.Split(sentence, -1)
+
+	if len(simpleWordCount) <= i.minimumWordCount && !strict {
+		// below 5 word the language detection becomes bad
+		// see https://github.com/pemistahl/lingua-go?tab=readme-ov-file#4-how-good-is-it
+		// return detector defaults
+		return i.defaultLanguageCode, i.defaultLanguageName, true
+	}
+
 	confidenceValues := i.detector.ComputeLanguageConfidenceValues(sentence)
 
 	highestConfidence := confidenceValues[0].Value()

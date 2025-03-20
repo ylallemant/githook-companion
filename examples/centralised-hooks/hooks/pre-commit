@@ -5,10 +5,10 @@ set -eu
 CURRENT_DIRECTORY="$(pwd)"
 # directory where the hook is running (your centralised hooks project)
 GITHOOKS_DIRECTORY="$(dirname $(dirname $0))"
-# bin directory depending on OS and ARCH
-GITHOOKS_BIN_DIRECTORY="$GITHOOKS_DIRECTORY/bin/$(uname -s)/$(uname -m)"
+# get the dependency installation directory
+CURRENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
 # where custom hook are located in other projects (see repo-specific-hooks example)
-CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_DIRECTORY/.githook-companion/hooks"
+CUSTOM_GITHOOKS_DIRECTORY="$(githook-companion config hook path)"
 # you can have multiple changelog templates depending on the repo git server (GitHub, Azure DevOps, ...)
 # look in the tool config directory .chglog
 TEMPLATE_NAME=$("$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-6-0 server name --default default)

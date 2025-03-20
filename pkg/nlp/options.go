@@ -10,6 +10,10 @@ func DefaultTokenizerOptions() *api.TokenizerOptions {
 	options := new(api.TokenizerOptions)
 
 	options.ConfidenceThresthold = DefaultConfidenceThresthold
+	options.LanguageDetectionOptions = DefaultLanguageDetectionOptions()
+	options.LanguageCodes = []string{
+		"en",
+	}
 
 	return options
 }

@@ -16,7 +16,7 @@ func TestDetectLanguage(t *testing.T) {
 	}{
 		{
 			name:          "known language german",
-			sentence:      "neues feature implementiert",
+			sentence:      "neues Ladenkorb angelegt",
 			expectedCode:  "de",
 			expectedName:  "german",
 			expectedKnown: true,
@@ -39,9 +39,9 @@ func TestDetectLanguage(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(tt *testing.T) {
-			detector, _ := NewLanguageDetector([]string{"en", "de"}, 0.8)
+			detector, _ := NewLanguageDetector(DefaultLanguageDetectionOptions())
 
-			code, name, known := detector.DetectLanguage(c.sentence)
+			code, name, known := detector.DetectLanguage(c.sentence, true)
 
 			assert.Equal(tt, c.expectedCode, code, "wrong language code")
 			assert.Equal(tt, c.expectedName, name, "wrong language name")

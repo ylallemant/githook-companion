@@ -1,9 +1,19 @@
 Repository Specific Configuration
 ===
 
-In this example, we still use the globaly defined hooks in Git that reference the [centralised-hooks](../centralised-hooks//README.md) example.
+In this example, we still use the globaly defined hooks in Git that reference the [centralised-hooks](../centralised-hooks/README.md) example.
 
 But we want to extend the centralised hooks to make project specific tasks.
+
+## Reference Central Configuration
+
+Install a minimalistic configuration with a reference to the central repository
+
+```bash
+init -m --reference-repository https://github.com/ylallemant/githook-companion/tree/main/examples/centralised-hooks --reference-path ../githooks
+```
+
+## Extend Githooks Functionlity
 
 Let say this repo is a Terraform module and we want to ensure some Terraform standards on commit and push.
 

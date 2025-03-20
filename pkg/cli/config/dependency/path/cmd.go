@@ -1,18 +1,19 @@
-package dependencies
+package path
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/api"
-	"github.com/ylallemant/githook-companion/pkg/cli/install/dependencies/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/dependency"
 	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "dependencies",
-	Short: "install all dependencies",
+	Use:   "path",
+	Short: "outputs dependency installation path",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
@@ -34,16 +35,12 @@ var rootCmd = &cobra.Command{
 
 		installationDirectory := dependency.InstallDirectoryFromConfig(configuration)
 
-		if options.Current.Directory != "" {
-			installationDirectory = options.Current.Directory
-		}
-
-		return dependency.InstallAll(installationDirectory, configuration)
+		fmt.Fprintln(cmd.OutOrStdout(), installationDirectory)
+		return nil
 	},
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&options.Current.Directory, "directory", "d", options.Current.Directory, "installation directory")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 }

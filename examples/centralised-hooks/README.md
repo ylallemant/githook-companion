@@ -1,16 +1,21 @@
 Centralised Hook
 ===
 
-## What We Want
+## Use Case
 
-Use case :
 - you want to define a standard for commit messages accross multiple teams and projects.
-- the standardised commit message will enable an automated changelog generation
 - you still want the teams to be able to have project specific hook tasks
 - you want this standard to be easily maintanable
-- you want to ship the necessary binaries too
+
 
 ## How We Get It
+
+- create a repository for your githooks
+- checkout the project
+- in the project directory install the default configuration
+```bash
+githook-companion init
+```
 
 This example shows a way to implement those requirements :
 - select a tool for the changelog generation

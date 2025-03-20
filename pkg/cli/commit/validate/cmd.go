@@ -3,11 +3,13 @@ package validate
 import (
 	"fmt"
 	"os"
+	"slices"
 
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/cli/commit/validate/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/environment"
@@ -27,9 +29,20 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to assess if called from terminal")
 		}
 
-		configuration, err := config.Get(globals.Current.ConfigPath)
-		if err != nil {
+		var configuration *api.Config
+
+		if globals.Current.ConfigPath != "" {
+			configuration, err = config.Load(globals.Current.ConfigPath, true)
+		} else {
+			configuration, err = config.Get()
+		}
+
+		if err != nil && !globals.Current.FallbackConfig {
 			return err
+		}
+
+		if configuration == nil {
+			configuration = config.Default()
 		}
 
 		if !environment.IsAnArgument(os.Args[3]) && options.Current.Message != "" {
@@ -46,7 +59,10 @@ var rootCmd = &cobra.Command{
 			return errors.Errorf("providing a commit message by argument or flag is mendatory")
 		}
 
-		languageCode, validated, commitTypeToken, tokens := commit.Validate(message, configuration)
+		languageCode, validated, commitTypeToken, tokens, err := commit.Validate(message, configuration)
+		if err != nil {
+			return errors.Wrap(err, "failed validation")
+		}
 
 		if !validated && calledFromTerminal {
 			// message does not have a commit type prefix
@@ -94,10 +110,12 @@ var rootCmd = &cobra.Command{
 			return errors.New(nonInteractiveErrorMessage)
 		}
 
-		// ensure commit type prefix format (lower-case)
-		message, err = commit.EnsureFormat(message, configuration.Commit.MessageTemplate, commitTypeToken, tokens)
-		if err != nil {
-			return errors.Wrap(err, "failed to format commit message")
+		if !slices.Contains(configuration.Commit.NoFormatting, commitTypeToken.Value) {
+			// ensure commit type prefix format (lower-case)
+			message, err = commit.EnsureFormat(message, configuration.Commit.MessageTemplate, commitTypeToken, tokens)
+			if err != nil {
+				return errors.Wrap(err, "failed to format commit message")
+			}
 		}
 
 		if options.Current.OutputFilePath == "" {
@@ -122,6 +140,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 	rootCmd.SetOutput(os.Stderr)
 }

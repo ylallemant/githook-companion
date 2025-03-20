@@ -1,19 +1,33 @@
 package api
 
 import (
+	"github.com/pkg/errors"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 const (
 	ConfigDirectory     = ".githook-companion"
 	ConfigFile          = "config.yaml"
+	GithooksDirectory   = "hooks"
 	CommitTypeTokenName = "commit_type"
 	CommitMessageKey    = "message"
 )
 
+var (
+	ConfigurationNotFound = errors.New("configuration not found")
+)
+
 type Config struct {
-	*Commit      `yaml:"commit" json:"commit"`
-	Dependencies []*Dependency `yaml:"dependencies" json:"dependencies"`
+	*ConfigReference    `yaml:"reference" json:"reference"`
+	*Commit             `yaml:"commit" json:"commit"`
+	Dependencies        []*Dependency `yaml:"dependencies" json:"dependencies"`
+	DependencyDirectory string        `yaml:"dependency_directory" json:"dependency_directory"`
+	GithooksDirectory   string        `yaml:"githook_directory" json:"githook_directory"`
+}
+
+type ConfigReference struct {
+	Path          string `yaml:"path" json:"path"`
+	GitRepository string `yaml:"repository" json:"repository"`
 }
 
 type Dependency struct {
@@ -29,6 +43,7 @@ type Dependency struct {
 
 type Commit struct {
 	Types            []*CommitType            `yaml:"types" json:"types"`
+	NoFormatting     []string                 `yaml:"no_formatting" json:"no_formatting"`
 	DefaultType      string                   `yaml:"defaut_type" json:"defaut_type"`
 	MessageTemplate  string                   `yaml:"message_template" json:"message_template"`
 	TokenizerOptions *nlpapi.TokenizerOptions `yaml:"tokenizer_options" json:"tokenizer_options"`

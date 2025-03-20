@@ -101,6 +101,12 @@ func TestValidate(t *testing.T) {
 							Type: "feat",
 						},
 					},
+					TokenizerOptions: &nlpapi.TokenizerOptions{
+						LanguageCodes: []string{
+							"en",
+						},
+						Dictionaries: []*nlpapi.Dictionary{},
+					},
 				},
 			},
 			expectedDictionaryFound:  false,
@@ -231,7 +237,7 @@ func TestValidate(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(tt *testing.T) {
-			languageCode, valid, commitTypeToken, _ := Validate(c.message, c.config)
+			languageCode, valid, commitTypeToken, _, _ := Validate(c.message, c.config)
 
 			if c.expectedToken != nil {
 				assert.NotNil(tt, commitTypeToken)

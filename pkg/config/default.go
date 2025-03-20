@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/nlp"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
@@ -26,7 +27,11 @@ func Default() *api.Config {
 	commit.MessageTemplate = "{{ .CommitType | upper }}: {{ if .IssueTrackerReference }}({{ .IssueTrackerReference }}){{ end }} {{ .Message | lower }}"
 	commit.DefaultType = typeFeature
 	commit.Types = commitTypes()
+	commit.NoFormatting = []string{
+		TypeIgnore,
+	}
 	commit.TokenizerOptions = &nlpapi.TokenizerOptions{
+		LanguageDetectionOptions: nlp.DefaultLanguageDetectionOptions(),
 		LanguageCodes: []string{
 			"en",
 		},

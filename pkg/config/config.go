@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -12,61 +11,130 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Get(path string) (*api.Config, error) {
-	var err error
+func GetLocalBasePath() (string, error) {
+	local, err := environment.CurrentDirectory()
+	if err != nil {
+		return "", err
+	}
 
-	if path == "" {
-		// set path to home directory
-		home, err := environment.Home()
+	return local, nil
+}
+
+func GetLocalPath() (string, error) {
+	local, err := GetLocalBasePath()
+	if err != nil {
+		return "", err
+	}
+
+	path := filepath.Join(local, api.ConfigDirectory, api.ConfigFile)
+
+	return path, nil
+}
+
+func GetLocally() (*api.Config, error) {
+	path, err := GetLocalPath()
+	if err != nil {
+		return nil, err
+	}
+
+	localConfig, err := Load(path, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if localConfig == nil {
+		return nil, errors.Wrapf(api.ConfigurationNotFound, "no local configuration at %s", path)
+	}
+
+	return localConfig, nil
+}
+
+func GetGlobalBasePath() (string, error) {
+	home, err := environment.Home()
+	if err != nil {
+		return "", err
+	}
+
+	return home, nil
+}
+
+func GetGlobalPath() (string, error) {
+	home, err := GetGlobalBasePath()
+	if err != nil {
+		return "", err
+	}
+
+	path := filepath.Join(home, api.ConfigDirectory, api.ConfigFile)
+
+	return path, nil
+}
+
+func GetGlobally() (*api.Config, error) {
+	path, err := GetGlobalPath()
+	if err != nil {
+		return nil, err
+	}
+
+	mainConfig, err := Load(path, false)
+	if err != nil {
+		return nil, err
+	}
+
+	if mainConfig == nil {
+		return nil, errors.Wrapf(api.ConfigurationNotFound, "no global configuration at %s", path)
+	}
+
+	return mainConfig, nil
+}
+
+func Get() (*api.Config, error) {
+	cfg, err := GetLocally()
+	if err != nil && !errors.Is(err, api.ConfigurationNotFound) {
+		return nil, err
+	}
+
+	if cfg == nil {
+		cfg, err = GetGlobally()
+		if err != nil && !errors.Is(err, api.ConfigurationNotFound) {
+			return nil, err
+		}
+	}
+
+	if cfg == nil {
+		return nil, errors.Wrap(api.ConfigurationNotFound, "failed to find a local or global configuration. use the \"init\" command to create one")
+	}
+
+	var referenceCfg *api.Config
+	if cfg.ConfigReference != nil {
+		path := filepath.Join(cfg.ConfigReference.Path, api.ConfigDirectory, api.ConfigFile)
+		path, err := environment.EnsureAbsolutePath(path)
 		if err != nil {
 			return nil, err
 		}
 
-		path = filepath.Join(home, api.ConfigDirectory, api.ConfigFile)
+		referenceCfg, err = Load(path, true)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	mainConfig, err := load(path, false)
-	if err != nil {
-		return nil, err
-	}
-
-	local, err := environment.CurrentDirectory()
-	if err != nil {
-		return nil, err
-	}
-
-	path = filepath.Join(local, api.ConfigDirectory, api.ConfigFile)
-	localConfig, err := load(path, false)
-	if err != nil {
-		return nil, err
-	}
-
-	if mainConfig != nil && localConfig != nil {
-		merged, err := Merge(mainConfig, localConfig)
+	if cfg != nil && referenceCfg != nil {
+		merged, err := Merge(referenceCfg, cfg)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to merge global and local configurations")
 		}
 
-		fmt.Println("merged config")
 		return merged, nil
 	}
 
-	if localConfig != nil {
-		fmt.Println("local config")
-		return localConfig, nil
+	if cfg != nil {
+		return cfg, nil
 	}
-
-	if mainConfig != nil {
-		fmt.Println("main config")
-		return mainConfig, nil
-	}
-
-	fmt.Println("default config")
 
 	return Default(), nil
 }
 
-func load(path string, strict bool) (*api.Config, error) {
+func Load(path string, strict bool) (*api.Config, error) {
 	var err error
 
 	path, err = environment.EnsureAbsolutePath(path)
@@ -99,6 +167,22 @@ func load(path string, strict bool) (*api.Config, error) {
 	}
 
 	return nil, nil
+}
+
+func Remove(path string) error {
+	exists, _, err := DirectoryExists(path)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		err = os.RemoveAll(path)
+		if err != nil {
+			return errors.Wrapf(err, "failed to remove configuration at %s", path)
+		}
+	}
+
+	return nil
 }
 
 func GetCommitTypes(types []*api.CommitType) []string {
