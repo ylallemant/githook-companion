@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/api"
@@ -26,7 +25,7 @@ func EnsureConfiguration(path string, reference *api.ParentConfig, minimalistic 
 }
 
 func ensureConfigurationDirectory(path string) error {
-	configurationDirectory := filepath.Join(path, api.ConfigDirectory)
+	configurationDirectory := DirectoryPathFromBase(path)
 
 	exists, _, err := DirectoryExists(configurationDirectory)
 	if err != nil {
@@ -44,7 +43,7 @@ func ensureConfigurationDirectory(path string) error {
 }
 
 func ensureConfigurationFile(path string, reference *api.ParentConfig, minimalistic bool) error {
-	configurationFile := filepath.Join(path, api.ConfigDirectory, api.ConfigFile)
+	configurationFile := FilePathFromBase(path)
 
 	exists, _, err := fileExists(configurationFile)
 	if err != nil {

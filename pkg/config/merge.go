@@ -35,7 +35,7 @@ func removeDictionaryDuplicates(cfg *api.Config) {
 		for _, element := range cfg.Commit.TokenizerOptions.Dictionaries {
 			found := false
 			for _, unique := range uniques {
-				if unique.TokenName == element.TokenName {
+				if unique.Name == element.Name {
 					found = true
 					break
 				}

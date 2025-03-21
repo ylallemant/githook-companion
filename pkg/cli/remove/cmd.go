@@ -2,12 +2,10 @@ package remove
 
 import (
 	"os"
-	"path/filepath"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/cli/init/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	gitConfig "github.com/ylallemant/githook-companion/pkg/git/config"
@@ -31,7 +29,7 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to get base path")
 		}
 
-		configurationDirectory := filepath.Join(path, api.ConfigDirectory)
+		configurationDirectory := config.DirectoryPathFromBase(path)
 		exists, _, err := config.DirectoryExists(configurationDirectory)
 		if err != nil {
 			return err

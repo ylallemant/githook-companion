@@ -3,12 +3,13 @@ package config
 import (
 	"fmt"
 
+	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/dependency"
 )
 
 func Debug() string {
-	localPath, _ := GetLocalPath()
-	globalPath, _ := GetGlobalPath()
+	localPath, _ := GetLocalFilePath()
+	globalPath, _ := GetGlobalFilePath()
 
 	localExists, _, _ := DirectoryExists(localPath)
 	globalExists, _, _ := DirectoryExists(globalPath)
@@ -16,11 +17,11 @@ func Debug() string {
 	configDebug := ""
 
 	if localExists {
-		configDebug = debugConfig(localPath)
+		configDebug = debugConfigs(localPath, "local")
 	}
 
 	if globalExists {
-		configDebug = debugConfig(globalPath)
+		configDebug = debugConfigs(globalPath, "global")
 	}
 
 	return fmt.Sprintf(
@@ -38,20 +39,59 @@ func Debug() string {
 	)
 }
 
-func debugConfig(path string) string {
-	cfg, err := Load(path, true)
+func debugConfigs(path, origin string) string {
+	originConfig, err := Load(path, true)
 	if err != nil {
-		panic("failes to load local config")
+		panic(fmt.Sprintf("failed to load origin config: %s", err.Error()))
 	}
 
 	referenceRepository := "none"
 	referencePath := "none"
 	referencePathExists := false
+	parent := ""
+	var parentConfig *api.Config
 
-	if cfg.ParentConfig != nil {
-		referenceRepository = cfg.ParentConfig.GitRepository
-		referencePath = ParentPathFromConfig(cfg)
+	if originConfig.ParentConfig != nil {
+		referenceRepository = originConfig.ParentConfig.GitRepository
+		referencePath = ParentPathFromConfig(originConfig)
 		referencePathExists, _, _ = DirectoryExists(referencePath)
+
+		parent = fmt.Sprintf(`
+  parent path (exits=%v):  "%s"
+     -> repository: %s
+		`,
+			referencePathExists,
+			referencePath,
+			referenceRepository,
+		)
+
+		parentConfig, err = Load(FilePathFromBase(referencePath), true)
+		if err != nil {
+			panic(fmt.Sprintf("failed to load parent config: %s", err.Error()))
+		}
+	}
+
+	fetchedConfig, err := Get()
+	if err != nil {
+		panic(fmt.Sprintf("failed to get config: %s", err.Error()))
+	}
+
+	originConfigDebug := debugConfig(originConfig, origin)
+	parentConfigDebug := debugConfig(parentConfig, "parent")
+	fetchedConfigDebug := debugConfig(fetchedConfig, "resulting")
+
+	return fmt.Sprintf(`%s%s%s%s
+	`,
+		parent,
+		originConfigDebug,
+		parentConfigDebug,
+		fetchedConfigDebug,
+	)
+}
+
+func debugConfig(cfg *api.Config, name string) string {
+	if cfg == nil {
+		return ""
 	}
 
 	dependencyDirectory := dependency.DependencyDirectoryFromConfig(cfg)
@@ -60,22 +100,32 @@ func debugConfig(path string) string {
 	hookDirectory := GithooksPathFromConfig(cfg)
 	hookDirectoryExists, _, _ := DirectoryExists(hookDirectory)
 
+	dictionaries := 0
+	lexemes := 0
+
+	if cfg.Commit != nil && cfg.Commit.TokenizerOptions != nil {
+		dictionaries = len(cfg.Commit.TokenizerOptions.Dictionaries)
+		lexemes = len(cfg.Commit.TokenizerOptions.Lexemes)
+	}
+
 	return fmt.Sprintf(
 		`
--- parent ---------
-  repository: %s
-  directory (exists=%v): %s
+   -- %s config ---------
+     parent:       %v
+     dictionaries: %d
+     lexemes:      %d
+     dependencies: %d
 
--- dependencies ---
-  count: %d
-  directory (exists=%v): %s
+     dependencies
+       directory (exists=%v): %s
 
--- hooks ----------
-  directory (exists=%v): %s
+     hooks
+       directory (exists=%v): %s
   `,
-		referenceRepository,
-		referencePathExists,
-		referencePath,
+		name,
+		(cfg.ParentConfig != nil),
+		dictionaries,
+		lexemes,
 		len(cfg.Dependencies),
 		dependencyDirectoryExists,
 		dependencyDirectory,

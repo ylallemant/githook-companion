@@ -3,7 +3,6 @@ package init
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -46,7 +45,7 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to ensure configuration")
 		}
 
-		configurationFile := filepath.Join(path, api.ConfigDirectory, api.ConfigFile)
+		configurationFile := config.DirectoryPathFromBase(path)
 
 		cfg, err := config.Load(configurationFile, true)
 		if err != nil {

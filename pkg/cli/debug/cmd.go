@@ -20,8 +20,8 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		fmt.Println(environment.Debug())
-		fmt.Println(config.Debug())
 		fmt.Println(git.Debug())
+		fmt.Println(config.Debug())
 
 		return nil
 	},

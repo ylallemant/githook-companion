@@ -10,7 +10,7 @@ import (
 func ParentPathFromConfig(configuration *api.Config) string {
 	if configuration.ParentConfig != nil {
 		if configuration.ParentConfig.Path != "" {
-			relativePath := filepath.Join(configuration.ParentConfig.Path, api.GithooksDirectory)
+			relativePath := filepath.Join(configuration.ParentConfig.Path)
 			path, err := environment.EnsureAbsolutePath(relativePath)
 			if err != nil {
 				panic(err)

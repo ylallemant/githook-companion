@@ -11,28 +11,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func GetLocalBasePath() (string, error) {
-	local, err := environment.CurrentDirectory()
-	if err != nil {
-		return "", err
-	}
-
-	return local, nil
-}
-
-func GetLocalPath() (string, error) {
-	local, err := GetLocalBasePath()
-	if err != nil {
-		return "", err
-	}
-
-	path := filepath.Join(local, api.ConfigDirectory, api.ConfigFile)
-
-	return path, nil
-}
-
 func GetLocally() (*api.Config, error) {
-	path, err := GetLocalPath()
+	path, err := GetLocalFilePath()
 	if err != nil {
 		return nil, err
 	}
@@ -49,28 +29,8 @@ func GetLocally() (*api.Config, error) {
 	return localConfig, nil
 }
 
-func GetGlobalBasePath() (string, error) {
-	home, err := environment.Home()
-	if err != nil {
-		return "", err
-	}
-
-	return home, nil
-}
-
-func GetGlobalPath() (string, error) {
-	home, err := GetGlobalBasePath()
-	if err != nil {
-		return "", err
-	}
-
-	path := filepath.Join(home, api.ConfigDirectory, api.ConfigFile)
-
-	return path, nil
-}
-
 func GetGlobally() (*api.Config, error) {
-	path, err := GetGlobalPath()
+	path, err := GetGlobalFilePath()
 	if err != nil {
 		return nil, err
 	}
