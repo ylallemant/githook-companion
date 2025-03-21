@@ -33,7 +33,7 @@ var rootCmd = &cobra.Command{
 			configuration = config.Default()
 		}
 
-		installationDirectory := dependency.InstallDirectoryFromConfig(configuration)
+		installationDirectory := dependency.DependencyDirectoryFromConfig(configuration)
 
 		fmt.Fprintln(cmd.OutOrStdout(), installationDirectory)
 		return nil

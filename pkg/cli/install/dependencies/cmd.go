@@ -32,7 +32,7 @@ var rootCmd = &cobra.Command{
 			configuration = config.Default()
 		}
 
-		installationDirectory := dependency.InstallDirectoryFromConfig(configuration)
+		installationDirectory := dependency.DependencyDirectoryFromConfig(configuration)
 
 		if options.Current.Directory != "" {
 			installationDirectory = options.Current.Directory

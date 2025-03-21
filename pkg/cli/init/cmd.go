@@ -42,6 +42,9 @@ var rootCmd = &cobra.Command{
 		}
 
 		err = config.EnsureConfiguration(path, reference, options.Current.Minimalistic)
+		if err != nil {
+			return errors.Wrap(err, "failed to ensure configuration")
+		}
 
 		configurationFile := filepath.Join(path, api.ConfigDirectory, api.ConfigFile)
 
@@ -56,13 +59,10 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-
-			// set path to the right directory
-			path = filepath.Join(path, cfg.ParentConfig.Path)
 		}
 
 		// check for the existance of the hooks directory
-		hooksDirectory := filepath.Join(path, api.GithooksDirectory)
+		hooksDirectory := config.GithooksPathFromConfig(cfg)
 		exists, _, err := config.DirectoryExists(hooksDirectory)
 		if err != nil {
 			return err
@@ -77,7 +77,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		if len(cfg.Dependencies) > 0 {
-			directory := dependency.InstallDirectoryFromConfig(cfg)
+			directory := dependency.DependencyDirectoryFromConfig(cfg)
 			err = dependency.InstallAll(directory, cfg)
 			if err != nil {
 				return err

@@ -11,7 +11,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/environment"
 )
 
-func InstallDirectoryFromConfig(configuration *api.Config) string {
+func DependencyDirectoryFromConfig(configuration *api.Config) string {
 	relativePath := filepath.Join(".", api.ConfigDirectory, "bin")
 	var err error
 

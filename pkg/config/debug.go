@@ -54,7 +54,7 @@ func debugConfig(path string) string {
 		referencePathExists, _, _ = DirectoryExists(referencePath)
 	}
 
-	dependencyDirectory := dependency.InstallDirectoryFromConfig(cfg)
+	dependencyDirectory := dependency.DependencyDirectoryFromConfig(cfg)
 	dependencyDirectoryExists, _, _ := DirectoryExists(dependencyDirectory)
 
 	hookDirectory := GithooksPathFromConfig(cfg)

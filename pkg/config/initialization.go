@@ -46,7 +46,7 @@ func ensureConfigurationDirectory(path string) error {
 func ensureConfigurationFile(path string, reference *api.ParentConfig, minimalistic bool) error {
 	configurationFile := filepath.Join(path, api.ConfigDirectory, api.ConfigFile)
 
-	exists, _, err := DirectoryExists(configurationFile)
+	exists, _, err := fileExists(configurationFile)
 	if err != nil {
 		return errors.Wrapf(err, "failed to check existance of %s", configurationFile)
 	}
