@@ -5,7 +5,8 @@ Provides a set of commands to make git-hook configuration and utilisation easy.
 
 > [!CAUTION]
 > The project is usable but in its early stages, feedback appreciated.
-> Please file issues if you encounter problems
+> Please file issues if you encounter problems.
+> Provide the output of the [debug command](#debug).
 
 ## Features
 
@@ -47,3 +48,12 @@ githook-companion init --minimalistic --reference-repository <git-repository-url
 The configuration consist of different blocks used for different purposes, like related to commit message standardisation or dependency management.
 
 You can find a list of all blocks and properties in the [CONFIGURATION.md](./CONFIGURATION.md)
+
+
+### Debug
+
+The debug command outputs information about the environment
+
+```Bash
+githook-companion debug
+```

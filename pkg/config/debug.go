@@ -28,7 +28,6 @@ func Debug() string {
 ++++ CONFIG(S) ++++++++++++++++++++
   local path  (exits=%v):  "%s"
   global path (exits=%v):  "%s"
-
 %s
   `,
 		localExists,

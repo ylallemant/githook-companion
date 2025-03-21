@@ -22,7 +22,7 @@ func Debug() string {
 
 	return fmt.Sprintf(
 		`
-++++ CENVIRONMENT +++++++++++++++++
+++++ ENVIRONMENT ++++++++++++++++++
   OS:   "%s"
   ARCH: "%s"
 

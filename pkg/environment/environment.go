@@ -58,14 +58,14 @@ func binaryPathValid(path string) bool {
 	osAssessment := false
 
 	switch runtime.GOOS {
-	case "dawin":
+	case "darwin":
 		osAssessment = assessForDarwin(path)
 	case "linux":
 		osAssessment = assessForLinux(path)
 	default:
 		return false
 	}
-	fmt.Println(`osAssessment`, osAssessment)
+
 	// check linux
 	return osAssessment ||
 		// valid if go rum is used
@@ -73,7 +73,8 @@ func binaryPathValid(path string) bool {
 }
 
 func assessForUnixFamily(path string) bool {
-	return strings.HasPrefix(path, "/usr")
+	return strings.HasPrefix(path, "/usr") ||
+		strings.Contains(path, "/.local/bin")
 }
 
 func assessForLinux(path string) bool {
@@ -81,7 +82,6 @@ func assessForLinux(path string) bool {
 }
 
 func assessForDarwin(path string) bool {
-	fmt.Println(`strings.Contains(path, "com.apple.Terminal")`, strings.Contains(path, "com.apple.Terminal"))
 	return assessForUnixFamily(path) ||
 		strings.Contains(path, "com.apple.Terminal")
 }
