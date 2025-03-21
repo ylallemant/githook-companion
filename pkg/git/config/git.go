@@ -42,6 +42,27 @@ func PropertyExists(property string, globally bool) (bool, error) {
 	return exists, nil
 }
 
+func GetProperty(property string, globally bool) (string, error) {
+	// unset githook property in local git configuration
+	git := command.New("git")
+	git.AddArg("config")
+
+	if globally {
+		git.AddArg("--global")
+	}
+
+	git.AddArg(property)
+
+	message, err := git.Execute()
+	if err != nil {
+		if err.Error() != ignoreErrorCheckUnknownSectionOrProperty {
+			return "", errors.Wrapf(err, "failed to check git property \"%s\" (global=%v): %s", property, globally, message)
+		}
+	}
+
+	return message, nil
+}
+
 func SetProperty(property, value string, globally bool) error {
 	// unset githook property in local git configuration
 	git := command.New("git")

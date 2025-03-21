@@ -11,7 +11,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/environment"
 )
 
-func EnsureConfiguration(path string, reference *api.ConfigReference, minimalistic bool) error {
+func EnsureConfiguration(path string, reference *api.ParentConfig, minimalistic bool) error {
 	err := ensureConfigurationDirectory(path)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func ensureConfigurationDirectory(path string) error {
 	return nil
 }
 
-func ensureConfigurationFile(path string, reference *api.ConfigReference, minimalistic bool) error {
+func ensureConfigurationFile(path string, reference *api.ParentConfig, minimalistic bool) error {
 	configurationFile := filepath.Join(path, api.ConfigDirectory, api.ConfigFile)
 
 	exists, _, err := DirectoryExists(configurationFile)
@@ -59,7 +59,7 @@ func ensureConfigurationFile(path string, reference *api.ConfigReference, minima
 		}
 
 		if reference != nil {
-			cfg.ConfigReference = reference
+			cfg.ParentConfig = reference
 		}
 
 		content, err := ToYAML(cfg)
@@ -76,7 +76,7 @@ func ensureConfigurationFile(path string, reference *api.ConfigReference, minima
 	return nil
 }
 
-func EnsureReference(reference *api.ConfigReference) error {
+func EnsureReference(reference *api.ParentConfig) error {
 	path, err := environment.EnsureAbsolutePath(reference.Path)
 	if err != nil {
 		return err

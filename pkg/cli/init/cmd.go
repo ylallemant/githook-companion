@@ -22,7 +22,7 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
 		var path string
-		var reference *api.ConfigReference
+		var reference *api.ParentConfig
 
 		if options.Current.Global {
 			path, err = config.GetGlobalBasePath()
@@ -30,10 +30,10 @@ var rootCmd = &cobra.Command{
 			path, err = config.GetLocalBasePath()
 		}
 
-		if options.Current.ReferencePath != "" && options.Current.ReferenceRepository != "" {
-			reference = &api.ConfigReference{
-				GitRepository: options.Current.ReferenceRepository,
-				Path:          options.Current.ReferencePath,
+		if options.Current.ParentPath != "" && options.Current.ParentRepository != "" {
+			reference = &api.ParentConfig{
+				GitRepository: options.Current.ParentRepository,
+				Path:          options.Current.ParentPath,
 			}
 		}
 
@@ -50,15 +50,15 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		if cfg.ConfigReference != nil {
+		if cfg.ParentConfig != nil {
 			// check and handle configuration reference
-			err = config.EnsureReference(cfg.ConfigReference)
+			err = config.EnsureReference(cfg.ParentConfig)
 			if err != nil {
 				return err
 			}
 
 			// set path to the right directory
-			path = filepath.Join(path, cfg.ConfigReference.Path)
+			path = filepath.Join(path, cfg.ParentConfig.Path)
 		}
 
 		// check for the existance of the hooks directory
@@ -90,8 +90,8 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&options.Current.Global, "global", options.Current.Global, "make a global initialization")
-	rootCmd.PersistentFlags().StringVar(&options.Current.ReferenceRepository, "reference-repository", options.Current.ReferenceRepository, "repository of the centralised configuration")
-	rootCmd.PersistentFlags().StringVar(&options.Current.ReferencePath, "reference-path", options.Current.ReferencePath, fmt.Sprintf("relative path to the centralised configuration root (parent of %s)", api.ConfigDirectory))
+	rootCmd.PersistentFlags().StringVar(&options.Current.ParentRepository, "parent-repository", options.Current.ParentRepository, "repository of the parent configuration. will be automatically checked out if necessary")
+	rootCmd.PersistentFlags().StringVar(&options.Current.ParentPath, "parent-path", options.Current.ParentPath, fmt.Sprintf("relative path to the parent configuration root (parent of %s)", api.ConfigDirectory))
 	rootCmd.PersistentFlags().BoolVarP(&options.Current.Minimalistic, "minimalistic", "m", options.Current.Minimalistic, "only install the bare minimum. no hooks, no dictionaries, no nothing")
 	rootCmd.SetOutput(os.Stderr)
 }

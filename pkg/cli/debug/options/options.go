@@ -11,8 +11,8 @@ func NewOptions() *Options {
 }
 
 type Options struct {
-	Global           bool
-	ParentRepository string
-	ParentPath       string
-	Minimalistic     bool
+	Global              bool
+	ReferenceRepository string
+	ReferencePath       string
+	Minimalistic        bool
 }

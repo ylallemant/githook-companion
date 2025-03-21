@@ -21,7 +21,7 @@ func Hostname() (string, error) {
 		return "", errors.Wrapf(err, "failed to retrieve origin from config")
 	}
 
-	uri, err := url.Parse(origin)
+	uri, err := parseGitURI(origin)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to parse origin uri %s", origin)
 	}
@@ -57,7 +57,7 @@ func Repository() (string, error) {
 		return "", errors.Wrapf(err, "failed to retrieve origin from config")
 	}
 
-	uri, err := url.Parse(origin)
+	uri, err := parseGitURI(origin)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to parse origin uri %s", origin)
 	}
@@ -65,4 +65,19 @@ func Repository() (string, error) {
 	path := strings.ReplaceAll(uri.Path, ".git", "")
 
 	return fmt.Sprintf("https://%s%s", uri.Host, path), nil
+}
+
+func parseGitURI(uri string) (*url.URL, error) {
+	isGitProtocol := strings.HasPrefix(uri, "git")
+	if isGitProtocol {
+		uri = strings.Replace(uri, ":", "/", 1)
+		uri = strings.Replace(uri, "git@", "https://", 1)
+	}
+
+	parsed, err := url.Parse(uri)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to parse git uri %s", uri)
+	}
+
+	return parsed, nil
 }

@@ -105,8 +105,8 @@ func Get() (*api.Config, error) {
 	}
 
 	var referenceCfg *api.Config
-	if cfg.ConfigReference != nil {
-		path := filepath.Join(cfg.ConfigReference.Path, api.ConfigDirectory, api.ConfigFile)
+	if cfg.ParentConfig != nil {
+		path := filepath.Join(cfg.ParentConfig.Path, api.ConfigDirectory, api.ConfigFile)
 		path, err := environment.EnsureAbsolutePath(path)
 		if err != nil {
 			return nil, err

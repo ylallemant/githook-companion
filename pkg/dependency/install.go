@@ -21,9 +21,9 @@ func InstallDirectoryFromConfig(configuration *api.Config) string {
 		return path
 	}
 
-	if configuration.ConfigReference != nil {
-		if configuration.ConfigReference.Path != "" {
-			relativePath := filepath.Join(configuration.ConfigReference.Path, "bin")
+	if configuration.ParentConfig != nil {
+		if configuration.ParentConfig.Path != "" {
+			relativePath := filepath.Join(configuration.ParentConfig.Path, "bin")
 			path, err := environment.EnsureAbsolutePath(relativePath)
 			if err != nil {
 				panic(err)

@@ -34,9 +34,9 @@ func GithooksPathFromConfig(configuration *api.Config) string {
 		return path
 	}
 
-	if configuration.ConfigReference != nil {
-		if configuration.ConfigReference.Path != "" {
-			relativePath := filepath.Join(configuration.ConfigReference.Path, api.GithooksDirectory)
+	if configuration.ParentConfig != nil {
+		if configuration.ParentConfig.Path != "" {
+			relativePath := filepath.Join(configuration.ParentConfig.Path, api.GithooksDirectory)
 			path, err := environment.EnsureAbsolutePath(relativePath)
 			if err != nil {
 				panic(err)
