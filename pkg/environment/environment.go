@@ -68,6 +68,8 @@ func binaryPathValid(path string) bool {
 
 	// check linux
 	return osAssessment ||
+		// dependency installation paths are valid
+		strings.Contains(path, ".githook-companion/bin") ||
 		// valid if go rum is used
 		strings.HasSuffix(path, "/go")
 }

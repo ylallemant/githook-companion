@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/nlp"
@@ -24,6 +25,7 @@ func Validate(message string, configuration *api.Config) (string, bool, *nlpapi.
 	})
 
 	languageCode, _, known := tokenizer.LanguageDetector().DetectLanguage(message, false)
+	log.Debug().Msgf("detected language \"%s\"", languageCode)
 
 	if !known {
 		return languageCode, false, nil, []*nlpapi.Token{}, errors.Errorf("unknown language")
@@ -40,6 +42,7 @@ func Validate(message string, configuration *api.Config) (string, bool, *nlpapi.
 
 	//validationRegexp := validationExpression(cfg)
 	commitTypeToken, formatted := hasCommitTypeToken(tokens)
+	log.Debug().Msgf("commit type token found: %v", commitTypeToken != nil)
 
 	if !formatted {
 		token, found := assessMessageType(tokens, configuration)

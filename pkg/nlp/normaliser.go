@@ -6,6 +6,7 @@ import (
 	"unicode"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/nlp/api"
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
@@ -54,10 +55,12 @@ func (i *normaliser) Clean(word *api.Word) {
 	word.Cleaned = replaceAcronyms(word.Cleaned)
 	word.Cleaned = removeSpecialChars(word.Cleaned)
 	word.Cleaned = strings.TrimSpace(word.Cleaned)
+	log.Debug().Msgf("  cleaned    \"%s\"", word.Cleaned)
 }
 
 func (i *normaliser) Normalise(word *api.Word) {
 	if word.Source != api.WordSourceLexeme {
+		log.Debug().Msgf("nomalise \"%s\"", word.Raw)
 		i.Clean(word)
 		i.lemmatizer.Lemma(word)
 	}
