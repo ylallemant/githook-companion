@@ -12,28 +12,25 @@ import (
 )
 
 func InstallDirectoryFromConfig(configuration *api.Config) string {
-	if configuration.DependencyDirectory != "" {
-		path, err := environment.EnsureAbsolutePath(configuration.DependencyDirectory)
-		if err != nil {
-			panic(err)
-		}
+	relativePath := filepath.Join(".", api.ConfigDirectory, "bin")
+	var err error
 
-		return path
+	if configuration.DependencyDirectory != "" {
+		relativePath = configuration.DependencyDirectory
 	}
 
 	if configuration.ParentConfig != nil {
 		if configuration.ParentConfig.Path != "" {
-			relativePath := filepath.Join(configuration.ParentConfig.Path, "bin")
-			path, err := environment.EnsureAbsolutePath(relativePath)
-			if err != nil {
-				panic(err)
-			}
-
-			return path
+			relativePath = filepath.Join(configuration.ParentConfig.Path, api.ConfigDirectory, "bin")
 		}
 	}
 
-	return DefaultInstallDirectory()
+	path, err := environment.EnsureAbsolutePath(relativePath)
+	if err != nil {
+		panic(err)
+	}
+
+	return path
 }
 
 func DefaultInstallDirectory() string {

@@ -3,9 +3,11 @@ Configuration
 
 List of configuration properties and their descripation.
 
-## reference (optional)
+## parent (optional)
 
-The `reference` is used to refer to configuration defined outside of the current project.
+The `parent` is used to refer to a parent configuration defined outside of the current project.
+
+If you use a parent configuration, you want to keep the local one minimal.
 
 ### repository
 
