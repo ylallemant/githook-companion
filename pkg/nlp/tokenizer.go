@@ -202,7 +202,7 @@ func (i *tokenizer) normalise(words []*api.Word, languageCode string) {
 // diectionary entry and confidence score if any.
 // A threshold can be set in the tokenizer options.
 func (i *tokenizer) fuzzyDictionaryMatch(word *api.Word) (*api.Dictionary, string, float64) {
-	log.Debug().Msgf("dictionary tokenization for normalised \"%s\"", word.Normalised)
+	log.Debug().Msgf("tokenization against %d dictionaries for normalised [%s] \"%s\"", len(i.dictionaries), word.LanguageCode, word.Normalised)
 	var match *api.Dictionary
 	bestConfidence := 0.0
 	bestMatch := word.Normalised
@@ -210,6 +210,7 @@ func (i *tokenizer) fuzzyDictionaryMatch(word *api.Word) (*api.Dictionary, strin
 	for _, dictionary := range i.dictionaries {
 		if dictionary.LanguageCode != word.LanguageCode && dictionary.LanguageCode != api.LanguageCodeWildcard {
 			// dictionary is not relevant, skip it
+			log.Debug().Msgf(" - ignore [%s] dictionary \"%s\"", dictionary.LanguageCode, dictionary.Name)
 			continue
 		}
 

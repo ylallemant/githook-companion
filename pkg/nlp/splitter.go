@@ -92,6 +92,7 @@ func (i *splitter) Split(sentence string) (string, []*api.Word) {
 func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word) {
 	words := make(map[string]*api.Word)
 
+	log.Debug().Msgf("check sentence for %d lexemes", len(i.lexemes))
 	for _, lexeme := range i.lexemes {
 		for _, matcher := range lexeme.Variants {
 			log.Debug().Msgf("search for lexeme \"%s\" variant with: \"%s\"", lexeme.Name, matcher.Matcher.Regex.String())
