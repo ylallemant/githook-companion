@@ -5,6 +5,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
@@ -30,6 +31,7 @@ func hasCommitTypeToken(tokens []*nlpapi.Token) (*nlpapi.Token, bool) {
 }
 
 func assessMessageType(tokens []*nlpapi.Token, cfg *api.Config) (*nlpapi.Token, bool) {
+	log.Debug().Msgf("assess commit type from %d tokens", len(tokens))
 	typeWeights := make(map[string]int)
 	tokenMap := make(map[string]*nlpapi.Token)
 
@@ -43,8 +45,10 @@ func assessMessageType(tokens []*nlpapi.Token, cfg *api.Config) (*nlpapi.Token, 
 			}
 		}
 	}
+	log.Debug().Msgf("commit type weights: %v", typeWeights)
 
 	hierarchy := commitTypeHierarchy(cfg.Types)
+	log.Debug().Msgf("commit type hierarchy: %v", hierarchy)
 
 	var highestWeightToken *nlpapi.Token
 	highestWeight := 0
@@ -62,11 +66,14 @@ func assessMessageType(tokens []*nlpapi.Token, cfg *api.Config) (*nlpapi.Token, 
 			}
 		}
 	}
+	log.Debug().Msgf("commit type token found: %v", found)
 
 	if !found {
 		// no valid commit type was found in the tokens
 		return nil, false
 	}
+
+	log.Debug().Msgf("result: token \"%s\" with value \"%s\"", highestWeightToken.Name, highestWeightToken.Value)
 
 	return commitTypeTokenFromToken(highestWeightToken), found
 }

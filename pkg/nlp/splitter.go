@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
@@ -46,13 +47,17 @@ func (i *splitter) Split(sentence string) (string, []*api.Word) {
 
 	// extract complex lexemes and replace them with position information
 	sentenceTemplate, wordsFromLexemes := i.ExtractLexemes(sentence)
+	log.Debug().Msgf("found %d lexemes in sentence", len(wordsFromLexemes))
 
 	// clean sentence without messing with diacritics
 	splitTemplate := i.clean(sentenceTemplate)
+	log.Debug().Msgf("cleaned sentence: %s", splitTemplate)
 
 	words := make([]*api.Word, 0)
 
 	parts := whitespaceRegexp.Split(splitTemplate, -1)
+	log.Debug().Msgf("splitted sentence: %v", parts)
+
 	for _, part := range parts {
 		var word *api.Word
 		var rawWord string
@@ -89,8 +94,10 @@ func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word
 
 	for _, lexeme := range i.lexemes {
 		for _, matcher := range lexeme.Variants {
+			log.Debug().Msgf("search for lexeme \"%s\" variant with: \"%s\"", lexeme.Name, matcher.Matcher.Regex.String())
 			if matcher.Matcher.Regex.MatchString(sentence) {
 				matches := matcher.Matcher.Regex.FindAllString(sentence, -1)
+				log.Debug().Msgf("  - matches: %s", matches)
 
 				for _, match := range matches {
 					word := new(api.Word)

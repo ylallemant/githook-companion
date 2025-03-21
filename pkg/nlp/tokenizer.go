@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
@@ -201,6 +202,7 @@ func (i *tokenizer) normalise(words []*api.Word, languageCode string) {
 // diectionary entry and confidence score if any.
 // A threshold can be set in the tokenizer options.
 func (i *tokenizer) fuzzyDictionaryMatch(word *api.Word) (*api.Dictionary, string, float64) {
+	log.Debug().Msgf("dictionary tokenization for normalised \"%s\"", word.Normalised)
 	var match *api.Dictionary
 	bestConfidence := 0.0
 	bestMatch := word.Normalised
@@ -211,14 +213,23 @@ func (i *tokenizer) fuzzyDictionaryMatch(word *api.Word) (*api.Dictionary, strin
 			continue
 		}
 
+		dictBestMatch := "none"
+		dictBestConfidence := 0.0
+
 		for _, entry := range dictionary.Entries {
 			confidence := calculateConfidence(word.Normalised, entry)
 
-			if confidence > bestConfidence && confidence > dictionary.ConfidenceThresthold {
-				bestConfidence = confidence
-				match = dictionary
-				bestMatch = entry
+			if confidence > dictBestConfidence && confidence > dictionary.ConfidenceThresthold {
+				dictBestConfidence = confidence
+				dictBestMatch = entry
 			}
+		}
+
+		log.Debug().Msgf(" - check against [%s] dictionary \"%s\" => best match \"%s\", confidence %f", dictionary.LanguageCode, dictionary.Name, dictBestMatch, dictBestConfidence)
+		if dictBestConfidence > bestConfidence && dictBestConfidence > dictionary.ConfidenceThresthold {
+			bestConfidence = dictBestConfidence
+			match = dictionary
+			bestMatch = dictBestMatch
 		}
 	}
 

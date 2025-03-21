@@ -7,6 +7,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/api"
@@ -22,6 +23,7 @@ var rootCmd = &cobra.Command{
 	Short: "validates interactively Git commit messages",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		globals.ProcessGlobals()
 
 		// assess if binary was called in a terminal or from some editor/git client
 		calledFromTerminal, err := environment.CalledFromTerminal()
@@ -50,21 +52,29 @@ var rootCmd = &cobra.Command{
 		}
 
 		message := os.Args[3]
+		log.Debug().Msgf("message from arguments \"%s\"", message)
 
 		if options.Current.Message != "" {
 			message = options.Current.Message
+			log.Debug().Msgf("message from flags \"%s\"", message)
 		}
 
 		if message == "" {
 			return errors.Errorf("providing a commit message by argument or flag is mendatory")
 		}
 
+		log.Debug().Msgf("validate \"%s\"", message)
+
 		languageCode, validated, commitTypeToken, tokens, err := commit.Validate(message, configuration)
 		if err != nil {
 			return errors.Wrap(err, "failed validation")
 		}
 
+		log.Debug().Msgf("message validated \"%v\"", validated)
+		log.Debug().Msgf("command called from terminal \"%v\"", calledFromTerminal)
+
 		if !validated && calledFromTerminal {
+			log.Debug().Msg("invalid message, user input required")
 			// message does not have a commit type prefix
 			// and no commit type could be correlated through dictionaries
 			// request user input through interactive commit type selection
@@ -86,9 +96,13 @@ var rootCmd = &cobra.Command{
 				return errors.Wrap(err, "interactive commit type user selection failed")
 			}
 
+			commiType := configuration.Commit.Types[idx].Type
+			log.Debug().Msgf("user selected commit type number %d \"%s\"", idx, commiType)
+
 			// commit type from user input
-			commitTypeToken = commit.CommitTypeTokenFromString(configuration.Commit.Types[idx].Type, languageCode)
+			commitTypeToken = commit.CommitTypeTokenFromString(commiType, languageCode)
 		} else if !validated {
+			log.Debug().Msg("invalid message error because no user input is possible")
 			// binary has not been called from a terminal
 			// no user interaction possible
 			// output invalidity information and throw error
@@ -110,6 +124,9 @@ var rootCmd = &cobra.Command{
 			return errors.New(nonInteractiveErrorMessage)
 		}
 
+		log.Debug().Msgf("commit type token: %s", commitTypeToken.Value)
+		log.Debug().Msgf("commit types without formatting: %v", configuration.Commit.NoFormatting)
+
 		if !slices.Contains(configuration.Commit.NoFormatting, commitTypeToken.Value) {
 			// ensure commit type prefix format (lower-case)
 			message, err = commit.EnsureFormat(message, configuration.Commit.MessageTemplate, commitTypeToken, tokens)
@@ -119,9 +136,11 @@ var rootCmd = &cobra.Command{
 		}
 
 		if options.Current.OutputFilePath == "" {
+			log.Debug().Msg("output to terminal")
 			// output to terminal
 			fmt.Fprintln(cmd.OutOrStdout(), message)
 		} else {
+			log.Debug().Msg("output to file")
 			// output to file
 			file, err := os.OpenFile(options.Current.OutputFilePath, os.O_RDWR|os.O_CREATE, 0755)
 			if err != nil {
@@ -142,6 +161,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
 	rootCmd.SetOutput(os.Stderr)
 }
 

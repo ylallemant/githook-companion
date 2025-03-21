@@ -11,6 +11,7 @@ import (
 	"github.com/aaaton/golem/v4/dicts/sv"
 	"github.com/aaaton/golem/v4/dicts/uk"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
@@ -61,4 +62,5 @@ func (l *lemmatizer) LanguageCode() string {
 
 func (l *lemmatizer) Lemma(word *api.Word) {
 	word.Normalised = l.tool.Lemma(word.Cleaned)
+	log.Debug().Msgf("  normalised \"%s\"", word.Normalised)
 }

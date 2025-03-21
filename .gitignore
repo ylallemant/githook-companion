@@ -17,6 +17,7 @@ pids
 
 # only local
 backup/
+.githook-companion
 
 # secret protection
 **/*.env
