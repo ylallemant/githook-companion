@@ -3,19 +3,16 @@ Configuration
 
 List of configuration properties and their descripation.
 
-## parent (optional)
+## parent
 
-The `parent` is used to refer to a parent configuration defined outside of the current project.
+  The `parent` block is used to refer to a parent configuration defined outside of the current project.
+  If you use a parent configuration, you want to keep the local one minimal.
 
-If you use a parent configuration, you want to keep the local one minimal.
+  - `repository`
+    Specifies a Git clonable URI were the external configuration is been versioned
 
-### repository
-
-Specifies a Git clonable URI were the external configuration is been versioned
-
-### path
-
-Specifies were the external configuration is installed on the current filesystem.
+  - `path`
+    Specifies were the external configuration is installed on the current filesystem.
 
 > [!NOTE]
 > The path should be relative to the current project, because there is no mean to know how users structure their files.
@@ -37,13 +34,9 @@ If something is not doable, please file an issue.
 
 A list of commit types.
 
-#### type
+- `type` Handle of the type.
 
-Handle of the type.
-
-### description
-
-Description of the type.
+- `description` Description of the type.
 
 ### defaut_type
 
