@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/cli/init/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
+	"github.com/ylallemant/githook-companion/pkg/filesystem"
 	gitConfig "github.com/ylallemant/githook-companion/pkg/git/config"
 )
 
@@ -30,7 +31,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		configurationDirectory := config.DirectoryPathFromBase(path)
-		exists, _, err := config.DirectoryExists(configurationDirectory)
+		exists, _, err := filesystem.DirectoryExists(configurationDirectory)
 		if err != nil {
 			return err
 		}

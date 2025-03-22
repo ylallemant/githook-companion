@@ -8,6 +8,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/command"
 	"github.com/ylallemant/githook-companion/pkg/environment"
+	"github.com/ylallemant/githook-companion/pkg/filesystem"
 )
 
 func EnsureConfiguration(path string, reference *api.ParentConfig, minimalistic bool) error {
@@ -27,7 +28,7 @@ func EnsureConfiguration(path string, reference *api.ParentConfig, minimalistic 
 func ensureConfigurationDirectory(path string) error {
 	configurationDirectory := DirectoryPathFromBase(path)
 
-	exists, _, err := DirectoryExists(configurationDirectory)
+	exists, _, err := filesystem.DirectoryExists(configurationDirectory)
 	if err != nil {
 		return errors.Wrapf(err, "failed to check existance of %s", configurationDirectory)
 	}
@@ -45,7 +46,7 @@ func ensureConfigurationDirectory(path string) error {
 func ensureConfigurationFile(path string, reference *api.ParentConfig, minimalistic bool) error {
 	configurationFile := FilePathFromBase(path)
 
-	exists, _, err := fileExists(configurationFile)
+	exists, _, err := filesystem.FileExists(configurationFile)
 	if err != nil {
 		return errors.Wrapf(err, "failed to check existance of %s", configurationFile)
 	}
@@ -81,7 +82,7 @@ func EnsureReference(reference *api.ParentConfig) error {
 		return err
 	}
 
-	exists, _, err := DirectoryExists(path)
+	exists, _, err := filesystem.DirectoryExists(path)
 	if err != nil {
 		return errors.Wrapf(err, "failed to check existance of %s", path)
 	}

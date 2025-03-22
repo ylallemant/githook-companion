@@ -11,7 +11,10 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/cli/init/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/dependency"
+	"github.com/ylallemant/githook-companion/pkg/filesystem"
+	"github.com/ylallemant/githook-companion/pkg/git"
 	gitConfig "github.com/ylallemant/githook-companion/pkg/git/config"
+	"github.com/ylallemant/githook-companion/pkg/git/hook"
 )
 
 var rootCmd = &cobra.Command{
@@ -45,7 +48,7 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to ensure configuration")
 		}
 
-		configurationFile := config.DirectoryPathFromBase(path)
+		configurationFile := config.FilePathFromBase(path)
 
 		cfg, err := config.Load(configurationFile, true)
 		if err != nil {
@@ -60,9 +63,15 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
+		// ensure githooks are present
+		err = hook.Ensure(cfg)
+		if err != nil {
+			return err
+		}
+
 		// check for the existance of the hooks directory
 		hooksDirectory := config.GithooksPathFromConfig(cfg)
-		exists, _, err := config.DirectoryExists(hooksDirectory)
+		exists, _, err := filesystem.DirectoryExists(hooksDirectory)
 		if err != nil {
 			return err
 		}
@@ -81,6 +90,11 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
+		}
+
+		err = git.EnsureGitIgnoreFromConfig(cfg)
+		if err != nil {
+			return err
 		}
 
 		return nil

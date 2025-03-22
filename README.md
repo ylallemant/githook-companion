@@ -96,6 +96,7 @@ You can do it on a global level in your home directory with the flag `global`.
 - `init` will checkout a parent configuration if necessary
 - `init` will download dependencies if necessary
 - `init` will at least install the `prepare-commit-msg` hook
+- `init` will add `githook-companion` specific entries to your `.gitignore`
 - `init` will set the Git config property `core.hooksPath` to your githook folder path
 
 ```Bash

@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/environment"
+	"github.com/ylallemant/githook-companion/pkg/filesystem"
 	"gopkg.in/yaml.v3"
 )
 
@@ -102,7 +103,7 @@ func Load(path string, strict bool) (*api.Config, error) {
 		return nil, err
 	}
 
-	_, stats, err := fileExists(path)
+	_, stats, err := filesystem.FileExists(path)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +131,7 @@ func Load(path string, strict bool) (*api.Config, error) {
 }
 
 func Remove(path string) error {
-	exists, _, err := DirectoryExists(path)
+	exists, _, err := filesystem.DirectoryExists(path)
 	if err != nil {
 		return err
 	}

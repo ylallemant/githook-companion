@@ -1,6 +1,21 @@
 TODOs
 ===
 
+## init command
+- ~~install githooks~~
+- ~~append to .gitignore~~
+
+## debug command
+- ~~add tool version~~
+
+## path commands (dependency, hook)
+- add `child` flag to force the path for the child
+
+## Githooks
+- lock hook
+- unlock hook
+- unlock all
+
 ## Cleanup Commit Message history
 
 - list all commit hashes : `git log --pretty=format:%H`

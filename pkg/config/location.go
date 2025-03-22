@@ -7,6 +7,24 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/environment"
 )
 
+func BasePathFromConfig(configuration *api.Config) (string, error) {
+	if configuration.ParentConfig != nil {
+		path, err := environment.EnsureAbsolutePath(configuration.ParentConfig.Path)
+		if err != nil {
+			return "", err
+		}
+
+		return path, nil
+	}
+
+	path, err := GetLocalBasePath()
+	if err != nil {
+		return "", err
+	}
+
+	return path, nil
+}
+
 func DirectoryPathFromBase(path string) string {
 	return filepath.Join(path, api.ConfigDirectory)
 }

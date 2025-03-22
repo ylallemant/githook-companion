@@ -1,4 +1,4 @@
-package config
+package filesystem
 
 import (
 	"io/fs"
@@ -13,7 +13,7 @@ const (
 
 var ErrorNoDirectory = errors.New("path target exists but is no directory")
 
-func fileExists(path string) (bool, fs.FileInfo, error) {
+func FileExists(path string) (bool, fs.FileInfo, error) {
 	fi, err := os.Stat(path)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {

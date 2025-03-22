@@ -5,14 +5,15 @@ import (
 
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/dependency"
+	"github.com/ylallemant/githook-companion/pkg/filesystem"
 )
 
 func Debug() string {
 	localPath, _ := GetLocalFilePath()
 	globalPath, _ := GetGlobalFilePath()
 
-	localExists, _, _ := DirectoryExists(localPath)
-	globalExists, _, _ := DirectoryExists(globalPath)
+	localExists, _, _ := filesystem.DirectoryExists(localPath)
+	globalExists, _, _ := filesystem.DirectoryExists(globalPath)
 
 	configDebug := ""
 
@@ -54,7 +55,7 @@ func debugConfigs(path, origin string) string {
 	if originConfig.ParentConfig != nil {
 		referenceRepository = originConfig.ParentConfig.GitRepository
 		referencePath = ParentPathFromConfig(originConfig)
-		referencePathExists, _, _ = DirectoryExists(referencePath)
+		referencePathExists, _, _ = filesystem.DirectoryExists(referencePath)
 
 		parent = fmt.Sprintf(`
   parent path (exits=%v):  "%s"
@@ -95,10 +96,10 @@ func debugConfig(cfg *api.Config, name string) string {
 	}
 
 	dependencyDirectory := dependency.DependencyDirectoryFromConfig(cfg)
-	dependencyDirectoryExists, _, _ := DirectoryExists(dependencyDirectory)
+	dependencyDirectoryExists, _, _ := filesystem.DirectoryExists(dependencyDirectory)
 
 	hookDirectory := GithooksPathFromConfig(cfg)
-	hookDirectoryExists, _, _ := DirectoryExists(hookDirectory)
+	hookDirectoryExists, _, _ := filesystem.DirectoryExists(hookDirectory)
 
 	dictionaries := 0
 	lexemes := 0
