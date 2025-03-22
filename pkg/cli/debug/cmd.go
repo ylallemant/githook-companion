@@ -11,6 +11,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/environment"
 	"github.com/ylallemant/githook-companion/pkg/git"
+	"github.com/ylallemant/githook-companion/pkg/version"
 )
 
 var rootCmd = &cobra.Command{
@@ -19,6 +20,7 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
+		fmt.Println("githook-companion version", version.GetInfo())
 		fmt.Println(environment.Debug())
 		fmt.Println(git.Debug())
 		fmt.Println(config.Debug())
