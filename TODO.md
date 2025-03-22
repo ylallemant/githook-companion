@@ -15,6 +15,8 @@ TODOs
 - lock hook
 - unlock hook
 - unlock all
+- disable hooks
+- enable hooks
 
 ## Cleanup Commit Message history
 

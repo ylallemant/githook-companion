@@ -1,7 +1,7 @@
 githook-companion
 ====
 
-Provides a set of commands to make git-hook configuration and utilisation easy.
+Provides poweful possibilities to define a commit message standard and a set of commands to make git-hook configuration and utilisation easy.
 
 > [!CAUTION]
 > The project is usable but in its early stages, feedback appreciated.
@@ -45,23 +45,36 @@ This gives the tool great flexibility and adaptation potential to various use ca
 The core functionality of the tool is the standardization of commit messages.
 The standardization allows for subsequent processings like the automation of changelogs.
 
-`githook-companion` allows to freely define any number of `commit-types` you want to use.
+`githook-companion` allows to freely define any number of `commit-types` you want to use ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L3)).
 
 Inspiration for the configuration are `Conventional Commits` patterns like [this one](https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13).
-Different projects have different people, different needs; so this tool won't force you into any specific pattern, although we propose one in the default configuration.
+Different projects have different people, different needs; so this tool won't force you into any specific pattern, although we propose one in the [default configuration](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L22).
+
+The tool uses tokenization to enable complex checks and formatting possibilities:
+
+- restrict commit message language(s) ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L28))
+- define regular expression based [lexemes](https://en.wikipedia.org/wiki/Lexical_analysis#Lexical_token_and_lexical_tokenization) for the tokenization ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L94))
+- use regular expressions and Go templates for normalization ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L102))
+- define dictionaries for the tokenization. comparation done with cleaned and [lemmatized](https://en.wikipedia.org/wiki/Lemmatization#Description) words. ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L31))
+- define Go Templates with available [helper functions](https://masterminds.github.io/sprig/) to format the final message. You can use the `camel-case` name of the tokens to reference them in the template ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L21))
 
 > [!TIP]
 > You can test/tweek your commit configuration effects with following command:
 > 
 > ```bash
-> githook-companion commit validate -m <commit-message> [--debug]
+> githook-companion commit validate -m "commit-message" [--debug]
 > ```
 
 ### Parent Configurations
 
 You can reference a centralised configuration in another Git repository to ease the maintenance of your configuration.
 
-`githook-companion` will automatically checkout the parent configuration if needed when you use the [init command](#initialize).
+In the presence of a child configuration, `githook-companion` will automatically checkout the parent configuration if needed when you use the [init command](#initialize).
+
+The hooks in the parent configuration can also trigger project specific hook-scripts in the child project.
+
+Here you can find an [example of parent configuration](https://github.com/ylallemant/githooks/tree/main/.githook-companion)
+
 
 > [!TIP]
 > You may also have different project collections use diffrent parent configurations, for different purposes, customers, ...
@@ -90,18 +103,23 @@ Navigate to your project or parent configuration project folder.
 
 ### Initialize
 
+### As Full Configuration (And Potential Parent)
+
 Initialize githooks in a specific project.
 You can do it on a global level in your home directory with the flag `global`.
 
 - `init` will checkout a parent configuration if necessary
 - `init` will download dependencies if necessary
-- `init` will at least install the `prepare-commit-msg` hook
-- `init` will add `githook-companion` specific entries to your `.gitignore`
-- `init` will set the Git config property `core.hooksPath` to your githook folder path
+- `init` will create a configuration with our defaults if necessary
+- `init` will at least install the `prepare-commit-msg` hook if necessary
+- `init` will add `githook-companion` specific entries to your `.gitignore` if necessary
+- `init` will set the Git config property `core.hooksPath` to your githook folder path if necessary
 
 ```Bash
 githook-companion init
 ```
+
+### As Minimalistic Child Configuration
 
 If you want to use a parent configuration for your project add following flags :
 
@@ -111,7 +129,7 @@ If you want to use a parent configuration for your project add following flags :
 
 
 ```Bash
-githook-companion init --minimalistic --parent-repository <git-repository-url> --parent-path <relative-path>
+githook-companion init --minimalistic --parent-path "../githooks" --parent-repository https://github.com/ylallemant/githooks
 ```
 
 > [!WARNING]
