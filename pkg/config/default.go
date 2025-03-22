@@ -212,5 +212,15 @@ func commitDictionaries() []*nlpapi.Dictionary {
 				"bug",
 			},
 		},
+		{
+			LanguageCode: "en",
+			Name:         "docs-signals",
+			TokenName:    api.CommitTypeTokenName,
+			TokenValue:   typeDocs,
+			Entries: []string{
+				"document",
+				"doc",
+			},
+		},
 	}
 }
