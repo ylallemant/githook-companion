@@ -10,6 +10,7 @@ TODOs
 
 ## configuration
 - adapt commit-types to this norm : https://www.conventionalcommits.org/en/v1.0.0/
+- test marshalling (check for null)/unmarschalling (formatter error)
 
 ## path commands (dependency, hook)
 - add `child` flag to force the path for the child
