@@ -47,7 +47,7 @@ The standardization allows for subsequent processings like the automation of cha
 
 `githook-companion` allows to freely define any number of `commit-types` you want to use ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L3)).
 
-Inspiration for the configuration are `Conventional Commits` patterns like [this one](https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13).
+Inspiration for the configuration are `Conventional Commits` patterns like [this one](https://www.conventionalcommits.org/en/v1.0.0/).
 Different projects have different people, different needs; so this tool won't force you into any specific pattern, although we propose one in the [default configuration](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L22).
 
 The tool uses tokenization to enable complex checks and formatting possibilities:
@@ -127,6 +127,7 @@ If you want to use a parent configuration for your project add following flags :
 - `parent-repository` : specifies a centralized configuation repository.
 - `parent-path` : specifies where the centralized repository will be cloned into. The path must be relative to your project folder.
 
+You have an [example in this repository](https://github.com/ylallemant/githook-companion/blob/main/.githook-companion/config.yaml) ("eat your own dog food").
 
 ```Bash
 githook-companion init --minimalistic --parent-path "../githooks" --parent-repository https://github.com/ylallemant/githooks

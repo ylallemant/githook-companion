@@ -1,7 +1,0 @@
-commit:
-    defaut_type: feat
-    types:
-        - type: feat
-          description: a new feature is introduced with the changes
-        - type: fix
-          description: a bug fix has occurred
