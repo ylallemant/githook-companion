@@ -8,6 +8,9 @@ TODOs
 ## debug command
 - ~~add tool version~~
 
+## configuration
+- adapt commit-types to this norm : https://www.conventionalcommits.org/en/v1.0.0/
+
 ## path commands (dependency, hook)
 - add `child` flag to force the path for the child
 
