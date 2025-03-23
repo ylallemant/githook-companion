@@ -107,7 +107,7 @@ func commitLexemes() []*nlpapi.Lexeme {
 		{
 			LanguageCode: nlpapi.LanguageCodeWildcard,
 			Name:         api.CommitTypeTokenName,
-			Description:  "commit type lexeme to be retrieved from well formatted messages",
+			Description:  "auto-generated commit type lexeme to be retrieved from well formatted messages",
 			TokenName:    api.CommitTypeTokenName,
 			Variants: []*nlpapi.Variant{
 				{

@@ -18,7 +18,7 @@ var (
 )
 
 type Config struct {
-	*ParentConfig       `yaml:"parent" json:"parent"`
+	*ParentConfig       `yaml:"parent,omitempty" json:"parent,omitempty"`
 	*Commit             `yaml:"commit" json:"commit"`
 	Dependencies        []*Dependency `yaml:"dependencies" json:"dependencies"`
 	DependencyDirectory string        `yaml:"dependency_directory" json:"dependency_directory"`

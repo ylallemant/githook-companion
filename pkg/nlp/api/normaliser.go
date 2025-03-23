@@ -32,15 +32,15 @@ type NormalisationStep struct {
 	// Replacement will replace all parts returned by Matcher
 	Replacement string `yaml:"replacement" json:"replacement"`
 	// Formatter allows the usage of go-templates to format the selected parts
-	Formatter *Formatter `yaml:"formatter" json:"formatter"`
+	Formatter *Formatter `yaml:"formatter,omitempty" json:"formatter,omitempty"`
 }
 
 // Formatter makes use of go templates to modify the provided text.
 // build-in template functions by Masterminds Sprig package
 // documentation can be found here https://masterminds.github.io/sprig/
 type Formatter struct {
-	Template string `yaml:"template" json:"template"`
-	Renderer *template.Template
+	Template string             `yaml:"template" json:"template"`
+	Renderer *template.Template `yaml:"renderer,omitempty" json:"renderer,omitempty"`
 }
 
 // UnmarshalText unmarshals json into a regexp.Regexp
@@ -64,12 +64,4 @@ func (r *Formatter) UnmarshalText(b []byte) error {
 	}
 
 	return nil
-}
-
-// MarshalText marshals regexp.Regexp as string
-func (r *Formatter) MarshalText() ([]byte, error) {
-	if r.Template != "" {
-		return []byte(r.Template), nil
-	}
-	return nil, nil
 }

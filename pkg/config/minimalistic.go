@@ -9,6 +9,7 @@ func Minimalistic() *api.Config {
 	config := new(api.Config)
 	config.Commit = new(api.Commit)
 	config.Commit.TokenizerOptions = new(nlpapi.TokenizerOptions)
+	config.Commit.TokenizerOptions.LanguageDetectionOptions = new(nlpapi.LanguageDetectionOptions)
 
 	return config
 }
