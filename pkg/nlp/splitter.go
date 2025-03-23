@@ -14,11 +14,13 @@ var (
 	nonScriptCharRegexp = regexp.MustCompile(`[^\p{L}]`)
 	whitespaceRegexp    = regexp.MustCompile(`\s+`)
 	puntuationRegexp    = regexp.MustCompile(`([^0-9\p{L}\s_-~])`)
+	minWordLength       = 3
 )
 
 func DefaultSplitter(languageCode string, lexemes []*api.Lexeme) *splitter {
 	instance := new(splitter)
 
+	instance.minWordLength = minWordLength
 	instance.languageCode = languageCode
 	instance.lexemes = make([]*api.Lexeme, 0)
 
@@ -34,8 +36,9 @@ func DefaultSplitter(languageCode string, lexemes []*api.Lexeme) *splitter {
 var _ api.Splitter = &splitter{}
 
 type splitter struct {
-	languageCode string
-	lexemes      []*api.Lexeme
+	languageCode  string
+	minWordLength int
+	lexemes       []*api.Lexeme
 }
 
 func (i *splitter) LanguageCode() string {
@@ -59,6 +62,12 @@ func (i *splitter) Split(sentence string) (string, []*api.Word) {
 	log.Debug().Msgf("splitted sentence: %v", parts)
 
 	for _, part := range parts {
+		if len(part) < i.minWordLength {
+			// ignore sigle characters
+			log.Debug().Msgf("ignore single character: \"%s\"", part)
+			continue
+		}
+
 		var word *api.Word
 		var rawWord string
 
@@ -166,7 +175,14 @@ func executeNormaliser(normaliser *api.NormalisationStep, text string) string {
 
 		if normaliser.Formatter != nil {
 			if normaliser.Formatter.Renderer == nil {
-				normaliser.Formatter.UnmarshalText([]byte{})
+				err := normaliser.Formatter.UnmarshalText([]byte{})
+				if err != nil {
+					panic(fmt.Sprintf(
+						"failed to unmarshal formatter with template \"%s\": %s",
+						normaliser.Formatter.Template,
+						err.Error(),
+					))
+				}
 			}
 
 			for _, match := range matches {

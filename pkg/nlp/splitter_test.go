@@ -331,7 +331,7 @@ func TestSplitter_Split(t *testing.T) {
 					},
 				},
 			},
-			expectedTemplate: "word~0 word~1 word~2 word~3",
+			expectedTemplate: "word~0 a word~1 word~2",
 			expectedWords: []*api.Word{
 				{
 					LanguageCode: api.LanguageCodeWildcard,
@@ -340,12 +340,6 @@ func TestSplitter_Split(t *testing.T) {
 					Raw:          "FEaT   :",
 					Cleaned:      "FEAT",
 					Normalised:   "FEAT",
-				},
-				{
-					LanguageCode: "de",
-					Raw:          "a",
-					Source:       api.WordSourceSplitter,
-					SourceName:   api.WordSourceSplitter,
 				},
 				{
 					LanguageCode: "de",

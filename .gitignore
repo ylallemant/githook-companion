@@ -26,3 +26,8 @@ backup/
 dist/
 .go/
 .gocache/
+
+
+# githook-companion rules
+.githook-companion/bin
+.githook-companion/locks

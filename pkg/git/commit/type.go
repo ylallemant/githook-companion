@@ -134,7 +134,3 @@ func commitTypeWeightIncrement(token *nlpapi.Token) int {
 
 	return int(math.Floor(float64(increment) * token.Confidence))
 }
-
-func formatMessage(token *nlpapi.Token, template string) string {
-	return ""
-}
