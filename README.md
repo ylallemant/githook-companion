@@ -1,7 +1,10 @@
 githook-companion
 ====
 
-Provides poweful possibilities to define a commit message standard and a set of commands to make git-hook configuration and utilisation easy: the main goal is to be still able to use `Git` as your primary tool and to not be forced into using some of the multiple wrapper commands other projects propose.
+Provides poweful possibilities to define a commit message standard and a set of commands to make git-hook configuration and utilisation easy.
+
+The main goal is to be still able to use `Git` as your primary tool and to not be forced into using some of the multiple wrapper commands other projects propose.
+Sticking with Git means any workflow/tool you build/use on top of it will not break.
 
 > [!CAUTION]
 > The project is usable but in its early stages, feedback appreciated.
