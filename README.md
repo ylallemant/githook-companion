@@ -16,7 +16,7 @@ Provides poweful possibilities to define a commit message standard and a set of 
 ### Installation
 
 ```sh
-curl -fsSL https://github.com/ylallemant/githook-companion/raw/0.7.0/install.sh | bash
+curl -fsSL https://github.com/ylallemant/githook-companion/raw/0.7.8/install.sh | bash
 ```
 
 ### Update
