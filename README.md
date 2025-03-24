@@ -36,6 +36,14 @@ The debug command outputs information about the environment
 githook-companion debug
 ```
 
+### Remove
+
+The remove command will remove the local configuration folder `.githook-companion` and unset the Git config property `core.hooksPath` (disable the githooks).
+
+```Bash
+githook-companion remove
+```
+
 
 ## Features
 
