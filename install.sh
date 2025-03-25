@@ -13,7 +13,7 @@ repo="githook-companion"
 exe_name="githook-companion"
 githubUrl=""
 githubApiUrl=""
-version="0.7.8"
+version=$(curl -s https://api.github.com/repos/ylallemant/githook-companion/releases/latest | grep -m1 -Eo "githook-companion-[^/]+-linux-amd64.tar.gz" | grep -Eo "([0-9]+\.[0-9]+\.[0-9]+)")
 separator="-"
 
 get_arch() {
