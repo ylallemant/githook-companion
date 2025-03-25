@@ -8,7 +8,7 @@ CONFIGURATION_DIRECTORY="$(dirname $(dirname $(dirname $0)))"
 # binary dependecy directory
 BIN_DIRECTORY="$(githook-companion config dependency path)"
 # githooks directory
-CUSTOM_GITHOOKS_DIRECTORY="$(githook-companion config hook path)"
+CUSTOM_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 
 
 echo "apply parent prepare-commit-msg"

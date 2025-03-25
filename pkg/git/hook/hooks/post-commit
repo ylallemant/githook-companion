@@ -4,7 +4,7 @@ set -eu
 CURRENT_REPOSITORY="$(pwd)"
 GITHOOKS_DIRECTORY="$(dirname $(dirname $(dirname $0)))"
 GITHOOKS_BIN_DIRECTORY="$(githook-companion config dependency path)"
-CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_REPOSITORY/.githook-companion/hooks"
+CUSTOM_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 TEMPLATE_NAME=$(githook-companion git server name --default default)
 REPOSITORY_URL=$(githook-companion git server repository)
 

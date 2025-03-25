@@ -13,7 +13,7 @@ TODOs
 - test marshalling (check for null)/unmarschalling (formatter error)
 
 ## path commands (dependency, hook)
-- add `child` flag to force the path for the child
+- ~~add `child` flag to force the path for the child~~
 
 ## Githooks
 - lock hook
