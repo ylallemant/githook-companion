@@ -1,0 +1,28 @@
+#!/usr/bin/sh
+#; C:/Program\ Files/Git/usr/bin/sh.exe
+set -eu
+
+CURRENT_REPOSITORY="$(pwd)"
+GITHOOKS_DIRECTORY="$(dirname $(dirname $(dirname $0)))"
+GITHOOKS_BIN_DIRECTORY="$(githook-companion config dependency path)"
+CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_REPOSITORY/.githook-companion/hooks"
+
+echo "apply generic pre-push"
+
+# apply custom git-hooks
+if [ -d "$CUSTOM_GITHOOKS_DIRECTORY" ] && [ -f "$CUSTOM_GITHOOKS_DIRECTORY/pre-commit" ] && [ "$GITHOOKS_DIRECTORY" != "$CURRENT_REPOSITORY" ]
+then
+  echo "apply custom pre-push"
+  "$CUSTOM_GITHOOKS_DIRECTORY"/pre-push
+fi
+
+# make sure a clean state is being pushed
+if [ -z "$(git status --porcelain)" ]; then
+  # Working directory clean
+  echo "clean state: proceed with push"
+else
+  # Uncommitted changes
+  echo "you have uncommited changes: stopping the push"
+  git status
+  exit 1
+fi

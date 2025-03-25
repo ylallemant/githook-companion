@@ -1,0 +1,29 @@
+#!/usr/bin/sh
+set -eu
+
+CURRENT_REPOSITORY="$(pwd)"
+GITHOOKS_DIRECTORY="$(dirname $(dirname $(dirname $0)))"
+GITHOOKS_BIN_DIRECTORY="$(githook-companion config dependency path)"
+CUSTOM_GITHOOKS_DIRECTORY="$CURRENT_REPOSITORY/.githook-companion/hooks"
+
+echo "apply generic pre-commit"
+
+# Make sure my email is set properly
+if [ -z "$(git config user.email)" ]
+then
+	cat "\nError: user.email not set\n\n"
+	exit 1
+fi
+
+# Make sure my name is set properly
+if [ -z "$(git config user.name)" ]
+then
+	cat "\nError: user.name not set\n\n"
+	exit 1
+fi
+
+if [ -d "$CUSTOM_GITHOOKS_DIRECTORY" ] && [ -f "$CUSTOM_GITHOOKS_DIRECTORY/pre-commit" ] && [ "$GITHOOKS_DIRECTORY" != "$CURRENT_REPOSITORY" ]
+then
+  echo "apply custom pre-commit"
+  "$CUSTOM_GITHOOKS_DIRECTORY"/pre-commit
+fi
