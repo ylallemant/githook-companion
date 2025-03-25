@@ -19,7 +19,7 @@ Sticking with Git means any workflow/tool you build/use on top of it will not br
 ### Installation
 
 ```sh
-curl -fsSL https://github.com/ylallemant/githook-companion/raw/0.7.8/install.sh | bash
+curl -fsSL https://github.com/ylallemant/githook-companion/raw/main/install.sh | bash
 ```
 
 ### Update
