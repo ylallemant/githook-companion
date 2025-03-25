@@ -30,6 +30,7 @@ Tokenizer
 
 ## Libs
 
+- https://stackoverflow.com/a/3614928 (Lexer/Parser)
 - https://github.com/aaaton/golem (lemmatizer)
 - https://github.com/go-ego/gse (text segmentation)
 - https://github.com/sentencizer/sentencizer (Sentence Splitting)

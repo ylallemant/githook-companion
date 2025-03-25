@@ -1,8 +1,9 @@
 package api
 
 const (
-	WordSourceLexeme   = "lexeme"
-	WordSourceSplitter = "splitter"
+	WordSourceLexeme         = "lexeme"
+	WordSourceLexemeSplitter = "lexeme-splitter"
+	WordSourceSplitter       = "splitter"
 )
 
 type Word struct {

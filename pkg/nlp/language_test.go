@@ -16,6 +16,13 @@ func TestDetectLanguage(t *testing.T) {
 		expectedKnown   bool
 	}{
 		{
+			name:          "short german sentence",
+			sentence:      "neues Ladenkorb",
+			expectedCode:  "de",
+			expectedName:  "german",
+			expectedKnown: true,
+		},
+		{
 			name:            "known language german",
 			sentence:        "neues Ladenkorb angelegt",
 			ignoreWordCount: true,

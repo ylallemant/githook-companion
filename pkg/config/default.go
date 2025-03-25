@@ -99,7 +99,7 @@ func commitLexemes() []*nlpapi.Lexeme {
 
 	commitTypeReplaceExpression, _ := regexp.Compile(expression)
 	commitTypeExpression, _ := regexp.Compile(fmt.Sprintf(
-		"%s\\b\\s*:{0,1}",
+		"%s\\b\\s*\\(\\w+\\)\\s*!{0,1}\\s*:{0,1}",
 		expression,
 	))
 
@@ -112,12 +112,50 @@ func commitLexemes() []*nlpapi.Lexeme {
 			Variants: []*nlpapi.Variant{
 				{
 					Matcher: &nlpapi.Matcher{Regex: commitTypeExpression},
+				},
+			},
+			Splitters: []*nlpapi.LexemeSplitter{
+				{
+					Name:        api.CommitTypeTokenName,
+					TokenName:   api.CommitTypeTokenName,
+					Description: "commit type lexeme",
+					Matcher:     &nlpapi.Matcher{Regex: commitTypeReplaceExpression},
 					Normalisers: []*nlpapi.NormalisationStep{
 						{
 							Matcher:    &nlpapi.Matcher{Regex: commitTypeReplaceExpression},
 							ReplaceAll: true,
 							Formatter: &nlpapi.Formatter{
 								Template: "{{ upper . }}",
+							},
+						},
+					},
+				},
+				{
+					Name:        api.CommitScopeTokenName,
+					TokenName:   api.CommitScopeTokenName,
+					Description: "commit scope lexeme",
+					Matcher:     &nlpapi.Matcher{Regex: regexp.MustCompile(`\((\w+)\)`)},
+					Normalisers: []*nlpapi.NormalisationStep{
+						{
+							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`(\w+)`)},
+							ReplaceAll: true,
+							Formatter: &nlpapi.Formatter{
+								Template: "{{ lower . }}",
+							},
+						},
+					},
+				},
+				{
+					Name:        api.CommitBreakingTokenName,
+					TokenName:   api.CommitBreakingTokenName,
+					Description: "commit scope lexeme",
+					Matcher:     &nlpapi.Matcher{Regex: regexp.MustCompile(`(!{0,1})`)},
+					Normalisers: []*nlpapi.NormalisationStep{
+						{
+							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`(!)`)},
+							ReplaceAll: true,
+							Formatter: &nlpapi.Formatter{
+								Template: "{{ lower . }}",
 							},
 						},
 					},
