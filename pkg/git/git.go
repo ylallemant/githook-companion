@@ -47,7 +47,6 @@ func EnsureGitIgnoreFromConfig(configuration *api.Config) error {
 
 		content = string(raw)
 	}
-	fmt.Println("  - content:", content)
 
 	for _, entry := range entries {
 		index := strings.Index(content, entry)

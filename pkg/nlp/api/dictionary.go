@@ -8,5 +8,6 @@ type Dictionary struct {
 	TokenValue           string   `yaml:"token_value" json:"token_value"`
 	TokenValueIsMatch    bool     `yaml:"token_value_is_match" json:"token_value_is_match"`
 	Entries              []string `yaml:"synonyms" json:"synonyms"`
+	Weight               int      `yaml:"weight" json:"weight"`
 	ConfidenceThresthold float64  `yaml:"confidence_thresthold" json:"confidence_thresthold"`
 }

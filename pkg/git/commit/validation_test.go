@@ -1,7 +1,6 @@
 package commit
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -114,49 +113,6 @@ func TestValidate(t *testing.T) {
 			expectedValidationResult: false,
 		},
 		{
-			name:    "matching commit type prefix",
-			message: "FeaT  :  some changes",
-			config: &api.Config{
-				Commit: &api.Commit{
-					Types: []*api.CommitType{
-						{
-							Type: "feat",
-						},
-					},
-					TokenizerOptions: &nlpapi.TokenizerOptions{
-						LanguageCodes: []string{
-							"en",
-						},
-						Dictionaries: []*nlpapi.Dictionary{
-							{
-								LanguageCode: "en",
-								Name:         "add",
-								TokenName:    api.CommitTypeTokenName,
-								TokenValue:   "feat",
-								Entries: []string{
-									"adds",
-									"added",
-									"adding",
-									"new",
-								},
-							},
-						},
-					},
-				},
-			},
-			expectedToken: &nlpapi.Token{
-				Name:        api.CommitTypeTokenName,
-				Source:      nlpapi.TokenSourceDictionary,
-				SourceName:  fmt.Sprintf("%s_dictionary", api.CommitTypeTokenName),
-				SourceMatch: "feat",
-				Value:       "feat",
-				Confidence:  1,
-			},
-			expectedDictionaryFound:  false,
-			expectedCommitType:       "feat",
-			expectedValidationResult: true,
-		},
-		{
 			name:    "matching commit type with a dictionary",
 			message: "added some changes",
 			config: &api.Config{
@@ -176,6 +132,7 @@ func TestValidate(t *testing.T) {
 								Name:         "weak-feature-signals",
 								TokenName:    api.CommitTypeTokenName,
 								TokenValue:   "feat",
+								Weight:       1,
 								Entries: []string{
 									"add",
 									"implement",
@@ -220,6 +177,7 @@ func TestValidate(t *testing.T) {
 								Name:         "nomatch",
 								TokenName:    api.CommitTypeTokenName,
 								TokenValue:   "feat",
+								Weight:       2,
 								Entries: []string{
 									"nomatch",
 									"whatever",

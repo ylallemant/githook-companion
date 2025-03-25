@@ -7,6 +7,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/nlp"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
@@ -37,10 +38,16 @@ func assessMessageType(tokens []*nlpapi.Token, cfg *api.Config) (*nlpapi.Token, 
 
 	for _, token := range tokens {
 		if token.Name != nlpapi.TokenUnknown && token.Source != nlpapi.TokenSourceLexeme {
+			dictionary := nlp.DictionaryByName(token.SourceName, cfg.TokenizerOptions)
+			if dictionary == nil {
+				log.Warn().Msgf("dictionary from token source name \"%s\" was not found", token.SourceName)
+				continue
+			}
+
 			if _, ok := typeWeights[token.Name]; ok {
-				typeWeights[token.SourceName] = typeWeights[token.SourceName] + commitTypeWeightIncrement(token)
+				typeWeights[token.SourceName] = typeWeights[token.SourceName] + dictionary.Weight
 			} else {
-				typeWeights[token.SourceName] = commitTypeWeightIncrement(token)
+				typeWeights[token.SourceName] = dictionary.Weight
 				tokenMap[token.SourceName] = token
 			}
 		}

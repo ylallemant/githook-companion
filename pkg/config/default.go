@@ -22,14 +22,16 @@ const (
 
 func Default() *api.Config {
 	config := new(api.Config)
-
 	commit := new(api.Commit)
+	config.Commit = commit
+
 	commit.MessageTemplate = "{{ .CommitType | upper }}: {{ if .IssueTrackerReference }}({{ .IssueTrackerReference }}){{ end }} {{ .Message | lower }}"
 	commit.DefaultType = typeFeature
 	commit.Types = commitTypes()
 	commit.NoFormatting = []string{
 		TypeIgnore,
 	}
+
 	commit.TokenizerOptions = &nlpapi.TokenizerOptions{
 		LanguageDetectionOptions: nlp.DefaultLanguageDetectionOptions(),
 		LanguageCodes: []string{
@@ -38,8 +40,6 @@ func Default() *api.Config {
 		Dictionaries: commitDictionaries(),
 		Lexemes:      commitLexemes(),
 	}
-
-	config.Commit = commit
 
 	return config
 }
@@ -169,6 +169,7 @@ func commitDictionaries() []*nlpapi.Dictionary {
 			LanguageCode: "en",
 			Name:         "weak-feature-signals",
 			Description:  "a collection of words that can imply a new feature",
+			Weight:       1,
 			TokenName:    api.CommitTypeTokenName,
 			TokenValue:   typeFeature,
 			Entries: []string{
@@ -181,6 +182,7 @@ func commitDictionaries() []*nlpapi.Dictionary {
 		{
 			LanguageCode: "en",
 			Name:         "ignore-signals",
+			Weight:       2,
 			TokenName:    api.CommitTypeTokenName,
 			TokenValue:   TypeIgnore,
 			Entries: []string{
@@ -191,6 +193,7 @@ func commitDictionaries() []*nlpapi.Dictionary {
 		{
 			LanguageCode: "en",
 			Name:         "refactor-signals",
+			Weight:       2,
 			TokenName:    api.CommitTypeTokenName,
 			TokenValue:   typeRefactor,
 			Entries: []string{
@@ -204,6 +207,7 @@ func commitDictionaries() []*nlpapi.Dictionary {
 		{
 			LanguageCode: "en",
 			Name:         "fix-signals",
+			Weight:       2,
 			TokenName:    api.CommitTypeTokenName,
 			TokenValue:   typeFix,
 			Entries: []string{
@@ -215,11 +219,33 @@ func commitDictionaries() []*nlpapi.Dictionary {
 		{
 			LanguageCode: "en",
 			Name:         "docs-signals",
+			Weight:       2,
 			TokenName:    api.CommitTypeTokenName,
 			TokenValue:   typeDocs,
 			Entries: []string{
 				"document",
 				"doc",
+			},
+		},
+		{
+			LanguageCode: "en",
+			Name:         "test-signals",
+			Weight:       2,
+			TokenName:    api.CommitTypeTokenName,
+			TokenValue:   typeTest,
+			Entries: []string{
+				"test",
+			},
+		},
+		{
+			LanguageCode: "en",
+			Name:         "breaking-signals",
+			Weight:       4,
+			TokenName:    api.CommitTypeTokenName,
+			TokenValue:   typeBreaking,
+			Entries: []string{
+				"break",
+				"major",
 			},
 		},
 	}

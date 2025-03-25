@@ -1,29 +1,17 @@
 package commit
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
-	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/nlp"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 func Validate(message string, configuration *api.Config) (string, bool, *nlpapi.Token, []*nlpapi.Token, error) {
 	tokenizer, _ := nlp.NewTokenizer(configuration.Commit.TokenizerOptions)
-
-	// TODO: get dictionary from function to test its structure
-	tokenizer.AddDictionary(&nlpapi.Dictionary{
-		LanguageCode:      nlpapi.LanguageCodeWildcard,
-		Name:              fmt.Sprintf("%s_dictionary", api.CommitTypeTokenName),
-		TokenName:         api.CommitTypeTokenName,
-		TokenValueIsMatch: true,
-		Entries:           config.CommitTypeList(configuration),
-	})
-
 	languageCode, _, known := tokenizer.LanguageDetector().DetectLanguage(message, false)
 	log.Debug().Msgf("detected language \"%s\"", languageCode)
 

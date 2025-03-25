@@ -22,6 +22,7 @@ var rootCmd = &cobra.Command{
 	Use:   "validate [message]",
 	Short: "validates interactively Git commit messages",
 	Long:  ``,
+	Args:  cobra.MatchAll(cobra.MinimumNArgs(0), cobra.MaximumNArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		globals.ProcessGlobals()
 
@@ -47,12 +48,17 @@ var rootCmd = &cobra.Command{
 			configuration = config.Default()
 		}
 
-		if !environment.IsAnArgument(os.Args[4]) && options.Current.Message != "" {
-			return errors.Errorf("too many messages provided, choose whether per argument or flag")
+		log.Debug().Msgf("arguments \"%v\"", args)
+		if len(args) > 0 && options.Current.Message != "" {
+			return errors.Errorf("too many messages provided, choose whether per argument or per flag")
 		}
 
-		message := os.Args[3]
-		log.Debug().Msgf("message from arguments \"%s\"", message)
+		message := ""
+
+		if len(args) > 0 {
+			message = args[0]
+			log.Debug().Msgf("message from arguments \"%s\"", message)
+		}
 
 		if options.Current.Message != "" {
 			message = options.Current.Message
