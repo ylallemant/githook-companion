@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/api"
@@ -22,25 +23,19 @@ func EnsureConfiguration(path string, reference *api.ParentConfig, minimalistic 
 		return err
 	}
 
+	for _, directory := range api.ConfigProcessingDirectories {
+		err = filesystem.EnsureDirectory(filepath.Join(path, directory))
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func ensureConfigurationDirectory(path string) error {
 	configurationDirectory := DirectoryPathFromBase(path)
-
-	exists, _, err := filesystem.DirectoryExists(configurationDirectory)
-	if err != nil {
-		return errors.Wrapf(err, "failed to check existance of %s", configurationDirectory)
-	}
-
-	if !exists {
-		err = os.MkdirAll(configurationDirectory, 0755)
-		if err != nil {
-			return errors.Wrapf(err, "failed create directory %s", configurationDirectory)
-		}
-	}
-
-	return nil
+	return filesystem.EnsureDirectory(configurationDirectory)
 }
 
 func ensureConfigurationFile(path string, reference *api.ParentConfig, minimalistic bool) error {

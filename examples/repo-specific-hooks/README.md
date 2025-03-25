@@ -26,10 +26,5 @@ Once the configuration is in place, you can install the dependencies:
 
 - locally if the tools may have different verions in different projects (used in the example)
 ```shell
-githook-companion install dependencies -d ./.githook-companion/bin
-```
-
-- "globally" in your Home directory (`<HOME>/.local/bin`)
-```shell
-githook-companion install dependencies
+githook-companion init
 ```

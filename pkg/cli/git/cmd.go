@@ -1,16 +1,17 @@
-package install
+package git
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githook-companion/pkg/cli/install/dependencies"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/commit"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/server"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "install",
-	Short: "installation commands",
+	Use:   "git",
+	Short: "helpers for Git configuration",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("please use a subcommand...")
@@ -20,7 +21,8 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(dependencies.Command())
+	rootCmd.AddCommand(server.Command())
+	rootCmd.AddCommand(commit.Command())
 }
 
 func Command() *cobra.Command {

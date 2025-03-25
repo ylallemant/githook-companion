@@ -61,7 +61,7 @@ The standardization allows for subsequent processings like the automation of cha
 Inspiration for the configuration are `Conventional Commits` patterns like [this one](https://www.conventionalcommits.org/en/v1.0.0/).
 Different projects have different people, different needs; so this tool won't force you into any specific pattern, although we propose one in the [default configuration](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L22).
 
-The tool uses tokenization to enable complex checks and formatting possibilities:
+The tool uses tokenization to provide complex checks and formatting capabilities:
 
 - restrict commit message language(s) ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L28))
 - define regular expression based [lexemes](https://en.wikipedia.org/wiki/Lexical_analysis#Lexical_token_and_lexical_tokenization) for the tokenization ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L94))
@@ -73,7 +73,7 @@ The tool uses tokenization to enable complex checks and formatting possibilities
 > You can test/tweek your commit configuration effects with following command:
 > 
 > ```bash
-> githook-companion commit validate -m "commit-message" [--debug]
+> githook-companion git commit validate -m "commit-message" [--debug]
 > ```
 
 ### Parent Configurations
@@ -94,7 +94,7 @@ Here you can find an [example of parent configuration](https://github.com/ylalle
 
 You may want to use specific binaries in your githooks.
 
-`githook-companion` allows you to list them in the configuration and will automatically download when you use the [init command](#initialize).
+`githook-companion` allows you to list them in the configuration and it will automatically download them when you use the [init command](#initialize).
 
 > [!TIP]
 > Using the parent configurations, you can define different tools in the parent and the child project:

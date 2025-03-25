@@ -1,17 +1,16 @@
-package commit
+package committype
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	commitType "github.com/ylallemant/githook-companion/pkg/cli/commit/type"
-	"github.com/ylallemant/githook-companion/pkg/cli/commit/validate"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/commit/type/list"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "commit",
-	Short: "tools for commit message processing",
+	Use:   "type",
+	Short: "commit message type commands",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("please use a subcommand...")
@@ -21,8 +20,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(validate.Command())
-	rootCmd.AddCommand(commitType.Command())
+	rootCmd.AddCommand(list.Command())
 }
 
 func Command() *cobra.Command {

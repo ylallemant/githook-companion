@@ -9,12 +9,20 @@ const (
 	ConfigDirectory     = ".githook-companion"
 	ConfigFile          = "config.yaml"
 	GithooksDirectory   = "hooks"
+	BinDirectory        = "bin"
+	ContextDirectory    = "context"
+	LogDirectory        = "logs"
 	CommitTypeTokenName = "commit_type"
 	CommitMessageKey    = "message"
 )
 
 var (
-	ConfigurationNotFound = errors.New("configuration not found")
+	ConfigurationNotFound       = errors.New("configuration not found")
+	ConfigProcessingDirectories = []string{
+		LogDirectory,
+		BinDirectory,
+		ContextDirectory,
+	}
 )
 
 type Config struct {

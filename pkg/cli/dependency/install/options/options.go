@@ -12,4 +12,5 @@ func NewOptions() *Options {
 
 type Options struct {
 	Directory string
+	All       bool
 }

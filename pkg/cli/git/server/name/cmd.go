@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githook-companion/pkg/cli/server/name/options"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/server/name/options"
 	"github.com/ylallemant/githook-companion/pkg/git/server"
 	"github.com/ylallemant/githook-companion/pkg/globals"
 )

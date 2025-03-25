@@ -15,8 +15,12 @@ import (
 var entries = []string{
 	`
 # githook-companion rules`,
-	filepath.Join(api.ConfigDirectory, "bin", ""),
-	filepath.Join(api.ConfigDirectory, "locks", ""),
+}
+
+func init() {
+	for _, directory := range api.ConfigProcessingDirectories {
+		entries = append(entries, filepath.Join(api.ConfigDirectory, directory))
+	}
 }
 
 func EnsureGitIgnoreFromConfig(configuration *api.Config) error {
@@ -26,6 +30,7 @@ func EnsureGitIgnoreFromConfig(configuration *api.Config) error {
 	}
 
 	path = filepath.Join(path, ".gitignore")
+	fmt.Println("ensure Git exclusion rules in .gitignore:", path)
 
 	exists, _, err := filesystem.FileExists(path)
 	if err != nil {
@@ -42,11 +47,13 @@ func EnsureGitIgnoreFromConfig(configuration *api.Config) error {
 
 		content = string(raw)
 	}
+	fmt.Println("  - content:", content)
 
 	for _, entry := range entries {
 		index := strings.Index(content, entry)
 
 		if index < 0 {
+			fmt.Println("  - add exclusion rule:", entry)
 			content = fmt.Sprintf(`%s
 %s`,
 				content,

@@ -42,3 +42,19 @@ func DirectoryExists(path string) (bool, fs.FileInfo, error) {
 
 	return true, fi, ErrorNoDirectory
 }
+
+func EnsureDirectory(path string) error {
+	exists, _, err := DirectoryExists(path)
+	if err != nil {
+		return errors.Wrapf(err, "failed to check existance of %s", path)
+	}
+
+	if !exists {
+		err = os.MkdirAll(path, 0755)
+		if err != nil {
+			return errors.Wrapf(err, "failed create directory %s", path)
+		}
+	}
+
+	return nil
+}

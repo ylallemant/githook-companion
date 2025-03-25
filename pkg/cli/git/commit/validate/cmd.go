@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/api"
-	"github.com/ylallemant/githook-companion/pkg/cli/commit/validate/options"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/commit/validate/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/environment"
 	"github.com/ylallemant/githook-companion/pkg/git/commit"
@@ -47,7 +47,7 @@ var rootCmd = &cobra.Command{
 			configuration = config.Default()
 		}
 
-		if !environment.IsAnArgument(os.Args[3]) && options.Current.Message != "" {
+		if !environment.IsAnArgument(os.Args[4]) && options.Current.Message != "" {
 			return errors.Errorf("too many messages provided, choose whether per argument or flag")
 		}
 
@@ -159,7 +159,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
-	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback-config", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
 	rootCmd.SetOutput(os.Stderr)

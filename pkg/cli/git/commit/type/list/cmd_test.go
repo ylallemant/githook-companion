@@ -37,7 +37,7 @@ func TestCommand(t *testing.T) {
 		},
 		{
 			name:       "with simple config",
-			configPath: "../../../../../test/configs/simple.yaml",
+			configPath: "../../../../../../test/configs/simple/config.yaml",
 			expected: `┌───────────────────────────────────────────────────────────────────┐
 │ Commit Types                                                      │
 ├──────┬──────────────────────────────────────────────┬─────────────┤
@@ -54,7 +54,8 @@ func TestCommand(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(tt *testing.T) {
 			b := bytes.NewBufferString("")
-			args := []string{"--fallback"}
+			args := []string{}
+			args = append(args, "--fallback-config")
 
 			rootCmd.SetOut(b)
 			if c.configPath != "" {

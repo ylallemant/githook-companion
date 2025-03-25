@@ -80,7 +80,7 @@ func TestCommand(t *testing.T) {
 			b := bytes.NewBufferString("")
 
 			rootCmd.SetOut(b)
-			rootCmd.SetArgs([]string{"--fallback", "-m", c.message})
+			rootCmd.SetArgs([]string{"--fallback-config", "-m", c.message})
 			cmdErr := rootCmd.Execute()
 
 			out, err := io.ReadAll(b)
