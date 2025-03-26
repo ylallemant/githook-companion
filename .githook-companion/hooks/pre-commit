@@ -1,0 +1,11 @@
+#!/usr/bin/sh
+set -eu
+
+CHILD_CONFIG_REPOSITORY="$(pwd)"
+# binary dependecy directories.
+# if there is no parent config,
+# both variables have the same value
+PARENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
+CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
+
+go test -cover ./...
