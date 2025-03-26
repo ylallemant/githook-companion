@@ -23,13 +23,23 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
-		var path string
+		var basePath string
 		var reference *api.ParentConfig
 
+		globalBasePath, err := config.GetGlobalBasePath()
+		if err != nil {
+			return err
+		}
+
+		localBasePath, err := config.GetLocalBasePath()
+		if err != nil {
+			return err
+		}
+
 		if options.Current.Global {
-			path, err = config.GetGlobalBasePath()
+			basePath = globalBasePath
 		} else {
-			path, err = config.GetLocalBasePath()
+			basePath = localBasePath
 		}
 
 		if options.Current.ParentPath != "" && options.Current.ParentRepository != "" {
@@ -43,14 +53,14 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to get base path")
 		}
 
-		err = config.EnsureConfiguration(path, reference, options.Current.Minimalistic)
+		err = config.EnsureConfiguration(basePath, reference, options.Current.Minimalistic)
 		if err != nil {
 			return errors.Wrap(err, "failed to ensure configuration")
 		}
 
-		configurationFile := config.FilePathFromBase(path)
+		configurationFilePath := config.FilePathFromBase(basePath)
 
-		cfg, err := config.Load(configurationFile, true)
+		cfg, err := config.Load(configurationFilePath, true)
 		if err != nil {
 			return err
 		}
@@ -61,6 +71,11 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
+		}
+
+		parentBasePath, err := config.BasePathFromConfig(cfg)
+		if err != nil {
+			return err
 		}
 
 		// ensure githooks are present
@@ -92,7 +107,16 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		err = git.EnsureGitIgnoreFromConfig(cfg)
+		if parentBasePath != basePath {
+			// ensure rules exist in the parent .gitignore file
+			err = git.EnsureGitIgnoreFromBasePath(parentBasePath)
+			if err != nil {
+				return err
+			}
+		}
+
+		// ensure rules exist in the child/project .gitignore file
+		err = git.EnsureGitIgnoreFromBasePath(localBasePath)
 		if err != nil {
 			return err
 		}

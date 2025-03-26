@@ -8,7 +8,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/api"
-	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/filesystem"
 )
 
@@ -23,12 +22,7 @@ func init() {
 	}
 }
 
-func EnsureGitIgnoreFromConfig(configuration *api.Config) error {
-	path, err := config.BasePathFromConfig(configuration)
-	if err != nil {
-		return err
-	}
-
+func EnsureGitIgnoreFromBasePath(path string) error {
 	path = filepath.Join(path, ".gitignore")
 	fmt.Println("ensure Git exclusion rules in .gitignore:", path)
 
