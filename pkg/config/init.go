@@ -24,7 +24,7 @@ func EnsureConfiguration(path string, reference *api.ParentConfig, minimalistic 
 	}
 
 	for _, directory := range api.ConfigProcessingDirectories {
-		err = filesystem.EnsureDirectory(filepath.Join(path, directory))
+		err = filesystem.EnsureDirectory(filepath.Join(path, api.ConfigDirectory, directory))
 		if err != nil {
 			return err
 		}
@@ -92,6 +92,13 @@ func EnsureReference(reference *api.ParentConfig) error {
 		_, err = git.Execute()
 		if err != nil {
 			return errors.Wrapf(err, "failed to clone reference repository %s", reference.GitRepository)
+		}
+	}
+
+	for _, directory := range api.ConfigProcessingDirectories {
+		err = filesystem.EnsureDirectory(filepath.Join(path, api.ConfigDirectory, directory))
+		if err != nil {
+			return err
 		}
 	}
 

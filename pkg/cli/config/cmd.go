@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/cli/config/arch"
 	"github.com/ylallemant/githook-companion/pkg/cli/config/dependency"
+	"github.com/ylallemant/githook-companion/pkg/cli/config/directory"
 	"github.com/ylallemant/githook-companion/pkg/cli/config/hook"
 	"github.com/ylallemant/githook-companion/pkg/cli/config/os"
 	"github.com/ylallemant/githook-companion/pkg/cli/config/show"
@@ -24,6 +25,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.AddCommand(directory.Command())
 	rootCmd.AddCommand(arch.Command())
 	rootCmd.AddCommand(os.Command())
 	rootCmd.AddCommand(show.Command())
