@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/iancoleman/strcase"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
@@ -68,6 +69,7 @@ func dynamicTemplateStruct(tokenNameReferences []string) reflect.Type {
 	})
 
 	dynamicStruct := reflect.StructOf(fields)
+	log.Debug().Msgf("dynamic template struct %+v)", dynamicStruct)
 	return dynamicStruct
 }
 
@@ -87,5 +89,6 @@ func dynamicTemplateData(dynamicStruct reflect.Type, message, commitTypeTokenSou
 
 	instance.Elem().FieldByName(TokenNameTemplateFormat(api.CommitMessageKey)).Set(reflect.ValueOf(message))
 
+	log.Debug().Msgf("dynamic template struct instance %+v)", instance)
 	return instance
 }

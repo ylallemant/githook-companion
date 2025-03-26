@@ -37,7 +37,7 @@ func DefaultLanguageDetectionOptions() *api.LanguageDetectionOptions {
 	return &api.LanguageDetectionOptions{
 		DefautLanguageCode:   "en",
 		DefautLanguageName:   "english",
-		ConfidenceThresthold: 0.25,
+		ConfidenceThresthold: 0.20,
 		MinimumWordCount:     5,
 	}
 }

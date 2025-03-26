@@ -1,16 +1,17 @@
 #!/bin/sh
 set -eu
 
-# directory where the hook was triggered (your project)
-PROJECT_DIRECTORY="$(pwd)"
-# directory where the hook is stored (child or parent)
-CONFIGURATION_DIRECTORY="$(dirname $(dirname $(dirname $0)))"
-# binary dependecy directory
+# root path of the repositories holding configuration
+# if there is no parent config,
+# both variables have the same value
+PARENT_CONFIG_REPOSITORY="$(dirname $(dirname $(dirname $0)))"
+CHILD_CONFIG_REPOSITORY="$(pwd)"
+# binary dependecy directories
 BIN_DIRECTORY="$(githook-companion config dependency path)"
+CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
 # githooks directory
 CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 CHILD_CONFIG_DIRECTORY="$(githook-companion config directory --child)"
-
 
 echo "apply parent prepare-commit-msg"
 
@@ -18,7 +19,7 @@ COMMIT_MESSAGE_FILE=$1
 COMMIT_SOURCE=$2
 
 # log some information for debugging
-CHILD_LOG_FILE="$CHILD_CONFIG_DIRECTORY/logs/prepare-commit-msg.log
+CHILD_LOG_FILE="$CHILD_CONFIG_DIRECTORY"/logs/prepare-commit-msg.log
 echo "$(date)" > "$CHILD_LOG_FILE"
 echo "-------------------------" >> "$CHILD_LOG_FILE"
 echo "COMMIT_MESSAGE_FILE: $COMMIT_MESSAGE_FILE" >> "$CHILD_LOG_FILE"
@@ -28,4 +29,4 @@ githook-companion debug >>  "$CHILD_LOG_FILE"
 echo "-------------------------" >>  "$CHILD_LOG_FILE"
 env >>  "$CHILD_LOG_FILE"
 
-githook-companion commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE" < /dev/tty
+githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE" < /dev/tty

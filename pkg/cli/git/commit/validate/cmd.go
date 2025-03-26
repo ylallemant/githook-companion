@@ -107,6 +107,7 @@ var rootCmd = &cobra.Command{
 
 			// commit type from user input
 			commitTypeToken = commit.CommitTypeTokenFromString(commiType, languageCode)
+			tokens = append(tokens, commitTypeToken)
 		} else if !validated {
 			log.Debug().Msg("invalid message error because no user input is possible")
 			// binary has not been called from a terminal
@@ -125,8 +126,6 @@ var rootCmd = &cobra.Command{
 %s
 			`, typeList)
 
-			//fmt.Fprintln(cmd.OutOrStderr(), nonInteractiveErrorMessage)
-			//os.Exit(1)
 			return errors.New(nonInteractiveErrorMessage)
 		}
 
