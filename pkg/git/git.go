@@ -2,63 +2,79 @@ package git
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/ylallemant/githook-companion/pkg/api"
-	"github.com/ylallemant/githook-companion/pkg/filesystem"
+	"github.com/ylallemant/githook-companion/pkg/command"
 )
 
-var entries = []string{
-	`
-# githook-companion rules`,
+func CurrentBranchFromPath(path string) (string, error) {
+	git := command.New("git")
+
+	if path != "" {
+		git.AddArg("-C")
+		git.AddArg(path)
+	}
+
+	git.AddArg("rev-parse")
+	git.AddArg("--abbrev-ref")
+	git.AddArg("HEAD")
+
+	branch, err := git.Execute()
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to fetch git branch at %s", path)
+	}
+
+	return branch, nil
 }
 
-func init() {
-	for _, directory := range api.ConfigProcessingDirectories {
-		entries = append(entries, filepath.Join(api.ConfigDirectory, directory))
-	}
+func CurrentBranch() (string, error) {
+	return CurrentBranchFromPath("")
 }
 
-func EnsureGitIgnoreFromBasePath(path string) error {
-	path = filepath.Join(path, ".gitignore")
-	fmt.Println("ensure Git exclusion rules in .gitignore:", path)
+func CommitHashFromPath(path, branch string) (string, error) {
+	git := command.New("git")
 
-	exists, _, err := filesystem.FileExists(path)
+	if path != "" {
+		git.AddArg("-C")
+		git.AddArg(path)
+	}
+
+	git.AddArg("rev-parse")
+	git.AddArg(branch)
+
+	hash, err := git.Execute()
 	if err != nil {
-		return err
+		return "", errors.Wrapf(err, "failed to fetch git hash for branch \"%s\" at %s", branch, path)
 	}
 
-	content := ""
+	return hash, nil
+}
 
-	if exists {
-		raw, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
-
-		content = string(raw)
-	}
-
-	for _, entry := range entries {
-		index := strings.Index(content, entry)
-
-		if index < 0 {
-			fmt.Println("  - add exclusion rule:", entry)
-			content = fmt.Sprintf(`%s
-%s`,
-				content,
-				entry,
-			)
-		}
-	}
-
-	err = os.WriteFile(path, []byte(content), 0644)
+func CommitHash() (string, error) {
+	branch, err := CurrentBranch()
 	if err != nil {
-		return errors.Wrapf(err, "failed to write %s", path)
+		return "", err
 	}
+
+	return CommitHashFromPath("", branch)
+}
+
+func Pull(path string) error {
+	git := command.New("git")
+
+	if path != "" {
+		git.AddArg("-C")
+		git.AddArg(path)
+	}
+
+	git.AddArg("pull")
+
+	result, err := git.Execute()
+	if err != nil {
+		return errors.Wrapf(err, "failed to pull git repository at %s", path)
+	}
+
+	fmt.Println(result, "at", path)
 
 	return nil
 }

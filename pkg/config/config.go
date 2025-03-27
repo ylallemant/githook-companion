@@ -95,6 +95,11 @@ func Get() (*api.Config, error) {
 	return Default(), nil
 }
 
+func LoadFromBase(path string, strict bool) (*api.Config, error) {
+	path = FilePathFromBase(path)
+	return Load(path, strict)
+}
+
 func Load(path string, strict bool) (*api.Config, error) {
 	var err error
 

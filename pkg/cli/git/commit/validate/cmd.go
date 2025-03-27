@@ -10,7 +10,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/cli/git/commit/validate/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/environment"
@@ -24,28 +23,15 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.MatchAll(cobra.MinimumNArgs(0), cobra.MaximumNArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		globals.ProcessGlobals()
+		configContext, err := config.InitContext()
+		if err != nil {
+			return err
+		}
 
 		// assess if binary was called in a terminal or from some editor/git client
 		calledFromTerminal, err := environment.CalledFromTerminal()
 		if err != nil {
 			return errors.Wrap(err, "failed to assess if called from terminal")
-		}
-
-		var configuration *api.Config
-
-		if globals.Current.ConfigPath != "" {
-			configuration, err = config.Load(globals.Current.ConfigPath, true)
-		} else {
-			configuration, err = config.Get()
-		}
-
-		if err != nil && !globals.Current.FallbackConfig {
-			return err
-		}
-
-		if configuration == nil {
-			configuration = config.Default()
 		}
 
 		log.Debug().Msgf("arguments \"%v\"", args)
@@ -71,7 +57,7 @@ var rootCmd = &cobra.Command{
 
 		log.Debug().Msgf("validate \"%s\"", message)
 
-		languageCode, validated, commitTypeToken, tokens, err := commit.Validate(message, configuration)
+		languageCode, validated, commitTypeToken, tokens, err := commit.Validate(message, configContext.Config())
 		if err != nil {
 			return errors.Wrap(err, "failed validation")
 		}
@@ -93,7 +79,7 @@ var rootCmd = &cobra.Command{
 
 			prompt := promptui.Select{
 				Label:     "Select Commit Type",
-				Items:     configuration.Commit.Types,
+				Items:     configContext.Config().Commit.Types,
 				Templates: templates,
 			}
 
@@ -102,7 +88,7 @@ var rootCmd = &cobra.Command{
 				return errors.Wrap(err, "interactive commit type user selection failed")
 			}
 
-			commiType := configuration.Commit.Types[idx].Type
+			commiType := configContext.Config().Commit.Types[idx].Type
 			log.Debug().Msgf("user selected commit type number %d \"%s\"", idx, commiType)
 
 			// commit type from user input
@@ -114,7 +100,7 @@ var rootCmd = &cobra.Command{
 			// no user interaction possible
 			// output invalidity information and throw error
 			typeList := ""
-			for _, commitType := range configuration.Commit.Types {
+			for _, commitType := range configContext.Config().Commit.Types {
 				typeList = typeList + fmt.Sprintf("    - %s: %s\n", commitType.Type, commitType.Description)
 			}
 
@@ -130,11 +116,11 @@ var rootCmd = &cobra.Command{
 		}
 
 		log.Debug().Msgf("commit type token: %s", commitTypeToken.Value)
-		log.Debug().Msgf("commit types without formatting: %v", configuration.Commit.NoFormatting)
+		log.Debug().Msgf("commit types without formatting: %v", configContext.Config().Commit.NoFormatting)
 
-		if !slices.Contains(configuration.Commit.NoFormatting, commitTypeToken.Value) {
+		if !slices.Contains(configContext.Config().Commit.NoFormatting, commitTypeToken.Value) {
 			// ensure commit type prefix format (lower-case)
-			message, err = commit.EnsureFormat(message, configuration.Commit.MessageTemplate, commitTypeToken, tokens)
+			message, err = commit.EnsureFormat(message, configContext.Config().Commit.MessageTemplate, commitTypeToken, tokens)
 			if err != nil {
 				return errors.Wrap(err, "failed to format commit message")
 			}
@@ -164,8 +150,8 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
-	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback-config", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
-	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback-config", globals.Current.FallbackConfig, "if no configContext.Config() was found, fallback to the default one")
+	//rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configContext.Config() file")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
 	rootCmd.SetOutput(os.Stderr)
 }

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 func CalledFromTerminal() (bool, error) {
@@ -15,10 +16,15 @@ func CalledFromTerminal() (bool, error) {
 	if err != nil {
 		return false, errors.Wrapf(err, "failed to get local directory")
 	}
+	log.Debug().Msgf("local path \"%s\"", dirname)
 
 	oldpwd := FindEnvVar("OLDPWD")
 	// absolute path of the called executable
 	underscore := FindEnvVar("_")
+	log.Debug().Msgf("OLDPWD       \"%s\"", oldpwd)
+	log.Debug().Msgf("_            \"%s\"", underscore)
+	log.Debug().Msgf("TERM_PROGRAM \"%s\"", FindEnvVar("TERM_PROGRAM"))
+	log.Debug().Msgf("TERM         \"%s\"", FindEnvVar("TERM"))
 
 	assertion := pathValid(dirname, oldpwd) &&
 		binaryPathValid(underscore)
@@ -55,15 +61,19 @@ func pathValid(path, oldpath string) bool {
 }
 
 func binaryPathValid(path string) bool {
+	log.Debug().Msgf("binary path assessment for \"%s\"", path)
 	osAssessment := false
 
 	switch runtime.GOOS {
 	case "darwin":
 		osAssessment = assessForDarwin(path)
+		log.Debug().Msgf("path assessment for darwin: %v", osAssessment)
 	case "linux":
 		osAssessment = assessForLinux(path)
+		log.Debug().Msgf("path assessment for linux: %v", osAssessment)
 	default:
-		return false
+		log.Debug().Msgf("default OS path assessment: %v", osAssessment)
+		return osAssessment
 	}
 
 	// check linux

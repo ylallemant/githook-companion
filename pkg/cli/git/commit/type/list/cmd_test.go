@@ -35,20 +35,21 @@ func TestCommand(t *testing.T) {
 `,
 			expectError: false,
 		},
-		{
-			name:       "with simple config",
-			configPath: "../../../../../../test/configs/simple/config.yaml",
-			expected: `┌───────────────────────────────────────────────────────────────────┐
-│ Commit Types                                                      │
-├──────┬──────────────────────────────────────────────┬─────────────┤
-│ TYPE │ DESCRIPTION                                  │ AUTO-FORMAT │
-├──────┼──────────────────────────────────────────────┼─────────────┤
-│ feat │ a new feature is introduced with the changes │ true        │
-│ fix  │ a bug fix has occurred                       │ true        │
-└──────┴──────────────────────────────────────────────┴─────────────┘
-`,
-			expectError: false,
-		},
+		// disabled along with the "-c" flag
+		// 		{
+		// 			name:       "with simple config",
+		// 			configPath: "../../../../../../test/configs/simple/config.yaml",
+		// 			expected: `┌───────────────────────────────────────────────────────────────────┐
+		// │ Commit Types                                                      │
+		// ├──────┬──────────────────────────────────────────────┬─────────────┤
+		// │ TYPE │ DESCRIPTION                                  │ AUTO-FORMAT │
+		// ├──────┼──────────────────────────────────────────────┼─────────────┤
+		// │ feat │ a new feature is introduced with the changes │ true        │
+		// │ fix  │ a bug fix has occurred                       │ true        │
+		// └──────┴──────────────────────────────────────────────┴─────────────┘
+		// `,
+		// 			expectError: false,
+		// 		},
 	}
 
 	for _, c := range cases {

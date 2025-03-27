@@ -80,7 +80,8 @@ func TestCommand(t *testing.T) {
 			b := bytes.NewBufferString("")
 
 			rootCmd.SetOut(b)
-			rootCmd.SetArgs([]string{"-c", "./force/fallback/config.yaml", "--fallback-config", "-m", c.message})
+			// TODO force the default config to be always up to date
+			rootCmd.SetArgs([]string{"--fallback-config", "-m", c.message})
 			cmdErr := rootCmd.Execute()
 
 			out, err := io.ReadAll(b)

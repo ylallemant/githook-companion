@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githook-companion/pkg/git/server"
+	"github.com/ylallemant/githook-companion/pkg/git"
 	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
@@ -14,7 +14,7 @@ var rootCmd = &cobra.Command{
 	Short: "returns the hostname configured in \"remote.origin.url\"",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		hostname, err := server.Hostname()
+		hostname, err := git.Hostname()
 		if err != nil {
 			return err
 		}
@@ -25,7 +25,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
 }
 
 func Command() *cobra.Command {

@@ -13,6 +13,15 @@ Sticking with Git means any workflow/tool you build/use on top of it will not br
 >
 > The main focus has been put on Linux and Darwin.
 > Windows has not been tested at all, but support is planed
+>
+> most probable issue: false detection of the tool being used
+> in the terminal - there is no good way to do it I fear. 
+> If falsly assuming a terminal, the tool will wait for an user input
+> on an interactive list... (a timeout exists)
+>
+> the threshold configuration for the language detector is also still
+> being twiked and may be a nuisance. You can see the confidence value
+> by using `--debug` ([see here](#test-commit-standard))
 
 ## Binary
 
@@ -68,6 +77,8 @@ The tool uses tokenization to provide complex checks and formatting capabilities
 - use regular expressions and Go templates for normalization ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L102))
 - define dictionaries for the tokenization. comparation done with cleaned and [lemmatized](https://en.wikipedia.org/wiki/Lemmatization#Description) words. ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L31))
 - define Go Templates with available [helper functions](https://masterminds.github.io/sprig/) to format the final message. You can use the `camel-case` name of the tokens to reference them in the template ([example](https://github.com/ylallemant/githooks/blob/3533e5d6aa7f49a5582a9f133e86728bed3f613a/.githook-companion/config.yaml#L21))
+
+#### Test Commit Standard
 
 > [!TIP]
 > You can test/tweek your commit configuration effects with following command:

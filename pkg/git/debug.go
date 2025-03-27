@@ -4,17 +4,16 @@ import (
 	"fmt"
 
 	"github.com/ylallemant/githook-companion/pkg/git/config"
-	"github.com/ylallemant/githook-companion/pkg/git/server"
 )
 
 func Debug() string {
 
-	hostname, err := server.Hostname()
+	hostname, err := Hostname()
 	if err != nil {
 		panic(fmt.Sprintf("failed to get git hostname: %s", err.Error()))
 	}
 
-	repository, err := server.Repository()
+	repository, err := Repository()
 	if err != nil {
 		panic(fmt.Sprintf("failed to get git repository: %s", err.Error()))
 	}

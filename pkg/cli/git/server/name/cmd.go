@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/cli/git/server/name/options"
-	"github.com/ylallemant/githook-companion/pkg/git/server"
+	"github.com/ylallemant/githook-companion/pkg/git"
 	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
@@ -15,7 +15,9 @@ var rootCmd = &cobra.Command{
 	Short: "returns a provider name based on the hostname configured in \"remote.origin.url\", defaults to hostname",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		name, err := server.Name(options.Current.Default)
+		globals.ProcessGlobals()
+
+		name, err := git.Name(options.Current.Default)
 		if err != nil {
 			return err
 		}
@@ -27,7 +29,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&options.Current.Default, "default", options.Current.Default, "returned value if origin hostname can't be resolved to a name")
-	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
 }
 
 func Command() *cobra.Command {
