@@ -88,6 +88,15 @@ func ContextFromPath(customPath string, fallbackToDefault bool) (*configContext,
 			return nil, errors.Wrapf(err, "could ensure sync of parent configuration repository at %s", ctx.ParentPath())
 		}
 
+		// binaryInSync, err := binary.VersionsInSync()
+		// if err != nil {
+		// 	return nil, errors.Wrapf(err, "could ensure sync of parent configuration repository at %s", ctx.ParentPath())
+		// }
+
+		// if !binaryInSync {
+		// 	return nil, errors.New("new version of \"githook-companion\" is available, please upgrade your binary")
+		// }
+
 		ctx.parentConfig, err = LoadFromBase(ctx.parentPath, false)
 		if err != nil {
 			return nil, err

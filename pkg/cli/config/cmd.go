@@ -11,6 +11,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/cli/config/hook"
 	"github.com/ylallemant/githook-companion/pkg/cli/config/os"
 	"github.com/ylallemant/githook-companion/pkg/cli/config/show"
+	"github.com/ylallemant/githook-companion/pkg/cli/config/sync"
 )
 
 var rootCmd = &cobra.Command{
@@ -31,6 +32,7 @@ func init() {
 	rootCmd.AddCommand(show.Command())
 	rootCmd.AddCommand(dependency.Command())
 	rootCmd.AddCommand(hook.Command())
+	rootCmd.AddCommand(sync.Command())
 }
 
 func Command() *cobra.Command {

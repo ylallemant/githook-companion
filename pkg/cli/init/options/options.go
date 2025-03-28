@@ -14,5 +14,6 @@ type Options struct {
 	Global           bool
 	ParentRepository string
 	ParentPath       string
+	ParentPrivate    bool
 	Minimalistic     bool
 }

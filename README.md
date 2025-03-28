@@ -100,6 +100,8 @@ Here you can find an [example of parent configuration](https://github.com/ylalle
 
 > [!TIP]
 > You may also have different project collections use diffrent parent configurations, for different purposes, customers, ...
+>
+> A parent configuration repository can be private. You will have to use a `~/.git-credentials` configuration or an ssh agent.
 
 ### Dependecies
 

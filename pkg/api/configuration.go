@@ -36,6 +36,7 @@ type Config struct {
 type ParentConfig struct {
 	Path          string `yaml:"path" json:"path"`
 	GitRepository string `yaml:"repository" json:"repository"`
+	Private       bool   `yaml:"private" json:"private"`
 }
 
 type Dependency struct {

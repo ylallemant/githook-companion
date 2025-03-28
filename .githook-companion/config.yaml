@@ -1,3 +1,4 @@
 parent:
   repository: https://github.com/ylallemant/githooks
   path: ../githooks
+  private: true

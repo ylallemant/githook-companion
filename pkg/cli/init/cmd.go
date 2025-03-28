@@ -46,6 +46,7 @@ var rootCmd = &cobra.Command{
 			reference = &api.ParentConfig{
 				GitRepository: options.Current.ParentRepository,
 				Path:          options.Current.ParentPath,
+				Private:       options.Current.ParentPrivate,
 			}
 		}
 
@@ -129,6 +130,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&options.Current.Global, "global", options.Current.Global, "make a global initialization")
 	rootCmd.PersistentFlags().StringVar(&options.Current.ParentRepository, "parent-repository", options.Current.ParentRepository, "repository of the parent configuration. will be automatically checked out if necessary")
 	rootCmd.PersistentFlags().StringVar(&options.Current.ParentPath, "parent-path", options.Current.ParentPath, fmt.Sprintf("relative path to the parent configuration root (parent of %s)", api.ConfigDirectory))
+	rootCmd.PersistentFlags().BoolVar(&options.Current.ParentPrivate, "parent-private", options.Current.ParentPrivate, "specifies if the parent configuration repository is private")
 	rootCmd.PersistentFlags().BoolVarP(&options.Current.Minimalistic, "minimalistic", "m", options.Current.Minimalistic, "only install the bare minimum. no hooks, no dictionaries, no nothing")
 	rootCmd.SetOutput(os.Stderr)
 }

@@ -16,16 +16,31 @@ func parentVersion(ctx api.ConfigContext, branch string) (string, error) {
 }
 
 func parentRemoteVersion(ctx api.ConfigContext, branch string) (string, error) {
+	var err error
+	uri := ctx.LocalConfig().ParentConfig.GitRepository
+
+	listOptions := &gogit.ListOptions{
+		// Returns all references, including peeled references.
+		PeelingOption: gogit.AppendPeeled,
+	}
+
+	if ctx.LocalConfig().ParentConfig.Private {
+		authMethod, err := git.AuthMethodFromUri(ctx.LocalConfig().ParentConfig.GitRepository)
+		if err != nil {
+			return "", errors.Wrap(err, "failed to add credentials to repository uri")
+		}
+
+		log.Debug().Msgf("add auth method to request options")
+		listOptions.Auth = authMethod
+	}
+
 	rem := gogit.NewRemote(memory.NewStorage(), &config.RemoteConfig{
 		Name: "origin",
-		URLs: []string{ctx.LocalConfig().ParentConfig.GitRepository},
+		URLs: []string{uri},
 	})
 
 	// We can then use every Remote functions to retrieve wanted information
-	refs, err := rem.List(&gogit.ListOptions{
-		// Returns all references, including peeled references.
-		PeelingOption: gogit.AppendPeeled,
-	})
+	refs, err := rem.List(listOptions)
 	if err != nil {
 		log.Warn().Msgf("unable to fetch remote hash for branch \"%s\": %s", branch, err.Error())
 		return "", nil

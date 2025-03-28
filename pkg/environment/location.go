@@ -31,6 +31,7 @@ func EnsureAbsolutePath(path string) (string, error) {
 		var err error
 
 		if strings.HasPrefix(path, "~") {
+			path = strings.Replace(path, "~", "", 1)
 			pathPrefix, err = Home()
 		} else {
 			pathPrefix, err = CurrentDirectory()
