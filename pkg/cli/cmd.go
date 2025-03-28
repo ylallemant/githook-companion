@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/ylallemant/githook-companion/pkg/cli/binary/upgrade"
+	"github.com/ylallemant/githook-companion/pkg/cli/binary/version"
 	"github.com/ylallemant/githook-companion/pkg/cli/config"
 	"github.com/ylallemant/githook-companion/pkg/cli/debug"
 	"github.com/ylallemant/githook-companion/pkg/cli/dependency"
 	"github.com/ylallemant/githook-companion/pkg/cli/git"
 	initCmd "github.com/ylallemant/githook-companion/pkg/cli/init"
 	"github.com/ylallemant/githook-companion/pkg/cli/remove"
-	"github.com/ylallemant/githook-companion/pkg/cli/update"
-	"github.com/ylallemant/githook-companion/pkg/cli/version"
 )
 
 var rootCmd = &cobra.Command{
@@ -32,7 +32,7 @@ func init() {
 	rootCmd.AddCommand(initCmd.Command())
 	rootCmd.AddCommand(remove.Command())
 	rootCmd.AddCommand(config.Command())
-	rootCmd.AddCommand(update.Command())
+	rootCmd.AddCommand(upgrade.Command())
 	rootCmd.AddCommand(version.Command())
 }
 

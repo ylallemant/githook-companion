@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githook-companion/pkg/cli/version/options"
-	"github.com/ylallemant/githook-companion/pkg/version"
+	"github.com/ylallemant/githook-companion/pkg/binary"
+	"github.com/ylallemant/githook-companion/pkg/cli/binary/version/options"
 )
 
 var rootCmd = &cobra.Command{
@@ -16,21 +16,21 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		if options.Current.Semver {
-			fmt.Println(version.Semver())
+			fmt.Println(binary.Semver())
 			return nil
 		}
 
 		if options.Current.Commit {
-			fmt.Println(version.Commit())
+			fmt.Println(binary.Commit())
 			return nil
 		}
 
 		if options.Current.Separator != "" {
-			fmt.Println(version.SemverWithSeparator(options.Current.Separator))
+			fmt.Println(binary.SemverWithSeparator(options.Current.Separator))
 			return nil
 		}
 
-		fmt.Println(version.GetInfo())
+		fmt.Println(binary.GetInfo())
 
 		return nil
 	},

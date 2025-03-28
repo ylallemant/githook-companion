@@ -31,10 +31,10 @@ Sticking with Git means any workflow/tool you build/use on top of it will not br
 curl -fsSL https://github.com/ylallemant/githook-companion/raw/main/install.sh | bash
 ```
 
-### Update
+### Upgrade
 
 ```sh
-githook-companion update [--force]
+githook-companion upgrade [--force]
 ```
 
 ### Debug

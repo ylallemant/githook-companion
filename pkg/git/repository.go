@@ -21,6 +21,28 @@ func OwnerAndRepositoryFromUri(uri string) (string, string, error) {
 	return parts[1], parts[2], err
 }
 
+func OwnerFromUri(uri string) (string, error) {
+	parsed, err := parseGitURI(uri)
+	if err != nil {
+		return "", err
+	}
+
+	parts := strings.Split(parsed.Path, "/")
+
+	return parts[1], err
+}
+
+func RepositoryFromUri(uri string) (string, error) {
+	parsed, err := parseGitURI(uri)
+	if err != nil {
+		return "", err
+	}
+
+	parts := strings.Split(parsed.Path, "/")
+
+	return parts[2], err
+}
+
 func Hostname() (string, error) {
 	cmd := command.New("git")
 	cmd.AddArg("config")

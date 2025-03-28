@@ -7,11 +7,11 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/binary"
 	"github.com/ylallemant/githook-companion/pkg/cli/debug/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/environment"
 	"github.com/ylallemant/githook-companion/pkg/git"
-	"github.com/ylallemant/githook-companion/pkg/version"
 )
 
 var rootCmd = &cobra.Command{
@@ -20,7 +20,7 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		fmt.Println("githook-companion version", version.GetInfo())
+		fmt.Println("githook-companion version", binary.GetInfo())
 		fmt.Println(environment.Debug())
 		fmt.Println(git.Debug())
 		fmt.Println(config.Debug())
