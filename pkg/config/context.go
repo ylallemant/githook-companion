@@ -86,12 +86,13 @@ func ContextFromPath(customPath string, fallbackToDefault bool) (*configContext,
 		// ensure parent config has the latest version
 		err := EnsureVersionSync(ctx)
 		if err != nil {
-			return nil, errors.Wrapf(err, "could ensure sync of parent configuration repository at %s", ctx.ParentPath())
+			log.Warn().Msgf("could not ensure parent configuration version sync: %s", err.Error())
 		}
 
+		// ensure binary has the latest version
 		binaryInSync, err := binary.VersionsInSync()
 		if err != nil {
-			return nil, errors.Wrapf(err, "could ensure sync of parent configuration repository at %s", ctx.ParentPath())
+			log.Warn().Msgf("could not ensure binary version sync: %s", err.Error())
 		}
 
 		if !binaryInSync {
