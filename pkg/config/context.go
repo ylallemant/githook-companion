@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/binary"
 	"github.com/ylallemant/githook-companion/pkg/environment"
 	"github.com/ylallemant/githook-companion/pkg/filesystem"
 )
@@ -88,14 +89,14 @@ func ContextFromPath(customPath string, fallbackToDefault bool) (*configContext,
 			return nil, errors.Wrapf(err, "could ensure sync of parent configuration repository at %s", ctx.ParentPath())
 		}
 
-		// binaryInSync, err := binary.VersionsInSync()
-		// if err != nil {
-		// 	return nil, errors.Wrapf(err, "could ensure sync of parent configuration repository at %s", ctx.ParentPath())
-		// }
+		binaryInSync, err := binary.VersionsInSync()
+		if err != nil {
+			return nil, errors.Wrapf(err, "could ensure sync of parent configuration repository at %s", ctx.ParentPath())
+		}
 
-		// if !binaryInSync {
-		// 	return nil, errors.New("new version of \"githook-companion\" is available, please upgrade your binary")
-		// }
+		if !binaryInSync {
+			return nil, errors.New("new version of the binary is available, please upgrade with: githook-companion upgrade")
+		}
 
 		ctx.parentConfig, err = LoadFromBase(ctx.parentPath, false)
 		if err != nil {

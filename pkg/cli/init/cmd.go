@@ -59,34 +59,32 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to ensure configuration")
 		}
 
-		configurationFilePath := config.FilePathFromBase(basePath)
-
-		cfg, err := config.Load(configurationFilePath, true)
+		configContext, err := config.Context(false)
 		if err != nil {
 			return err
 		}
 
-		if cfg.ParentConfig != nil {
+		if configContext.Config().ParentConfig != nil {
 			// check and handle configuration reference
-			err = config.EnsureReference(cfg.ParentConfig)
+			err = config.EnsureReference(configContext.Config().ParentConfig)
 			if err != nil {
 				return err
 			}
 		}
 
-		parentBasePath, err := config.BasePathFromConfig(cfg)
+		parentBasePath, err := config.BasePathFromConfig(configContext.Config())
 		if err != nil {
 			return err
 		}
 
 		// ensure githooks are present
-		err = hook.Ensure(cfg)
+		err = hook.Ensure(configContext.Config())
 		if err != nil {
 			return err
 		}
 
 		// check for the existance of the hooks directory
-		hooksDirectory := config.GithooksPathFromConfig(cfg)
+		hooksDirectory := config.GithooksPathFromConfig(configContext.Config())
 		exists, _, err := filesystem.DirectoryExists(hooksDirectory)
 		if err != nil {
 			return err
@@ -100,9 +98,9 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		if len(cfg.Dependencies) > 0 {
-			directory := dependency.DependencyDirectoryFromConfig(cfg)
-			err = dependency.InstallAll(directory, cfg)
+		if len(configContext.Config().Dependencies) > 0 {
+			directory := dependency.DependencyDirectoryFromConfig(configContext.Config())
+			err = dependency.InstallAll(directory, configContext.Config())
 			if err != nil {
 				return err
 			}

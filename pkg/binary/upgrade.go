@@ -68,7 +68,7 @@ func VersionsInSync() (bool, error) {
 
 	if localVersion == defaultVersion {
 		// go run is being used
-		return false, nil
+		return true, nil
 	}
 
 	return latest.GetTagName() == localVersion, nil
