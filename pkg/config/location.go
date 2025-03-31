@@ -72,3 +72,7 @@ func GetGlobalFilePath() (string, error) {
 
 	return path, nil
 }
+
+func ContextDirectoryFromBase(basePath string) string {
+	return filepath.Join(basePath, api.ConfigDirectory, api.ContextDirectory)
+}

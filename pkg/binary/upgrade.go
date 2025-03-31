@@ -14,19 +14,36 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/google/go-github/github"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"github.com/ylallemant/githook-companion/pkg/filesystem"
 	"github.com/ylallemant/githook-companion/pkg/git"
+)
+
+const (
+	binaryLockDescription = `lock used to mitigate Git provider request limits. Use PAT to enable more requests`
 )
 
 func ListReleases() ([]*github.RepositoryRelease, error) {
 	var releases []*github.RepositoryRelease
 
-	uri, err := git.Repository()
+	uri := GetRepository()
+	hasCredentials, err := git.HasCredentialsForUri(uri)
 	if err != nil {
 		return releases, err
+	}
+
+	if !hasCredentials {
+		lockPath := filepath.Join(ConfigDirectory, "binary-sync")
+		active, _ := filesystem.TimeLockActive(lockPath)
+		if active {
+			return releases, nil
+		}
+
+		filesystem.SetTimedLockWithDescription(lockPath, binaryLockDescription, 10*time.Minute)
 	}
 
 	owner, repo, err := git.OwnerAndRepositoryFromUri(uri)

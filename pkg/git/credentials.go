@@ -83,6 +83,29 @@ func UserInfoFromUri(uri *url.URL) (*url.Userinfo, bool, error) {
 	return nil, false, nil
 }
 
+func HasCredentialsForUri(uri string) (bool, error) {
+	repositoryUri, err := url.Parse(uri)
+	if err != nil {
+		return false, errors.Wrapf(err, "failed to parse repository uri \"%s\"", uri)
+	}
+
+	userInfo, found, err := UserInfoFromUri(repositoryUri)
+	if err != nil {
+		return false, err
+	}
+
+	if found {
+		_, found := userInfo.Password()
+
+		if found {
+			log.Debug().Msgf("returns a BasicAuth or PAT exist for uri %s", uri)
+			return found, nil
+		}
+	}
+
+	return false, nil
+}
+
 func AuthMethodFromUri(uri string) (transport.AuthMethod, error) {
 	repositoryUri, err := url.Parse(uri)
 	if err != nil {
@@ -95,15 +118,17 @@ func AuthMethodFromUri(uri string) (transport.AuthMethod, error) {
 	}
 
 	if found {
-		password, _ := userInfo.Password()
+		password, found := userInfo.Password()
 
-		authMethod := &http.BasicAuth{
-			Username: userInfo.Username(),
-			Password: password,
+		if found {
+			authMethod := &http.BasicAuth{
+				Username: userInfo.Username(),
+				Password: password,
+			}
+
+			log.Debug().Msgf("returns a BasicAuth method for user %s", userInfo.Username())
+			return authMethod, nil
 		}
-
-		log.Debug().Msgf("returns a BasicAuth method for user %s", userInfo.Username())
-		return authMethod, nil
 	}
 
 	// fallback to a ssh-agent method

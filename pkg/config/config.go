@@ -12,6 +12,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var Current *api.Config
+
 func GetLocally() (*api.Config, error) {
 	path, err := GetLocalFilePath()
 	if err != nil {
@@ -89,6 +91,7 @@ func Get() (*api.Config, error) {
 	}
 
 	if cfg != nil {
+		Current = cfg
 		return cfg, nil
 	}
 

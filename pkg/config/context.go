@@ -9,6 +9,10 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/filesystem"
 )
 
+const (
+	configLockDescription = `lock used to mitigate Git provider request limits. Use PAT to enable more requests`
+)
+
 func Context(fallbackToDefault bool) (*configContext, error) {
 	var err error
 	var basePath string

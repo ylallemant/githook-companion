@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	gogit "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/storage/memory"
@@ -61,6 +63,20 @@ func EnsureVersionSync(ctx api.ConfigContext) error {
 	if !ctx.HasParent() {
 		// no repository to pull
 		return nil
+	}
+
+	hasCredentials, err := git.HasCredentialsForUri(ctx.LocalConfig().ParentConfig.GitRepository)
+	if err != nil {
+		return err
+	}
+
+	if !hasCredentials {
+		active, _ := TimeLockActive("config-sync", ctx)
+		if active {
+			return nil
+		}
+
+		SetTimedLockWithDescription("config-sync", configLockDescription, 10*time.Minute, ctx)
 	}
 
 	branch, err := git.CurrentBranchFromPath(ctx.ParentPath())
