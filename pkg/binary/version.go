@@ -13,13 +13,13 @@ var (
 	defaultGitCommitHash = "dirty"
 )
 
-func GetInfo() string {
+func Information() string {
 	return fmt.Sprintf(
 		`version: %s, commit: %s
 source: %s`,
 		getOr(semverVersion, defaultSemverVersion),
 		getOr(gitCommitHash, defaultGitCommitHash),
-		repository,
+		uri,
 	)
 }
 

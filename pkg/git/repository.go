@@ -3,11 +3,16 @@ package git
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/ylallemant/githook-companion/pkg/api"
-	"github.com/ylallemant/githook-companion/pkg/command"
+)
+
+var (
+	gitExtention    = regexp.MustCompile(`.git$`)
+	azureSshVersion = regexp.MustCompile(`:v\d+`)
 )
 
 func OwnerAndRepositoryFromUri(uri string) (string, string, error) {
@@ -18,7 +23,12 @@ func OwnerAndRepositoryFromUri(uri string) (string, string, error) {
 
 	parts := strings.Split(parsed.Path, "/")
 
-	return parts[1], parts[2], err
+	switch Provider(uri) {
+	case ProviderAzureDevOps:
+		return parts[1], parts[4], err
+	default:
+		return parts[1], parts[2], err
+	}
 }
 
 func OwnerFromUri(uri string) (string, error) {
@@ -39,20 +49,13 @@ func RepositoryFromUri(uri string) (string, error) {
 	}
 
 	parts := strings.Split(parsed.Path, "/")
+	maxIndex := len(parts) - 1
 
-	return parts[2], err
+	return parts[maxIndex], err
 }
 
 func Hostname() (string, error) {
-	cmd := command.New("git")
-	cmd.AddArg("config")
-	cmd.AddArg("--get")
-	cmd.AddArg("remote.origin.url")
-
-	origin, err := cmd.Execute()
-	if err != nil {
-		return "", errors.Wrapf(err, "failed to retrieve origin from config")
-	}
+	origin, err := Origin()
 
 	uri, err := parseGitURI(origin)
 	if err != nil {
@@ -89,38 +92,25 @@ func Repository() (string, error) {
 }
 
 func RepositorySignature(path string) (string, error) {
-	cmd := command.New("git")
-
-	if path != "" {
-		cmd.AddArg("-C")
-		cmd.AddArg(path)
-	}
-
-	cmd.AddArg("config")
-	cmd.AddArg("--get")
-	cmd.AddArg("remote.origin.url")
-
-	origin, err := cmd.Execute()
+	origin, err := OriginFromPath(path)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to retrieve origin from config")
 	}
 
-	uri, err := parseGitURI(origin)
+	return RepositorySignatureFromUri(origin)
+}
+
+func RepositorySignatureFromUri(uri string) (string, error) {
+	parsed, err := parseGitURI(uri)
 	if err != nil {
-		return "", errors.Wrapf(err, "failed to parse origin uri %s", origin)
+		return "", errors.Wrapf(err, "failed to parse origin uri %s", uri)
 	}
 
-	uriPath := strings.ReplaceAll(uri.Path, ".git", "")
-
-	return fmt.Sprintf("%s%s", uri.Host, uriPath), nil
+	return fmt.Sprintf("%s%s", parsed.Host, parsed.Path), nil
 }
 
 func parseGitURI(uri string) (*url.URL, error) {
-	isGitProtocol := strings.HasPrefix(uri, "git")
-	if isGitProtocol {
-		uri = strings.Replace(uri, ":", "/", 1)
-		uri = strings.Replace(uri, "git@", "https://", 1)
-	}
+	uri = NormaliseUri(uri)
 
 	parsed, err := url.Parse(uri)
 	if err != nil {
@@ -128,4 +118,45 @@ func parseGitURI(uri string) (*url.URL, error) {
 	}
 
 	return parsed, nil
+}
+
+func NormaliseUri(uri string) string {
+	switch Provider(uri) {
+	case ProviderAzureDevOps:
+		uri = normaliseAzureDevOpsUri(uri)
+	default:
+		uri = nomaliseGitHubLikeUri(uri)
+	}
+
+	return uri
+}
+
+func nomaliseGitHubLikeUri(uri string) string {
+	isGitProtocol := strings.HasPrefix(uri, "git@")
+	if isGitProtocol {
+		uri = strings.Replace(uri, ":", "/", 1)
+		uri = strings.Replace(uri, "git@", "https://", 1)
+	}
+
+	isGitUri := strings.HasPrefix(uri, "git://")
+	if isGitUri {
+		uri = strings.Replace(uri, "git://", "https://", 1)
+	}
+
+	uri = gitExtention.ReplaceAllString(uri, "")
+
+	return uri
+}
+
+func normaliseAzureDevOpsUri(uri string) string {
+	if strings.Contains(uri, "git@ssh.") {
+		lastSlach := strings.LastIndex(uri, "/")
+		repository := uri[lastSlach+1:]
+
+		uri = azureSshVersion.ReplaceAllString(uri, "")
+		uri = strings.Replace(uri, "git@ssh.", "https://", 1)
+		uri = strings.Replace(uri, repository, fmt.Sprintf("_git/%s", repository), 1)
+	}
+
+	return uri
 }

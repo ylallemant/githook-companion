@@ -30,7 +30,9 @@ const (
 func ListReleases() ([]*github.RepositoryRelease, error) {
 	var releases []*github.RepositoryRelease
 
-	uri := GetRepository()
+	uri := Uri()
+	log.Debug().Msgf("binary repository uri %s", uri)
+
 	hasCredentials, err := git.HasCredentialsForUri(uri)
 	if err != nil {
 		return releases, err
@@ -94,10 +96,7 @@ func VersionsInSync() (bool, error) {
 func Upgrade(currentLocation, tempDir string, wanted *github.RepositoryRelease) error {
 	localVersion := Semver()
 
-	uri, err := git.Repository()
-	if err != nil {
-		return err
-	}
+	uri := Uri()
 
 	binaryName, err := git.RepositoryFromUri(uri)
 	if err != nil {

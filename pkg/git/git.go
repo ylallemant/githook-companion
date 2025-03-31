@@ -78,3 +78,27 @@ func Pull(path string) error {
 
 	return nil
 }
+
+func Origin() (string, error) {
+	return OriginFromPath("")
+}
+
+func OriginFromPath(path string) (string, error) {
+	cmd := command.New("git")
+
+	if path != "" {
+		cmd.AddArg("-C")
+		cmd.AddArg(path)
+	}
+
+	cmd.AddArg("config")
+	cmd.AddArg("--get")
+	cmd.AddArg("remote.origin.url")
+
+	origin, err := cmd.Execute()
+	if err != nil {
+		return "", errors.Wrapf(err, "failed to retrieve origin from config at %s", path)
+	}
+
+	return origin, nil
+}

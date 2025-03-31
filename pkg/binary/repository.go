@@ -1,11 +1,24 @@
 package binary
 
+import (
+	"github.com/ylallemant/githook-companion/pkg/git"
+)
+
 var repository string
 
 var (
-	defaultRepository = "https://github.com/ylallemant/githook-companion"
+	defaultRepository = "git@github.com:test/some-repo.git"
+	uri               = ""
 )
 
-func GetRepository() string {
+func init() {
+	uri = git.NormaliseUri(Repository())
+}
+
+func Repository() string {
 	return getOr(repository, defaultRepository)
+}
+
+func Uri() string {
+	return uri
 }

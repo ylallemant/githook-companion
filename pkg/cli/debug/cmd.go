@@ -20,7 +20,7 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		fmt.Println("githook-companion version", binary.GetInfo())
+		fmt.Println("githook-companion version", binary.Information())
 		fmt.Println(environment.Debug())
 		fmt.Println(git.Debug())
 		fmt.Println(config.Debug())

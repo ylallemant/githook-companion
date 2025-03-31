@@ -30,7 +30,7 @@ var rootCmd = &cobra.Command{
 			return nil
 		}
 
-		fmt.Println(binary.GetInfo())
+		fmt.Println(binary.Information())
 
 		return nil
 	},

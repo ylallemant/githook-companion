@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetInfo(t *testing.T) {
-	info := GetInfo()
+	info := Information()
 	assert.Contains(t, info, semverVersion)
 	assert.Contains(t, info, gitCommitHash)
 }
