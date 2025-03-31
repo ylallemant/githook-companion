@@ -15,7 +15,7 @@ require (
 	github.com/aaaton/golem/v4/dicts/sv v1.0.1
 	github.com/aaaton/golem/v4/dicts/uk v0.0.0-20221121100719-34023a0c192d
 	github.com/go-git/go-git/v5 v5.14.0
-	github.com/google/go-github v17.0.0+incompatible
+	github.com/google/go-github/v70 v70.0.0
 	github.com/hbollon/go-edlib v1.6.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/jedib0t/go-pretty/v6 v6.6.7

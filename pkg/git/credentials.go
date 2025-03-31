@@ -141,6 +141,26 @@ func AuthMethodFromUri(uri string) (transport.AuthMethod, error) {
 	return authMethod, nil
 }
 
+func TokenFromUri(uri string) (string, bool, error) {
+	repositoryUri, err := url.Parse(uri)
+	if err != nil {
+		return "", false, errors.Wrapf(err, "failed to parse repository uri \"%s\"", uri)
+	}
+
+	userInfo, found, err := UserInfoFromUri(repositoryUri)
+	if err != nil {
+		return "", false, err
+	}
+
+	if found {
+		password, found := userInfo.Password()
+
+		return password, found, nil
+	}
+
+	return "", false, nil
+}
+
 func filterCredentials(uri *url.URL) []*url.Userinfo {
 	filtered := filterByHostname(uri, credentials)
 

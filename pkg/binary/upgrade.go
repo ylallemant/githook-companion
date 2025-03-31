@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v70/github"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/filesystem"
@@ -33,7 +33,7 @@ func ListReleases() ([]*github.RepositoryRelease, error) {
 	uri := Uri()
 	log.Debug().Msgf("binary repository uri %s", uri)
 
-	hasCredentials, err := git.HasCredentialsForUri(uri)
+	token, hasCredentials, err := git.TokenFromUri(uri)
 	if err != nil {
 		return releases, err
 	}
@@ -53,9 +53,14 @@ func ListReleases() ([]*github.RepositoryRelease, error) {
 		return releases, err
 	}
 
-	log.Debug().Msgf("list releases for repo %s/%s\n", owner, repo)
+	log.Debug().Msgf("list releases for repo %s/%s", owner, repo)
 
 	client := github.NewClient(nil)
+
+	if hasCredentials {
+		log.Debug().Msgf("request with PAT token")
+		client = github.NewClient(nil).WithAuthToken(token)
+	}
 
 	releases, _, err = client.Repositories.ListReleases(context.Background(), owner, repo, nil)
 
@@ -79,7 +84,8 @@ func Latest(releases []*github.RepositoryRelease, allowPrerelease bool) *github.
 func VersionsInSync() (bool, error) {
 	releases, err := ListReleases()
 	if err != nil {
-		return false, errors.Wrapf(err, "failed to list binery releases")
+		log.Warn().Msgf("failed to list binary releases: %s", err.Error())
+		return true, nil
 	}
 
 	latest := Latest(releases, false)
@@ -205,7 +211,7 @@ func downloadArchive(uri string) (io.ReadCloser, error) {
 func matchingBinary(release *github.RepositoryRelease) (*github.ReleaseAsset, bool) {
 	for _, asset := range release.Assets {
 		if checkForMatchingAsset(asset.GetName(), false) {
-			return &asset, true
+			return asset, true
 		}
 	}
 
@@ -215,7 +221,7 @@ func matchingBinary(release *github.RepositoryRelease) (*github.ReleaseAsset, bo
 func matchingChecksum(release *github.RepositoryRelease) (*github.ReleaseAsset, bool) {
 	for _, asset := range release.Assets {
 		if checkForMatchingAsset(asset.GetName(), true) {
-			return &asset, true
+			return asset, true
 		}
 	}
 
