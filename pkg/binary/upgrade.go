@@ -83,7 +83,7 @@ func VersionsInSync() (bool, error) {
 	latest := Latest(releases, false)
 	localVersion := Semver()
 
-	if localVersion == defaultVersion {
+	if localVersion == defaultSemverVersion {
 		// go run is being used
 		return true, nil
 	}

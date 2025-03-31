@@ -39,5 +39,5 @@ jobs:
         goversion: "1.23"
         project_path: "./cmd/githook-companion"
         binary_name: "githook-companion"
-        ldflags: -X github.com/ylallemant/githook-companion/pkg/binary/repository.Repository=${{github.repositoryUrl}} -X github.com/ylallemant/githook-companion/pkg/binary/version.GitCommit=${{github.sha}} -X github.com/ylallemant/githook-companion/pkg/binary/version.Version=${{ github.ref_name }}
+        ldflags: -X github.com/ylallemant/githook-companion/pkg/binary.repository=${{github.repositoryUrl}} -X github.com/ylallemant/githook-companion/pkg/binary.gitCommitHash=${{github.sha}} -X github.com/ylallemant/githook-companion/pkg/binary.semverVersion=${{ github.ref_name }}
         #extra_files: LICENSE README.md

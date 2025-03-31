@@ -8,6 +8,6 @@ import (
 
 func TestGetInfo(t *testing.T) {
 	info := GetInfo()
-	assert.Contains(t, info, Version)
-	assert.Contains(t, info, GitCommit)
+	assert.Contains(t, info, semverVersion)
+	assert.Contains(t, info, gitCommitHash)
 }

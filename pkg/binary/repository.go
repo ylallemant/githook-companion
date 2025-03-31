@@ -1,11 +1,11 @@
 package binary
 
-var Repository string
+var repository string
 
 var (
 	defaultRepository = "https://github.com/ylallemant/githook-companion"
 )
 
 func GetRepository() string {
-	return getOr(Repository, defaultRepository)
+	return getOr(repository, defaultRepository)
 }

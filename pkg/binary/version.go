@@ -5,24 +5,30 @@ import (
 	"strings"
 )
 
-var Version string
-var GitCommit string
+var semverVersion string
+var gitCommitHash string
 
 var (
-	defaultVersion   = "n/a"
-	defaultGitCommit = "dirty"
+	defaultSemverVersion = "n/a"
+	defaultGitCommitHash = "dirty"
 )
 
 func GetInfo() string {
-	return fmt.Sprintf("version: %s, commit: %s", getOr(Version, defaultVersion), getOr(GitCommit, defaultGitCommit))
+	return fmt.Sprintf(
+		`version: %s, commit: %s
+source: %s`,
+		getOr(semverVersion, defaultSemverVersion),
+		getOr(gitCommitHash, defaultGitCommitHash),
+		repository,
+	)
 }
 
 func Commit() string {
-	return getOr(GitCommit, defaultGitCommit)
+	return getOr(gitCommitHash, defaultGitCommitHash)
 }
 
 func Semver() string {
-	return getOr(Version, defaultVersion)
+	return getOr(semverVersion, defaultSemverVersion)
 }
 
 func SemverWithSeparator(sep string) string {
