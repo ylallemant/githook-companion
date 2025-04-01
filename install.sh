@@ -119,9 +119,12 @@ echo "${exe_name} was installed successfully to ${exe}"
 if command -v $exe_name --version >/dev/null; then
     echo "Run '$exe_name --help' to get started"
 else
-    echo "Manually add the directory to your \$HOME/.bash_profile (or similar)"
-    echo "  export PATH=${executable_folder}:\$PATH"
+    echo "add the ${executable_folder} directory to your \$HOME/.profile"
+    echo "export PATH=${executable_folder}:\$PATH" >> $HOME/.profile
+    export PATH=${executable_folder}:$PATH
     echo "Run '$exe_name --help' to get started"
 fi
+
+$exe_name version
 
 exit 0
