@@ -29,6 +29,7 @@ func configDirectory() (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to get binary name")
 	}
+	executable = filepath.Base(executable)
 
 	dirname = filepath.Join(dirname, fmt.Sprintf(".%s", executable))
 

@@ -5,12 +5,15 @@ import (
 
 	gogit "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing/transport/client"
+	gogithttp "github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/command"
 	"github.com/ylallemant/githook-companion/pkg/git"
+	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 func parentVersion(ctx api.ConfigContext, branch string) (string, error) {
@@ -36,6 +39,8 @@ func parentRemoteVersion(ctx api.ConfigContext, branch string) (string, error) {
 		listOptions.Auth = authMethod
 	}
 
+	client.InstallProtocol("https", gogithttp.NewClient(globals.DefaultApiClient))
+
 	rem := gogit.NewRemote(memory.NewStorage(), &config.RemoteConfig{
 		Name: "origin",
 		URLs: []string{uri},
@@ -45,6 +50,7 @@ func parentRemoteVersion(ctx api.ConfigContext, branch string) (string, error) {
 	refs, err := rem.List(listOptions)
 	if err != nil {
 		log.Warn().Msgf("unable to fetch remote hash for branch \"%s\": %s", branch, err.Error())
+		SetTimedLockWithDescription("network-problems", networkLockDescription, 2*time.Minute, ctx)
 		return "", nil
 	}
 
@@ -62,6 +68,12 @@ func parentRemoteVersion(ctx api.ConfigContext, branch string) (string, error) {
 func EnsureVersionSync(ctx api.ConfigContext) error {
 	if !ctx.HasParent() {
 		// no repository to pull
+		return nil
+	}
+
+	active, _ := TimeLockActive("network-problems", ctx)
+	if active {
+		// no sync possible
 		return nil
 	}
 

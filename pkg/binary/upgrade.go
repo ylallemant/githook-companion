@@ -25,11 +25,19 @@ import (
 )
 
 const (
-	binaryLockDescription = `lock used to mitigate Git provider request limits. Use PAT to enable more requests`
+	binaryLockDescription  = `lock used to mitigate Git provider request limits. Use PAT to enable more requests`
+	networkLockDescription = `lock used to mitigate network connectivity problems`
 )
 
 func ListReleases() ([]*github.RepositoryRelease, error) {
 	var releases []*github.RepositoryRelease
+
+	networkLockPath := filepath.Join(ConfigDirectory, "network-problems")
+	active, _ := filesystem.TimeLockActive(networkLockPath)
+	if active {
+		// no sync possible
+		return releases, nil
+	}
 
 	uri := Uri()
 	log.Debug().Msgf("binary repository uri %s", uri)
@@ -64,6 +72,9 @@ func ListReleases() ([]*github.RepositoryRelease, error) {
 	}
 
 	releases, _, err = client.Repositories.ListReleases(context.Background(), owner, repo, nil)
+	if err != nil {
+		filesystem.SetTimedLockWithDescription(networkLockPath, networkLockDescription, 2*time.Minute)
+	}
 
 	return releases, err
 }

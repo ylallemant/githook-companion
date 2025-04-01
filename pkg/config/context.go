@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	configLockDescription = `lock used to mitigate Git provider request limits. Use PAT to enable more requests`
+	configLockDescription  = `lock used to mitigate Git provider request limits. Use PAT to enable more requests`
+	networkLockDescription = `lock used to mitigate network connectivity problems`
 )
 
 func Context(fallbackToDefault bool) (*configContext, error) {
