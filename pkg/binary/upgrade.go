@@ -21,6 +21,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/filesystem"
 	"github.com/ylallemant/githook-companion/pkg/git"
+	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 const (
@@ -55,7 +56,7 @@ func ListReleases() ([]*github.RepositoryRelease, error) {
 
 	log.Debug().Msgf("list releases for repo %s/%s", owner, repo)
 
-	client := github.NewClient(nil)
+	client := github.NewClient(globals.DefaultApiClient)
 
 	if hasCredentials {
 		log.Debug().Msgf("request with PAT token")
@@ -78,7 +79,8 @@ func Latest(releases []*github.RepositoryRelease, allowPrerelease bool) *github.
 		}
 	}
 
-	return releases[0]
+	// no release was found
+	return nil
 }
 
 func VersionsInSync() (bool, error) {
@@ -89,6 +91,13 @@ func VersionsInSync() (bool, error) {
 	}
 
 	latest := Latest(releases, false)
+
+	if latest == nil {
+		// no release was found
+		log.Warn().Msgf("no release was found for repository %s", Uri())
+		return true, nil
+	}
+
 	localVersion := Semver()
 
 	if localVersion == defaultSemverVersion {
