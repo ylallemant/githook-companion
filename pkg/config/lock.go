@@ -8,6 +8,10 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/filesystem"
 )
 
+func GithookLockPathFromNameAndConfig(name string, ctx api.ConfigContext) string {
+	return filepath.Join(ContextDirectoryFromBase(ctx.LocalPath()), name)
+}
+
 func SetPermanentLock(filename string, ctx api.ConfigContext) error {
 	path := filepath.Join(ContextDirectoryFromBase(ctx.LocalPath()), filename)
 	return filesystem.SetPermanentLock(path)

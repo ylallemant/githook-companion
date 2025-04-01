@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -44,4 +45,38 @@ func GithooksPathFromConfig(configuration *api.Config) string {
 	}
 
 	return path
+}
+
+func GithookPathFromNameAndConfig(name string, configuration *api.Config) string {
+	directory := GithooksPathFromConfig(configuration)
+	return filepath.Join(directory, name)
+}
+
+func ListGithooks(configuration *api.Config) ([]string, bool, error) {
+	list := make([]string, 0)
+	directory := GithooksPathFromConfig(configuration)
+
+	exists, _, err := filesystem.DirectoryExists(directory)
+	if err != nil {
+		return list, false, errors.Wrap(err, "failed to check existance of hooks directory")
+	}
+
+	if exists {
+		err = filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if !info.IsDir() && info.Size() > 0 {
+				list = append(list, info.Name())
+			}
+
+			return nil
+		})
+		if err != nil {
+			return list, exists, errors.Wrap(err, "failed list content of hooks directory")
+		}
+	}
+
+	return list, exists, nil
 }

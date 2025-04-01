@@ -9,14 +9,40 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const (
+	temporaryLockMode = os.FileMode(0644)
+	permanentLockMode = os.FileMode(0600)
+	LockTypePermanent = "permanent"
+	LockTypeTemporary = "temporary"
+	LockTypeUnknown   = "unknown"
+)
+
 func SetPermanentLock(path string) error {
 	description := "permanent lock"
 	return SetPermanentLockWithDescription(path, description)
 }
 
+func LockType(path string) string {
+	exists, info, err := FileExists(path)
+	if err != nil {
+		panic(fmt.Sprintf("failed to read filesystem lock at %s: %s", path, err.Error()))
+	}
+
+	if exists {
+		switch info.Mode() {
+		case temporaryLockMode:
+			return LockTypeTemporary
+		case permanentLockMode:
+			return LockTypePermanent
+		}
+	}
+
+	return LockTypeUnknown
+}
+
 func SetPermanentLockWithDescription(path, description string) error {
 	log.Debug().Msgf("set permanent lock at %s", path)
-	return os.WriteFile(path, []byte(description), 0644)
+	return os.WriteFile(path, []byte(description), permanentLockMode)
 }
 
 func SetTimedLock(path string, duration time.Duration) error {
@@ -28,7 +54,7 @@ func SetTimedLockWithDescription(path, description string, duration time.Duratio
 	description = fmt.Sprintf(`%s
 	valid until: %s`, description, time.Now().Add(duration))
 
-	err := os.WriteFile(path, []byte(description), 0644)
+	err := os.WriteFile(path, []byte(description), temporaryLockMode)
 	if err != nil {
 		return errors.Wrap(err, "failed to add credentials to repository uri")
 	}
@@ -84,5 +110,10 @@ func TimeLockActive(path string) (bool, error) {
 
 func RemoveLock(path string) error {
 	log.Debug().Msgf("remove lock at %s", path)
-	return os.Remove(path)
+	err := os.Remove(path)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+
+	return nil
 }

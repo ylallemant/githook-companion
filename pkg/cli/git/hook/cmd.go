@@ -6,6 +6,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/cli/git/hook/disable"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/hook/lock"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/hook/locked"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/hook/unlock"
 )
 
 var rootCmd = &cobra.Command{
@@ -21,6 +24,9 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(disable.Command())
+	rootCmd.AddCommand(unlock.Command())
+	rootCmd.AddCommand(locked.Command())
+	rootCmd.AddCommand(lock.Command())
 }
 
 func Command() *cobra.Command {
