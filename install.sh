@@ -22,7 +22,7 @@ PATH=${absolute_executable_folder}:$PATH
 
 if command -v $exe_name >/dev/null; then
   echo "$exe_name is already installed in version $(command $exe_name version --semver)"
-  command $exe_name upgrade
+  command $exe_name upgrade --non-blocking
   exit 0
 fi
 

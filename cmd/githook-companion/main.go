@@ -12,6 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/ylallemant/githook-companion/pkg/cli"
+	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 func main() {
@@ -34,6 +35,12 @@ func main() {
 	log.Logger = zerolog.New(output).With().Timestamp().Caller().Logger()
 
 	if err := cli.Command().Execute(); err != nil {
-		log.Fatal().Err(err).Msg("error during execution")
+		if globals.Current.NonBlocking {
+			// catch error
+			os.Exit(0)
+		} else {
+			// log error
+			log.Fatal().Err(err).Msg("error during execution")
+		}
 	}
 }

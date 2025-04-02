@@ -11,6 +11,7 @@ type Globals struct {
 	FallbackConfig bool
 	Debug          bool
 	LogLevel       string
+	NonBlocking    bool
 }
 
 func ProcessGlobals() {

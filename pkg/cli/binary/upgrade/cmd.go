@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/binary"
 	"github.com/ylallemant/githook-companion/pkg/cli/binary/upgrade/options"
+	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 var (
@@ -73,6 +74,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&options.Current.DryRun, "dry-run", options.Current.DryRun, "does not replace the binary")
 	rootCmd.PersistentFlags().BoolVar(&options.Current.Force, "force", options.Current.Force, "force the replacement of the binary")
 	rootCmd.PersistentFlags().BoolVar(&options.Current.AllowPrerelease, "allow-prerelease", options.Current.AllowPrerelease, "allow the installation of pre-release binary versions")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.NonBlocking, "non-blocking", globals.Current.NonBlocking, "an issue during the upgrade will not retrun a command error")
 }
 
 func Command() *cobra.Command {

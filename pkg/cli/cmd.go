@@ -15,9 +15,10 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "githook-companion",
-	Short: "githook-companion provides a toolset facilitating complex git-hook workflows",
-	Long:  ``,
+	Use:          "githook-companion",
+	Short:        "githook-companion provides a toolset facilitating complex git-hook workflows",
+	SilenceUsage: true,
+	Long:         ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("please use a subcommand...")
 		cmd.Usage()
