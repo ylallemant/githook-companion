@@ -25,7 +25,7 @@ func Default() *api.Config {
 	commit := new(api.Commit)
 	config.Commit = commit
 
-	commit.MessageTemplate = "{{ .CommitType | upper }}: {{ if .IssueTrackerReference }}({{ .IssueTrackerReference }}){{ end }} {{ .Message | lower }}"
+	commit.MessageTemplate = "{{ .CommitType | upper }}{{ if .CommitScope }}({{ .CommitScope | lower }}){{ end }}{{ if .CommitBreakinFlag }}({{ .CommitBreakinFlag }}){{ end }}: {{ if .IssueTrackerReference }}({{ .IssueTrackerReference }}){{ end }} {{ .Message | lower }}"
 	commit.DefaultType = typeFeature
 	commit.Types = commitTypes()
 	commit.NoFormatting = []string{
@@ -119,7 +119,11 @@ func commitLexemes() []*nlpapi.Lexeme {
 					Name:        api.CommitTypeTokenName,
 					TokenName:   api.CommitTypeTokenName,
 					Description: "commit type lexeme",
-					Matcher:     &nlpapi.Matcher{Regex: commitTypeReplaceExpression},
+					Variants: []*nlpapi.Variant{
+						{
+							Matcher: &nlpapi.Matcher{Regex: commitTypeReplaceExpression},
+						},
+					},
 					Normalisers: []*nlpapi.NormalisationStep{
 						{
 							Matcher:    &nlpapi.Matcher{Regex: commitTypeReplaceExpression},
@@ -134,7 +138,11 @@ func commitLexemes() []*nlpapi.Lexeme {
 					Name:        api.CommitScopeTokenName,
 					TokenName:   api.CommitScopeTokenName,
 					Description: "commit scope lexeme",
-					Matcher:     &nlpapi.Matcher{Regex: regexp.MustCompile(`\((\w+)\)`)},
+					Variants: []*nlpapi.Variant{
+						{
+							Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`\((\w+)\)`)},
+						},
+					},
 					Normalisers: []*nlpapi.NormalisationStep{
 						{
 							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`(\w+)`)},
@@ -146,17 +154,18 @@ func commitLexemes() []*nlpapi.Lexeme {
 					},
 				},
 				{
-					Name:        api.CommitBreakingTokenName,
-					TokenName:   api.CommitBreakingTokenName,
+					Name:        api.CommitBreakingFlagTokenName,
+					TokenName:   api.CommitBreakingFlagTokenName,
 					Description: "commit scope lexeme",
-					Matcher:     &nlpapi.Matcher{Regex: regexp.MustCompile(`(!{0,1})`)},
+					Variants: []*nlpapi.Variant{
+						{
+							Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`(!{0,1})`)},
+						},
+					},
 					Normalisers: []*nlpapi.NormalisationStep{
 						{
 							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`(!)`)},
 							ReplaceAll: true,
-							Formatter: &nlpapi.Formatter{
-								Template: "{{ lower . }}",
-							},
 						},
 					},
 				},
