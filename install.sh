@@ -13,6 +13,19 @@ repo="githook-companion"
 exe_name="githook-companion"
 githubUrl=""
 githubApiUrl=""
+
+relative_executable_folder=".local/bin"
+absolute_executable_folder="${HOME}/$relative_executable_folder" # Eventually, the executable file will be placed here
+
+# make sure PATH is properly set, in some pipeline it may not be the case
+PATH=${absolute_executable_folder}:$PATH
+
+if command -v $exe_name >/dev/null; then
+  echo "$exe_name is already installed in version $(command $exe_name version --semver)"
+  command $exe_name upgrade
+  exit 0
+fi
+
 version=$(curl -s https://api.github.com/repos/ylallemant/githook-companion/releases/latest | grep -m1 -Eo "githook-companion-[^/]+-linux-amd64.tar.gz" | grep -Eo "([0-9]+\.[0-9]+\.[0-9]+)")
 separator="-"
 
@@ -83,8 +96,7 @@ arch=$(get_arch)
 file_name="${exe_name}${separator}${version}${separator}${os}${separator}${arch}.tar.gz" # the file name should be download
 downloaded_file="${downloadFolder}/${file_name}" # the file path should be download
 
-executable_folder="${HOME}/.local/bin" # Eventually, the executable file will be placed here
-mkdir -p $executable_folder
+mkdir -p $absolute_executable_folder
 
 # if version is empty
 if [ -z "$version" ]; then
@@ -109,22 +121,27 @@ echo "[1/3] Download ${asset_uri} to ${downloadFolder}"
 rm -f ${downloaded_file}
 curl --fail --location --output "${downloaded_file}" "${asset_uri}"
 
-echo "[2/3] Install ${exe_name} to the ${executable_folder}"
-tar -xz -f ${downloaded_file} -C ${executable_folder}
-exe=${executable_folder}/${exe_name}
+echo "[2/3] Install ${exe_name} to the ${absolute_executable_folder}"
+tar -xz -f ${downloaded_file} -C ${absolute_executable_folder}
+exe=${absolute_executable_folder}/${exe_name}
 chmod +x ${exe}
 
 echo "[3/3] Set environment variables"
 echo "${exe_name} was installed successfully to ${exe}"
-if command -v $exe_name --version >/dev/null; then
-    echo "Run '$exe_name --help' to get started"
-else
-    echo "add the ${executable_folder} directory to your \$HOME/.profile"
-    echo "export PATH=${executable_folder}:\$PATH" >> $HOME/.profile
-    export PATH=${executable_folder}:$PATH
-    echo "Run '$exe_name --help' to get started"
+if [ -z "$(grep "/$relative_executable_folder" "$HOME/.profile")" ]; then
+    echo "add the ${absolute_executable_folder} directory to your \$HOME/.profile"
+    echo "
+# set PATH so it includes user's private bin if it exists
+if [ -d \"${absolute_executable_folder@Q}\" ] ; then
+    PATH=\"${absolute_executable_folder@Q}:\$PATH\"
 fi
 
-$exe_name version
+" >> $HOME/.profile
+
+    export PATH=${absolute_executable_folder}:$PATH
+    echo "Run '$exe_name --help' to get started"
+else
+    echo "Run '$exe_name --help' to get started"
+fi
 
 exit 0
