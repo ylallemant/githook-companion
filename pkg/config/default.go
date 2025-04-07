@@ -11,13 +11,17 @@ import (
 )
 
 const (
-	typeFeature  = "feat"
-	TypeIgnore   = "ignore"
-	typeDocs     = "docs"
-	typeFix      = "fix"
-	typeTest     = "test"
-	typeRefactor = "refactor"
-	typeBreaking = "breaking"
+	typeFeature     = "feat"
+	TypeIgnore      = "ignore"
+	typeDocs        = "docs"
+	typeFix         = "fix"
+	typeTest        = "test"
+	typeRefactor    = "refactor"
+	typePerformance = "perf"
+	typeStyle       = "style"
+	typeChore       = "chore"
+	typeBuild       = "build"
+	typeCI          = "ci"
 )
 
 func Default() *api.Config {
@@ -25,7 +29,7 @@ func Default() *api.Config {
 	commit := new(api.Commit)
 	config.Commit = commit
 
-	commit.MessageTemplate = "{{ .CommitType | upper }}{{ if .CommitScope }}({{ .CommitScope | lower }}){{ end }}{{ if .CommitBreakinFlag }}({{ .CommitBreakinFlag }}){{ end }}: {{ if .IssueTrackerReference }}({{ .IssueTrackerReference }}){{ end }} {{ .Message | lower }}"
+	commit.MessageTemplate = "{{ .CommitType | upper }}{{ if .CommitScope }}({{ .CommitScope | lower }}){{ end }}{{ if .CommitBreakingFlag }}{{ .CommitBreakingFlag }}{{ end }}: {{ if .IssueTrackerReference }}[{{ .IssueTrackerReference }}]{{ end }} {{ .Message | lower }}"
 	commit.DefaultType = typeFeature
 	commit.Types = commitTypes()
 	commit.NoFormatting = []string{
@@ -51,28 +55,44 @@ func commitTypes() []*api.CommitType {
 			Description: "a new feature is introduced with the changes",
 		},
 		{
+			Type:        typeRefactor,
+			Description: "refactored code that neither fixes a bug nor adds a feature",
+		},
+		{
 			Type:        TypeIgnore,
 			Description: "commit can be ignored by other tools",
 		},
 		{
 			Type:        typeFix,
-			Description: "a bug fix has occurred",
+			Description: "a bug fix has been implemented",
 		},
 		{
 			Type:        typeDocs,
-			Description: "updates to documentation such as a the README or other markdown files",
+			Description: "documentation only changes",
 		},
 		{
 			Type:        typeTest,
 			Description: "including new or correcting previous tests",
 		},
 		{
-			Type:        typeRefactor,
-			Description: "refactored code that neither fixes a bug nor adds a feature",
+			Type:        typePerformance,
+			Description: "a code change that improves performance",
 		},
 		{
-			Type:        typeBreaking,
-			Description: "introducing a breaking change in input or output behaviour",
+			Type:        typeStyle,
+			Description: "changes that do not affect the meaning of the code (white-space, formatting, ...)",
+		},
+		{
+			Type:        typeChore,
+			Description: "other changes that don't modify src or test files",
+		},
+		{
+			Type:        typeBuild,
+			Description: "changes that affect the build system or external dependencies",
+		},
+		{
+			Type:        typeCI,
+			Description: "changes to CI configuration files and scripts",
 		},
 	}
 }
@@ -99,7 +119,7 @@ func commitLexemes() []*nlpapi.Lexeme {
 
 	commitTypeReplaceExpression, _ := regexp.Compile(expression)
 	commitTypeExpression, _ := regexp.Compile(fmt.Sprintf(
-		"%s\\b\\s*\\(\\w+\\)\\s*!{0,1}\\s*:{0,1}",
+		"%s\\b(\\s*\\(\\w+\\)){0,1}\\s*!{0,1}\\s*:{0,1}",
 		expression,
 	))
 
@@ -179,24 +199,24 @@ func commitLexemes() []*nlpapi.Lexeme {
 			Variants: []*nlpapi.Variant{
 				{
 					Name:    "JIRA like issue reference",
-					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile("[\\(\\[]{0,1}([\\w]{0,6})[-_]([\\d]+)[\\)\\]]{0,1}")},
+					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`[\(\[]{0,1}([\w]{0,6})[-_]([\d]+)[\)\]]{0,1}`)},
 					Normalisers: []*nlpapi.NormalisationStep{
 						{
-							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile("([\\w]{0,6})[-_]([\\d]+)")},
+							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`([\w]{0,6})[-_]([\d]+)`)},
 							ReplaceAll: true,
 							Formatter: &nlpapi.Formatter{
 								Template: "{{ upper . }}",
 							},
 						},
 						{
-							Matcher:     &nlpapi.Matcher{Regex: regexp.MustCompile("[-_]")},
+							Matcher:     &nlpapi.Matcher{Regex: regexp.MustCompile(`[-_]`)},
 							Replacement: "-",
 						},
 					},
 				},
 				{
 					Name:    "GitHub issue reference",
-					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile("[\\(\\[]{0,1}(#|gh-|GH-)([\\d]+)[\\)\\]]{0,1}")},
+					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`[\(\[]{0,1}(#|gh-|GH-)([\d]+)[\)\]]{0,1}`)},
 					Normalisers: []*nlpapi.NormalisationStep{
 						{
 							Name:        "github issue reference",
@@ -282,17 +302,6 @@ func commitDictionaries() []*nlpapi.Dictionary {
 			TokenValue:   typeTest,
 			Entries: []string{
 				"test",
-			},
-		},
-		{
-			LanguageCode: "en",
-			Name:         "breaking-signals",
-			Weight:       4,
-			TokenName:    api.CommitTypeTokenName,
-			TokenValue:   typeBreaking,
-			Entries: []string{
-				"break",
-				"major",
 			},
 		},
 	}

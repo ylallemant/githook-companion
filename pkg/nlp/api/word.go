@@ -7,10 +7,11 @@ const (
 )
 
 type Word struct {
-	LanguageCode string
-	Raw          string
-	Cleaned      string
-	Source       string
-	SourceName   string
-	Normalised   string
+	LanguageCode  string
+	FromComposite string
+	Raw           string
+	Cleaned       string
+	Source        string
+	SourceName    string
+	Normalised    string
 }
