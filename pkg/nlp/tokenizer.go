@@ -151,6 +151,13 @@ func (i *tokenizer) matchTokens(words []*api.Word) []*api.Token {
 			token.SourceName = word.SourceName
 			token.SourceMatch = word.Raw
 			token.Confidence = 1
+		} else if word.Source == api.WordSourceLexemeSplitter {
+			token.Name = word.SourceName
+			token.Value = word.Normalised
+			token.Source = api.TokenSourceLexemeComposite
+			token.SourceName = word.SourceName
+			token.SourceMatch = word.Raw
+			token.Confidence = 1
 		} else {
 			dictionary, match, confidence := i.fuzzyDictionaryMatch(word)
 

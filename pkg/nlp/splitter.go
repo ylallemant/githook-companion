@@ -126,6 +126,9 @@ func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word
 						allwords, _ := i.splitLexeme(word.Normalised, len(words), lexeme)
 
 						for key, word := range allwords {
+							// add parent lexeme match
+							word.FromComposite = strings.TrimSpace(match)
+
 							words[key] = word
 							replacementWords[key] = word
 						}
@@ -259,7 +262,6 @@ func (i *splitter) splitLexeme(text string, lexemeIndex int, lexeme *nlpapi.Lexe
 					template = secureReplaceAllString(template, word.Raw, fmt.Sprintf(" %s ", key))
 				}
 			}
-
 		}
 	}
 

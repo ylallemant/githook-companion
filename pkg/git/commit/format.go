@@ -46,6 +46,8 @@ func cleanRawMessage(message string, tokenNameReferences []string, tokens []*nlp
 		for _, token := range tokens {
 			if token.Name == tokenNameReference && token.Source == nlpapi.TokenSourceLexeme {
 				message = strings.ReplaceAll(message, token.Word.Raw, "")
+			} else if token.Name == tokenNameReference && token.Source == nlpapi.TokenSourceLexemeComposite {
+				message = strings.ReplaceAll(message, token.Word.FromComposite, "")
 			}
 		}
 	}
@@ -75,12 +77,16 @@ func dynamicTemplateStruct(tokenNameReferences []string) reflect.Type {
 
 func dynamicTemplateData(dynamicStruct reflect.Type, message, commitTypeTokenSourceName string, tokenNameReferences []string, tokens []*nlpapi.Token) reflect.Value {
 	instance := reflect.New(dynamicStruct)
+	log.Debug().Msgf("generate dynamic template struct instance")
 
 	for _, tokenNameReference := range tokenNameReferences {
+		log.Debug().Msgf("- search token reference \"%+v\"", tokenNameReference)
 		for _, token := range tokens {
 			if token.Name == tokenNameReference {
 
 				if token.Name != api.CommitTypeTokenName || (token.SourceName == commitTypeTokenSourceName && token.Name == api.CommitTypeTokenName) {
+					log.Debug().Msgf("  match token \"%+v\": %+v", token.Name, token)
+					log.Debug().Msgf("  add value \"%+v\"", token.Value)
 					instance.Elem().FieldByName(TokenNameTemplateFormat(token.Name)).Set(reflect.ValueOf(token.Value))
 				}
 			}
@@ -89,6 +95,6 @@ func dynamicTemplateData(dynamicStruct reflect.Type, message, commitTypeTokenSou
 
 	instance.Elem().FieldByName(TokenNameTemplateFormat(api.CommitMessageKey)).Set(reflect.ValueOf(message))
 
-	log.Debug().Msgf("dynamic template struct instance %+v)", instance)
+	log.Debug().Msgf("dynamic template struct instance %+v", instance)
 	return instance
 }

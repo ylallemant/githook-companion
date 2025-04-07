@@ -1,9 +1,7 @@
 package commit
 
 import (
-	"math"
 	"slices"
-	"strings"
 
 	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
@@ -23,7 +21,7 @@ func commitTypeHierarchy(types []*api.CommitType) []string {
 
 func hasCommitTypeToken(tokens []*nlpapi.Token) (*nlpapi.Token, bool) {
 	for _, token := range tokens {
-		if token.Source == nlpapi.TokenSourceLexeme && token.SourceName == api.CommitTypeTokenName {
+		if (token.Source == nlpapi.TokenSourceLexeme || token.Source == nlpapi.TokenSourceLexemeComposite) && token.SourceName == api.CommitTypeTokenName {
 			return token, true
 		}
 	}
@@ -37,7 +35,7 @@ func assessMessageType(tokens []*nlpapi.Token, cfg *api.Config) (*nlpapi.Token, 
 	tokenMap := make(map[string]*nlpapi.Token)
 
 	for _, token := range tokens {
-		if token.Name != nlpapi.TokenUnknown && token.Source != nlpapi.TokenSourceLexeme {
+		if token.Name != nlpapi.TokenUnknown && token.Source != nlpapi.TokenSourceLexeme && token.Source != nlpapi.TokenSourceLexemeComposite {
 			dictionary := nlp.DictionaryByName(token.SourceName, cfg.TokenizerOptions)
 			if dictionary == nil {
 				log.Warn().Msgf("dictionary from token source name \"%s\" was not found", token.SourceName)
@@ -126,18 +124,4 @@ func commitTypeHierarchyNumber(hierarchy []string, typeName string) int {
 	}
 
 	return number
-}
-
-func commitTypeWeightIncrement(token *nlpapi.Token) int {
-	increment := 2
-
-	if strings.Contains(token.SourceName, "weak") {
-		increment = 1
-	}
-
-	if token.Source == nlpapi.TokenSourceLexeme && token.SourceName == api.CommitTypeTokenName {
-		increment = 100000
-	}
-
-	return int(math.Floor(float64(increment) * token.Confidence))
 }
