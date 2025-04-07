@@ -8,6 +8,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/nlp/api"
+	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
 var (
@@ -106,7 +107,7 @@ func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word
 		for _, matcher := range lexeme.Variants {
 			log.Debug().Msgf("search for lexeme \"%s\" variant with: \"%s\"", lexeme.Name, matcher.Matcher.Regex.String())
 			if matcher.Matcher.Regex.MatchString(sentence) {
-				matches := matcher.Matcher.Regex.FindAllString(sentence, -1)
+				matches := FindAll(sentence, matcher.Matcher)
 				log.Debug().Msgf("  - matches: %s", matches)
 
 				for _, match := range matches {
@@ -117,16 +118,35 @@ func (i *splitter) ExtractLexemes(sentence string) (string, map[string]*api.Word
 					word.Source = api.WordSourceLexeme
 					word.SourceName = lexeme.TokenName
 
-					key := fmt.Sprintf(api.LexemeReferenceFmt, len(words))
+					i.normaliseLexeme(word, matcher.Normalisers, lexeme.Normalisers)
 
-					i.normaliseLexeme(word, matcher, lexeme)
+					replacementWords := make(map[string]*api.Word)
 
-					words[key] = word
+					if len(lexeme.Splitters) > 0 {
+						allwords, _ := i.splitLexeme(word.Normalised, len(words), lexeme)
 
-					// replace lexeme with index information
-					// add spaces as prefix and suffix to make sure
-					// the splitter will be able to split
-					sentence = secureReplaceAllString(sentence, word.Raw, fmt.Sprintf(" %s ", key))
+						for key, word := range allwords {
+							// add parent lexeme match
+							word.FromComposite = strings.TrimSpace(match)
+
+							words[key] = word
+							replacementWords[key] = word
+						}
+					} else {
+						key := fmt.Sprintf(api.LexemeReferenceFmt, len(words), 0)
+
+						words[key] = word
+						replacementWords[key] = word
+					}
+
+					for key, word := range replacementWords {
+						// replace lexeme with index information
+						// add spaces as prefix and suffix to make sure
+						// the splitter will be able to split
+						log.Debug().Msgf("    - replacement: %s, %s", word.Raw, key)
+						sentence = secureReplaceAllString(sentence, word.Raw, fmt.Sprintf(" %s ", key))
+						log.Debug().Msgf("    - sentence: %s", sentence)
+					}
 				}
 			}
 		}
@@ -144,14 +164,14 @@ func (i *splitter) clean(sentence string) string {
 	return strings.TrimSpace(sentence)
 }
 
-func (i *splitter) normaliseLexeme(word *api.Word, matcher *api.Variant, lexeme *api.Lexeme) {
+func (i *splitter) normaliseLexeme(word *api.Word, primary []*api.NormalisationStep, secondary []*api.NormalisationStep) {
 	text := word.Raw
 
-	for _, normalisationStep := range matcher.Normalisers {
+	for _, normalisationStep := range primary {
 		text = executeNormaliser(normalisationStep, text)
 	}
 
-	for _, normalisationStep := range lexeme.Normalisers {
+	for _, normalisationStep := range secondary {
 		text = executeNormaliser(normalisationStep, text)
 	}
 
@@ -199,4 +219,51 @@ func executeNormaliser(normaliser *api.NormalisationStep, text string) string {
 	}
 
 	return text
+}
+
+func (i *splitter) splitLexeme(text string, lexemeIndex int, lexeme *nlpapi.Lexeme) (map[string]*api.Word, error) {
+	words := make(map[string]*api.Word)
+	template := text
+
+	for _, splitter := range lexeme.Splitters {
+
+		for _, variant := range splitter.Variants {
+			log.Debug().Msgf("    - search for part \"%s\" variant with: \"%s\"", splitter.Name, variant.Matcher.Regex.String())
+
+			if Match(text, variant.Matcher) {
+				matches := FindAll(text, variant.Matcher)
+				log.Debug().Msgf("      - matches: %s", matches)
+
+				for _, match := range matches {
+					if match == "" {
+						continue
+					}
+
+					log.Debug().Msgf("        - match: %s", match)
+					word := new(api.Word)
+
+					word.LanguageCode = lexeme.LanguageCode
+					word.Raw = strings.TrimSpace(match)
+					word.Source = api.WordSourceLexemeSplitter
+					word.SourceName = splitter.TokenName
+					log.Debug().Msgf("        - raw: %s", word.Raw)
+
+					key := fmt.Sprintf(api.LexemeReferenceFmt, lexemeIndex, len(words))
+					log.Debug().Msgf("        - key: %s", key)
+
+					i.normaliseLexeme(word, variant.Normalisers, splitter.Normalisers)
+					log.Debug().Msgf("        - nomalised: %s", word.Normalised)
+
+					words[key] = word
+
+					// replace lexeme with index information
+					// add spaces as prefix and suffix to make sure
+					// the splitter will be able to split
+					template = secureReplaceAllString(template, word.Raw, fmt.Sprintf(" %s ", key))
+				}
+			}
+		}
+	}
+
+	return words, nil
 }

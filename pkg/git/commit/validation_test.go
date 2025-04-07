@@ -52,6 +52,42 @@ func TestHasCommitTypeToken(t *testing.T) {
 			commitType: "FEAT",
 			expected:   true,
 		},
+		{
+			name:       "type and scope with space",
+			message:    "FEAT (scope):   some message",
+			commitType: "FEAT",
+			expected:   true,
+		},
+		{
+			name:       "type and scope without space",
+			message:    "FEAT(scope):   some message",
+			commitType: "FEAT",
+			expected:   true,
+		},
+		{
+			name:       "type and breaking-flag with space",
+			message:    "FEAT !:   some message",
+			commitType: "FEAT",
+			expected:   true,
+		},
+		{
+			name:       "type and breaking-flag without space",
+			message:    "FEAT!:   some message",
+			commitType: "FEAT",
+			expected:   true,
+		},
+		{
+			name:       "type and scope and breaking-flag with space",
+			message:    "FEAT (scope) !:   some message",
+			commitType: "FEAT",
+			expected:   true,
+		},
+		{
+			name:       "type and scope and breaking-flag without space",
+			message:    "FEAT(scope)!:   some message",
+			commitType: "FEAT",
+			expected:   true,
+		},
 	}
 
 	for _, c := range cases {

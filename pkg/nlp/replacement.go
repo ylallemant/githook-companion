@@ -3,9 +3,14 @@ package nlp
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/rs/zerolog/log"
 )
 
 func secureReplaceAllString(text, old, new string) string {
+	log.Debug().Msgf("        - text: %s", text)
+	log.Debug().Msgf("        - old:  %s", old)
+	log.Debug().Msgf("        - new:  %s", new)
 	regex := searchStringToRegex(old)
 
 	return regex.ReplaceAllString(text, new)

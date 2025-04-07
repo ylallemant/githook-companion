@@ -6,14 +6,16 @@ import (
 )
 
 const (
-	ConfigDirectory     = ".githook-companion"
-	ConfigFile          = "config.yaml"
-	GithooksDirectory   = "hooks"
-	BinDirectory        = "bin"
-	ContextDirectory    = "context"
-	LogDirectory        = "logs"
-	CommitTypeTokenName = "commit_type"
-	CommitMessageKey    = "message"
+	ConfigDirectory             = ".githook-companion"
+	ConfigFile                  = "config.yaml"
+	GithooksDirectory           = "hooks"
+	BinDirectory                = "bin"
+	ContextDirectory            = "context"
+	LogDirectory                = "logs"
+	CommitTypeTokenName         = "commit_type"
+	CommitScopeTokenName        = "commit_scope"
+	CommitBreakingFlagTokenName = "commit_breaking_flag"
+	CommitMessageKey            = "message"
 )
 
 var (

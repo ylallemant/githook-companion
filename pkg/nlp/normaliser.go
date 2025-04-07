@@ -59,7 +59,7 @@ func (i *normaliser) Clean(word *api.Word) {
 }
 
 func (i *normaliser) Normalise(word *api.Word) {
-	if word.Source != api.WordSourceLexeme {
+	if word.Source != api.WordSourceLexeme && word.Source != api.WordSourceLexemeSplitter {
 		log.Debug().Msgf("nomalise \"%s\"", word.Raw)
 		i.Clean(word)
 		i.lemmatizer.Lemma(word)

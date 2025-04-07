@@ -19,19 +19,23 @@ func TestCommand(t *testing.T) {
 		{
 			name:       "with default config",
 			configPath: "",
-			expected: `┌────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Commit Types                                                                                   │
-├──────────┬───────────────────────────────────────────────────────────────────────┬─────────────┤
-│ TYPE     │ DESCRIPTION                                                           │ AUTO-FORMAT │
-├──────────┼───────────────────────────────────────────────────────────────────────┼─────────────┤
-│ feat     │ a new feature is introduced with the changes                          │ true        │
-│ ignore   │ commit can be ignored by other tools                                  │ false       │
-│ fix      │ a bug fix has occurred                                                │ true        │
-│ docs     │ updates to documentation such as a the README or other markdown files │ true        │
-│ test     │ including new or correcting previous tests                            │ true        │
-│ refactor │ refactored code that neither fixes a bug nor adds a feature           │ true        │
-│ breaking │ introducing a breaking change in input or output behaviour            │ true        │
-└──────────┴───────────────────────────────────────────────────────────────────────┴─────────────┘
+			expected: `┌────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Commit Types                                                                                               │
+├──────────┬───────────────────────────────────────────────────────────────────────────────────┬─────────────┤
+│ TYPE     │ DESCRIPTION                                                                       │ AUTO-FORMAT │
+├──────────┼───────────────────────────────────────────────────────────────────────────────────┼─────────────┤
+│ feat     │ a new feature is introduced with the changes                                      │ true        │
+│ refactor │ refactored code that neither fixes a bug nor adds a feature                       │ true        │
+│ ignore   │ commit can be ignored by other tools                                              │ false       │
+│ fix      │ a bug fix has been implemented                                                    │ true        │
+│ docs     │ documentation only changes                                                        │ true        │
+│ test     │ including new or correcting previous tests                                        │ true        │
+│ perf     │ a code change that improves performance                                           │ true        │
+│ style    │ changes that do not affect the meaning of the code (white-space, formatting, ...) │ true        │
+│ chore    │ other changes that don't modify src or test files                                 │ true        │
+│ build    │ changes that affect the build system or external dependencies                     │ true        │
+│ ci       │ changes to CI configuration files and scripts                                     │ true        │
+└──────────┴───────────────────────────────────────────────────────────────────────────────────┴─────────────┘
 `,
 			expectError: false,
 		},

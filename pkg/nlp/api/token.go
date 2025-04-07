@@ -1,10 +1,11 @@
 package api
 
 const (
-	TokenUnknown          = "unknown"
-	TokenSourceNone       = "none"
-	TokenSourceLexeme     = "lexeme"
-	TokenSourceDictionary = "dictionary"
+	TokenUnknown               = "unknown"
+	TokenSourceNone            = "none"
+	TokenSourceLexeme          = "lexeme"
+	TokenSourceLexemeComposite = "lexeme-composite"
+	TokenSourceDictionary      = "dictionary"
 )
 
 type Token struct {

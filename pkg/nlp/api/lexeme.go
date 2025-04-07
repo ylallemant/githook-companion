@@ -12,6 +12,7 @@ type Lexeme struct {
 	LanguageCode string               `yaml:"language_code" json:"language_code"`
 	TokenName    string               `yaml:"token" json:"token"`
 	Variants     []*Variant           `yaml:"variants" json:"variants"`
+	Splitters    []*LexemeSplitter    `yaml:"splitters" json:"splitters"`
 	Normalisers  []*NormalisationStep `yaml:"normalisers" json:"normalisers"`
 }
 
@@ -19,6 +20,14 @@ type Variant struct {
 	Name        string               `yaml:"name" json:"name"`
 	Description string               `yaml:"description" json:"description"`
 	Matcher     *Matcher             `yaml:"matcher" json:"matcher"`
+	Normalisers []*NormalisationStep `yaml:"normalisers" json:"normalisers"`
+}
+
+type LexemeSplitter struct {
+	Name        string               `yaml:"name" json:"name"`
+	Description string               `yaml:"description" json:"description"`
+	TokenName   string               `yaml:"token" json:"token"`
+	Variants    []*Variant           `yaml:"variants" json:"variants"`
 	Normalisers []*NormalisationStep `yaml:"normalisers" json:"normalisers"`
 }
 

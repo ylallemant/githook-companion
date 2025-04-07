@@ -92,9 +92,9 @@ func TestSplitter_ExtractLexemes(t *testing.T) {
 					},
 				},
 			},
-			expectedSentence: "neues Döner Shop implementiert lexeme~0",
+			expectedSentence: "neues Döner Shop implementiert lexeme~0~0",
 			expectedWords: map[string]*api.Word{
-				"lexeme~0": {
+				"lexeme~0~0": {
 					LanguageCode: api.LanguageCodeWildcard,
 					Source:       api.WordSourceLexeme,
 					SourceName:   "issue-tracker-reference",
@@ -132,9 +132,9 @@ func TestSplitter_ExtractLexemes(t *testing.T) {
 					},
 				},
 			},
-			expectedSentence: "neues Döner Shop implementiert lexeme~1 and lexeme~0",
+			expectedSentence: "neues Döner Shop implementiert lexeme~1~0 and lexeme~0~0",
 			expectedWords: map[string]*api.Word{
-				"lexeme~0": {
+				"lexeme~0~0": {
 					LanguageCode: api.LanguageCodeWildcard,
 					Source:       api.WordSourceLexeme,
 					SourceName:   "issue-tracker-reference",
@@ -142,7 +142,7 @@ func TestSplitter_ExtractLexemes(t *testing.T) {
 					Cleaned:      "ECOM-2345",
 					Normalised:   "ECOM-2345",
 				},
-				"lexeme~1": {
+				"lexeme~1~0": {
 					LanguageCode: api.LanguageCodeWildcard,
 					Source:       api.WordSourceLexeme,
 					SourceName:   "issue-tracker-reference",
