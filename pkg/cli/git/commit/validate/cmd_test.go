@@ -27,12 +27,16 @@ func TestCommand(t *testing.T) {
   format: "<commit-type-prefix>: <commit-message>"
   available commit types:
     - feat: a new feature is introduced with the changes
-    - ignore: commit can be ignored by other tools
-    - fix: a bug fix has occurred
-    - docs: updates to documentation such as a the README or other markdown files
-    - test: including new or correcting previous tests
     - refactor: refactored code that neither fixes a bug nor adds a feature
-    - breaking: introducing a breaking change in input or output behaviour
+    - ignore: commit can be ignored by other tools
+    - fix: a bug fix has been implemented
+    - docs: documentation only changes
+    - test: including new or correcting previous tests
+    - perf: a code change that improves performance
+    - style: changes that do not affect the meaning of the code (white-space, formatting, ...)
+    - chore: other changes that don't modify src or test files
+    - build: changes that affect the build system or external dependencies
+    - ci: changes to CI configuration files and scripts
 
 			`,
 		},
@@ -57,7 +61,7 @@ func TestCommand(t *testing.T) {
 		{
 			name:        "message with issue tracker reference",
 			message:     "implemented new inbox layout [TEST_123]",
-			expected:    "FEAT: (TEST-123) implemented new inbox layout\n",
+			expected:    "FEAT: [TEST-123] implemented new inbox layout\n",
 			expectError: false,
 		},
 		{
