@@ -17,7 +17,7 @@ Sticking with Git means any workflow/tool you build/use on top of it will not br
 > most probable issue: false detection of the tool being used
 > in the terminal - there is no good way to do it I fear. 
 > If falsly assuming a terminal, the tool will wait for an user input
-> on an interactive list... (a timeout exists)
+> on an interactive list... (a timeout exists and a log is written in .githook-companion/logs)
 >
 > the threshold configuration for the language detector is also still
 > being tweaked and may be a nuisance. You can see the confidence value
@@ -182,17 +182,17 @@ githook-companion git hook disable
 
 ```bash
 # locks a specific githook
-githook-companion git hook lock
+githook-companion git hook lock "hook-name"
 ```
 
 ```bash
 # unlocks a specific or all githooks
-githook-companion git hook unlock [--all]
+githook-companion git hook unlock  "hook-name" | --all
 ```
 
 ```bash
 # checks if a specific githook is locked - returns "true" or "false"
-githook-companion git hook unlock [--all]
+githook-companion git hook locked "hook-name"
 ```
 
 #### Git Server Commands
