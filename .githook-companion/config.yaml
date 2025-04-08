@@ -1,0 +1,23 @@
+parent:
+    path: ../githooks
+    repository: https://github.com/ylallemant/githooks
+    private: false
+commit:
+    types: []
+    no_formatting: []
+    default_type: ""
+    message_template: ""
+    tokenizer_options:
+        language_detection_options:
+            default_language_code: ""
+            default_language_Name: ""
+            confidence_thresthold: 0
+            minimum_word_count: 0
+        language_codes: []
+        dictionaries: []
+        lexemes: []
+        normalisers: []
+        confidence_thresthold: 0
+dependencies: []
+dependency_directory: ""
+githook_directory: ""
