@@ -28,6 +28,12 @@ var rootCmd = &cobra.Command{
 		}
 
 		installationDirectory := config.ParentPathFromConfig(configContext.Config())
+
+		if installationDirectory == "" {
+			// no parent config exists
+			// use local path
+			installationDirectory = configContext.LocalPath()
+		}
 		configDirectory := config.DirectoryPathFromBase(installationDirectory)
 
 		fmt.Fprintln(cmd.OutOrStdout(), configDirectory)
