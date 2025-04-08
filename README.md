@@ -20,7 +20,7 @@ Sticking with Git means any workflow/tool you build/use on top of it will not br
 > on an interactive list... (a timeout exists)
 >
 > the threshold configuration for the language detector is also still
-> being twiked and may be a nuisance. You can see the confidence value
+> being tweaked and may be a nuisance. You can see the confidence value
 > by using `--debug` ([see here](#test-commit-standard))
 
 ## Binary
@@ -81,7 +81,7 @@ The tool uses tokenization to provide complex checks and formatting capabilities
 #### Test Commit Standard
 
 > [!TIP]
-> You can test/tweek your commit configuration effects with following command:
+> You can test/tweak your commit configuration effects with following command:
 > 
 > ```bash
 > githook-companion git commit validate -m "commit-message" [--debug]
