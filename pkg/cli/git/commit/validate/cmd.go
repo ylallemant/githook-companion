@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
@@ -83,9 +84,25 @@ var rootCmd = &cobra.Command{
 				Templates: templates,
 			}
 
-			idx, _, err := prompt.Run()
-			if err != nil {
-				return errors.Wrap(err, "interactive commit type user selection failed")
+			resultChan := make(chan int, 1)
+			errorChan := make(chan error, 1)
+
+			go func() {
+				idx, _, err := prompt.Run()
+				if err != nil {
+					errorChan <- errors.Wrap(err, "interactive commit type user selection failed")
+				}
+				resultChan <- idx
+			}()
+
+			var idx int
+			select {
+			case result := <-resultChan:
+				idx = result
+			case <-time.After(20 * time.Second):
+				return errors.New("timeout while waiting for the interactive selection of the commit type")
+			case err := <-errorChan:
+				return err
 			}
 
 			commiType := configContext.Config().Commit.Types[idx].Type

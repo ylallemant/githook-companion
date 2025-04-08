@@ -38,9 +38,6 @@ func main() {
 		if globals.Current.NonBlocking {
 			// catch error
 			os.Exit(0)
-		} else {
-			// log error
-			log.Fatal().Err(err).Msg("error during execution")
 		}
 	}
 }

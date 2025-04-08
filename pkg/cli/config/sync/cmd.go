@@ -29,6 +29,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback-config", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.NonBlocking, "non-blocking", globals.Current.NonBlocking, "an issue during the upgrade will not retrun a command error")
 }
 
 func Command() *cobra.Command {
