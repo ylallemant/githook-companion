@@ -114,11 +114,104 @@ You may want to use specific binaries in your githooks.
 > - in the parent for common functionalities (like changelog automation)
 > - in the child for project specific behaviours (linting, validation, formatting)
 
-### Convenience Commands
+### Commands
 
-`githook-companion` provides some convenience commands to retrieve "complex" information like from the Git configuration.
+`githook-companion` provides various commands like some convenience commands to retrieve "complex" information like from the Git configuration.
 
 This is done to avoid too complex manipulations in the githook scripts themselves.
+
+#### Configuration Commands
+
+```bash
+# synchronizes the parent configuration if necessary
+# very convenient to ensure that the latest configuration is used
+githook-companion config sync
+```
+
+```bash
+# prints the used configuration
+githook-companion config show
+```
+
+```bash
+# returns the absolute path to the parent or child githook directory
+# (if no parent configuration is used both parent and child paths are equal)
+githook-companion config hook path [--child]
+```
+
+```bash
+# returns the absolute path to the parent or child dependency directory
+# (if no parent configuration is used both parent and child paths are equal)
+githook-companion config dependency path [--child]
+```
+
+```bash
+# returns the absolute path to the parent or child configuration directory
+# (if no parent configuration is used both parent and child paths are equal)
+githook-companion config directory [--child]
+```
+
+```bash
+# returns computer's OS
+githook-companion config os
+```
+
+```bash
+# returns computer's CPU architecture
+githook-companion config arch
+```
+
+#### Git Commit Commands
+
+```bash
+# list configured commit types
+githook-companion git commit type list
+```
+
+```bash
+# validate commit
+githook-companion git commit validate 'message' [--debug]
+```
+
+#### Git Hooks Commands
+
+```bash
+# disables the locally the githooks by unsetting "core.hooksPath"
+githook-companion git hook disable
+```
+
+```bash
+# locks a specific githook
+githook-companion git hook lock
+```
+
+```bash
+# unlocks a specific or all githooks
+githook-companion git hook unlock [--all]
+```
+
+```bash
+# checks if a specific githook is locked - returns "true" or "false"
+githook-companion git hook unlock [--all]
+```
+
+#### Git Server Commands
+
+```bash
+# returns the server's hostname
+githook-companion git server hostname
+```
+
+```bash
+# returns the server's name (shorthand for the provider: "github", ...)
+githook-companion git server name
+```
+
+```bash
+# returns the normalised repository uri
+githook-companion git server repository
+```
+
 
 
 ## Usage
