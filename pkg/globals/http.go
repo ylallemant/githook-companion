@@ -13,7 +13,7 @@ var DefaultApiClient = &http.Client{
 		MaxConnsPerHost:       20,
 		ResponseHeaderTimeout: 5 * time.Second,
 		ExpectContinueTimeout: 5 * time.Second,
-		IdleConnTimeout:       15 * time.Second,
+		IdleConnTimeout:       5 * time.Second,
 		TLSHandshakeTimeout:   5 * time.Second,
 		DisableCompression:    false,
 		DialContext: (&net.Dialer{
