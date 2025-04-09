@@ -88,22 +88,6 @@ func ContextFromPath(customPath string, fallbackToDefault bool) (*configContext,
 		}
 		log.Debug().Msgf("parent configuration directory at \"%s\"", ctx.parentPath)
 
-		// ensure parent config has the latest version
-		err := EnsureVersionSync(ctx)
-		if err != nil {
-			log.Warn().Msgf("could not ensure parent configuration version sync: %s", err.Error())
-		}
-
-		// ensure binary has the latest version
-		binaryInSync, err := binary.VersionsInSync()
-		if err != nil {
-			log.Warn().Msgf("could not ensure binary version sync: %s", err.Error())
-		}
-
-		if !binaryInSync {
-			return nil, errors.New("new version of the binary is available, please upgrade with: githook-companion upgrade")
-		}
-
 		ctx.parentConfig, err = LoadFromBase(ctx.parentPath, false)
 		if err != nil {
 			return nil, err
@@ -119,6 +103,36 @@ func ContextFromPath(customPath string, fallbackToDefault bool) (*configContext,
 	} else if ctx.localConfig != nil {
 		log.Debug().Msg("use local configuration")
 		ctx.config = ctx.localConfig
+	}
+
+	syncConfig := ctx.Config().ToolSync
+
+	if syncConfig == nil {
+		syncConfig = defaultSync()
+	}
+
+	if syncConfig.Enabled {
+		// ensure parent config has the latest version
+		reloadNeeded, err := EnsureVersionSync(ctx)
+		if err != nil {
+			log.Warn().Msgf("could not ensure parent configuration version sync: %s", err.Error())
+		}
+
+		// ensure binary has the latest version
+		binaryInSync, err := binary.VersionsInSync()
+		if err != nil {
+			log.Warn().Msgf("could not ensure binary version sync: %s", err.Error())
+		}
+
+		if !binaryInSync {
+			return nil, errors.New("new version of the binary is available, please upgrade with: githook-companion upgrade")
+		}
+
+		if reloadNeeded {
+			return ContextFromPath(customPath, fallbackToDefault)
+		}
+	} else {
+		log.Warn().Msgf("configuration sync is disabled")
 	}
 
 	return ctx, nil

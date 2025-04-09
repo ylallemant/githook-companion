@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
@@ -30,9 +32,17 @@ var (
 type Config struct {
 	*ParentConfig       `yaml:"parent,omitempty" json:"parent,omitempty"`
 	*Commit             `yaml:"commit" json:"commit"`
+	*ToolSync           `yaml:"sync" json:"sync"`
 	Dependencies        []*Dependency `yaml:"dependencies" json:"dependencies"`
 	DependencyDirectory string        `yaml:"dependency_directory" json:"dependency_directory"`
 	GithooksDirectory   string        `yaml:"githook_directory" json:"githook_directory"`
+}
+
+type ToolSync struct {
+	Enabled             bool
+	Timeout             time.Duration
+	CheckPeriod         time.Duration
+	OfflineLockDuration time.Duration
 }
 
 type ParentConfig struct {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/nlp"
@@ -26,6 +27,9 @@ const (
 
 func Default() *api.Config {
 	config := new(api.Config)
+
+	config.ToolSync = defaultSync()
+
 	commit := new(api.Commit)
 	config.Commit = commit
 
@@ -46,6 +50,16 @@ func Default() *api.Config {
 	}
 
 	return config
+}
+
+func defaultSync() *api.ToolSync {
+	sync := new(api.ToolSync)
+
+	sync.Timeout = 5 * time.Second
+	sync.OfflineLockDuration = 20 * time.Minute
+	sync.CheckPeriod = 3 * time.Minute
+
+	return sync
 }
 
 func commitTypes() []*api.CommitType {

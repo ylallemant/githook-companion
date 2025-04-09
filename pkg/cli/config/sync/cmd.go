@@ -17,7 +17,7 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		err = config.EnsureVersionSync(configContext)
+		_, err = config.EnsureVersionSync(configContext)
 		if err != nil {
 			return err
 		}
