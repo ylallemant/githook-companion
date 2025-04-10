@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/manifoldco/promptui"
@@ -135,12 +136,15 @@ var rootCmd = &cobra.Command{
 		log.Debug().Msgf("commit type token: %s", commitTypeToken.Value)
 		log.Debug().Msgf("commit types without formatting: %v", configContext.Config().Commit.NoFormatting)
 
-		if !slices.Contains(configContext.Config().Commit.NoFormatting, commitTypeToken.Value) {
+		if !slices.Contains(configContext.Config().Commit.NoFormatting, strings.ToLower(commitTypeToken.Value)) {
 			// ensure commit type prefix format (lower-case)
 			message, err = commit.EnsureFormat(message, configContext.Config().Commit.MessageTemplate, commitTypeToken, tokens)
 			if err != nil {
 				return errors.Wrap(err, "failed to format commit message")
 			}
+		} else {
+			// remove the ignored commit type from the message if present
+			message = strings.TrimSpace(strings.ReplaceAll(message, commitTypeToken.Word.FromComposite, ""))
 		}
 
 		if options.Current.OutputFilePath == "" {
@@ -167,8 +171,8 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
-	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback-config", globals.Current.FallbackConfig, "if no configContext.Config() was found, fallback to the default one")
-	//rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configContext.Config() file")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback-config", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
+	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
 	rootCmd.SetOutput(os.Stderr)
 }

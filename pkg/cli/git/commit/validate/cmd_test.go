@@ -71,6 +71,12 @@ func TestCommand(t *testing.T) {
 			expectError: false,
 		},
 		{
+			name:        "remove ignored commit type from message",
+			message:     "IGNORE: update at 2025-04-10T10:29",
+			expected:    "update at 2025-04-10T10:29\n",
+			expectError: false,
+		},
+		{
 			name:         "unallowed language used",
 			message:      "Impresionante nueva característica para la tienda",
 			expected:     "typo in title\n",
