@@ -1,0 +1,19 @@
+#!/bin/sh
+#; C:/Program\ Files/Git/usr/bin/sh.exe
+set -eu
+
+# root path of the repositories holding configuration
+# if there is no parent config,
+# both variables have the same value
+PARENT_REPOSITORY_ROOT="$(dirname $(githook-companion config directory))"
+CHILD_REPOSITORY_ROOT="$(pwd)"
+# binary dependecy directories
+# if there is no parent config,
+# both variables have the same value
+PARENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
+CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
+# githooks directory
+CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
+CHILD_CONFIG_DIRECTORY="$(githook-companion config directory --child)"
+
+go test -cover ./...
