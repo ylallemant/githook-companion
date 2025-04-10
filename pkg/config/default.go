@@ -213,7 +213,7 @@ func commitLexemes() []*nlpapi.Lexeme {
 			Variants: []*nlpapi.Variant{
 				{
 					Name:    "JIRA like issue reference",
-					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`[\(\[]{0,1}([\w]{0,6})[-_]([\d]+)[\)\]]{0,1}`)},
+					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`[\(\[]{0,1}([a-zA-z][\w]{0,5})[-_]([\d]+)[\)\]]{0,1}`)},
 					Normalisers: []*nlpapi.NormalisationStep{
 						{
 							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`([\w]{0,6})[-_]([\d]+)`)},
