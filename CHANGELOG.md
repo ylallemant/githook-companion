@@ -11,6 +11,10 @@
 
 * add run go tests on pre-push
 
+### Documentation
+
+* add changelog
+
 ### Features
 
 * add post-commit and pre-push githooks
