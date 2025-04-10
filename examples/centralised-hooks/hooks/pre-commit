@@ -7,14 +7,14 @@ CURRENT_DIRECTORY="$(pwd)"
 GITHOOKS_DIRECTORY="$(dirname $(dirname $0))"
 # get the dependency installation directory
 CURRENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
-# where custom hook are located in other projects (see repo-specific-hooks example)
+# where child hook are located in other projects (see repo-specific-hooks example)
 CUSTOM_GITHOOKS_DIRECTORY="$(githook-companion config hook path)"
 # you can have multiple changelog templates depending on the repo git server (GitHub, Azure DevOps, ...)
 # look in the tool config directory .chglog
 TEMPLATE_NAME=$("$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-6-0 server name --default default)
 REPOSITORY_URL=$("$GITHOOKS_BIN_DIRECTORY"/githook-companion-0-6-0 server repository)
 
-echo "apply generic pre-commit"
+echo "apply parent pre-commit"
 
 # Make sure an email is set properly
 if [ -z "$(git config user.email)" ]
@@ -44,6 +44,6 @@ git fetch origin --prune --tags
 # check for existing project specific hooks
 if [ -d "$CUSTOM_GITHOOKS_DIRECTORY" ] && [ -f "$CUSTOM_GITHOOKS_DIRECTORY/pre-commit" ]
 then
-  echo "apply custom pre-commit"
+  echo "apply child pre-commit"
   "$CUSTOM_GITHOOKS_DIRECTORY"/pre-commit
 fi

@@ -8,16 +8,16 @@ CURRENT_DIRECTORY="$(pwd)"
 GITHOOKS_DIRECTORY="$(dirname $(dirname $0))"
 # get the dependency installation directory
 CURRENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
-# where custom hook are located in other projects (see repo-specific-hooks example)
+# where child hook are located in other projects (see repo-specific-hooks example)
 CUSTOM_GITHOOKS_DIRECTORY="$(githook-companion config hook path)"
 
-echo "apply generic pre-push"
+echo "apply parent pre-push"
 
 
-# apply custom git-hooks
+# apply child git-hooks
 if [ -d "$CUSTOM_GITHOOKS_DIRECTORY" ] && [ -f "$CUSTOM_GITHOOKS_DIRECTORY/pre-push" ]
 then
-  echo "apply custom pre-push"
+  echo "apply child pre-push"
   "$CUSTOM_GITHOOKS_DIRECTORY"/pre-push
 fi
 

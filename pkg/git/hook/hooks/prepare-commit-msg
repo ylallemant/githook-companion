@@ -1,13 +1,20 @@
 #!/bin/sh
 set -eu
 
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#   YOU SHOULD AVOID TO EDIT THIS
+#   GITHOOK OR AT LEAST BE CAREFUL
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 # root path of the repositories holding configuration
 # if there is no parent config,
 # both variables have the same value
-PARENT_CONFIG_REPOSITORY="$(dirname $(githook-companion config directory))"
-CHILD_CONFIG_REPOSITORY="$(pwd)"
+PARENT_REPOSITORY_ROOT="$(dirname $(githook-companion config directory))"
+CHILD_REPOSITORY_ROOT="$(pwd)"
 # binary dependecy directories
-BIN_DIRECTORY="$(githook-companion config dependency path)"
+# if there is no parent config,
+# both variables have the same value
+PARENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
 CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
 # githooks directory
 CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
@@ -28,5 +35,7 @@ echo "-------------------------" >>  "$CHILD_LOG_FILE"
 githook-companion debug >>  "$CHILD_LOG_FILE"
 echo "-------------------------" >>  "$CHILD_LOG_FILE"
 env >>  "$CHILD_LOG_FILE"
+echo "-------------------------" >>  "$CHILD_LOG_FILE"
+ls -al /dev/tty* >>  "$CHILD_LOG_FILE"
 
 githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE" < /dev/tty

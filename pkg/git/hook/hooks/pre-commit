@@ -4,16 +4,18 @@ set -eu
 # root path of the repositories holding configuration
 # if there is no parent config,
 # both variables have the same value
-PARENT_CONFIG_REPOSITORY="$(dirname $(githook-companion config directory))"
-CHILD_CONFIG_REPOSITORY="$(pwd)"
+PARENT_REPOSITORY_ROOT="$(dirname $(githook-companion config directory))"
+CHILD_REPOSITORY_ROOT="$(pwd)"
 # binary dependecy directories
-BIN_DIRECTORY="$(githook-companion config dependency path)"
+# if there is no parent config,
+# both variables have the same value
+PARENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
 CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
 # githooks directory
 CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 CHILD_CONFIG_DIRECTORY="$(githook-companion config directory --child)"
 
-echo "apply generic pre-commit"
+echo "apply parent pre-commit"
 
 # unlock all githooks from last cycle
 githook-companion git hook unlock --all
@@ -32,7 +34,18 @@ then
 	exit 1
 fi
 
-if [ -d "$CHILD_GITHOOKS_DIRECTORY" ] && [ -f "$CHILD_GITHOOKS_DIRECTORY/pre-commit" ] && [ "$PARENT_CONFIG_REPOSITORY" != "$CHILD_CONFIG_REPOSITORY" ]
+
+#************************************
+#   START OF YOUR HOOK LOGIC BLOCK
+#+++
+
+
+#+++
+#   END OF YOUR HOOK LOGIC BLOCK
+#************************************
+
+
+if [ -d "$CHILD_GITHOOKS_DIRECTORY" ] && [ -f "$CHILD_GITHOOKS_DIRECTORY/pre-commit" ] && [ "$PARENT_REPOSITORY_ROOT" != "$CHILD_REPOSITORY_ROOT" ]
 then
   echo "apply child pre-commit"
   "$CHILD_GITHOOKS_DIRECTORY"/pre-commit

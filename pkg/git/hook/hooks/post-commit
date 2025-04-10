@@ -1,38 +1,43 @@
 #!/bin/sh
 set -eu
 
-CURRENT_REPOSITORY="$(pwd)"
-GITHOOKS_DIRECTORY="$(dirname $(dirname $(dirname $0)))"
-GITHOOKS_BIN_DIRECTORY="$(githook-companion config dependency path)"
-CUSTOM_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
-TEMPLATE_NAME=$(githook-companion git server name --default default)
-REPOSITORY_URL=$(githook-companion git server repository)
+# root path of the repositories holding configuration
+# if there is no parent config,
+# both variables have the same value
+PARENT_REPOSITORY_ROOT="$(dirname $(githook-companion config directory))"
+CHILD_REPOSITORY_ROOT="$(pwd)"
+# binary dependecy directories.
+# if there is no parent config,
+# both variables have the same value
+PARENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
+CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
+# project child githook directory
+CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 
-LOCK=".git/post-commit.lock"
 
-if [ ! -f "$LOCK" ]
+if [ "$(githook-companion git hook locked post-commit)" != "true" ]
 then
-echo "apply generic post-commit"
-touch "$LOCK"
 
-# generating changelog
-git fetch origin --prune --tags
-"$GITHOOKS_BIN_DIRECTORY"/git-chglog \
-    --next-tag 'Unreleased' \
-    --repository-url "$REPOSITORY_URL" \
-    -o "$CURRENT_REPOSITORY/CHANGELOG.md" \
-    -c "$GITHOOKS_DIRECTORY/.chglog/config.yml" \
-    -t "$GITHOOKS_DIRECTORY/.chglog/templates/$TEMPLATE_NAME.tpl.md" 
+  echo "apply parent post-commit"
+  githook-companion git hook lock post-commit --duration 5m
 
-git add "CHANGELOG.md"
+  if [ -d "$CHILD_GITHOOKS_DIRECTORY" ] && [ -f "$CHILD_GITHOOKS_DIRECTORY/post-commit" ] && [ "$PARENT_REPOSITORY_ROOT" != "$CHILD_REPOSITORY_ROOT" ]
+  then
+    echo "apply child post-commit"
+    "$CHILD_GITHOOKS_DIRECTORY"/post-commit
+  fi
 
-git commit --amend -C HEAD --no-verify
+  #************************************
+  #   START OF YOUR HOOK LOGIC BLOCK
+  #+++
 
-if [ -d "$CUSTOM_GITHOOKS_DIRECTORY" ] && [ -f "$CUSTOM_GITHOOKS_DIRECTORY/pre-commit" ] && [ "$GITHOOKS_DIRECTORY" != "$CURRENT_REPOSITORY" ]
-then
-  echo "apply custom post-commit"
-  "$CUSTOM_GITHOOKS_DIRECTORY"/post-commit
-fi
+  
+  #+++
+  #   END OF YOUR HOOK LOGIC BLOCK
+  #************************************
 
-rm "$LOCK"
+  # remove lock
+  githook-companion git hook unlock post-commit
+else
+  echo "parent post-commit is locked"
 fi

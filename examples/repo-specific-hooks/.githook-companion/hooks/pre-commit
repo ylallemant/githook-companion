@@ -4,7 +4,7 @@ set -eu
 CURRENT_DIRECTORY="$(pwd)"
 CURRENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
 
-echo "CUSTOM pre-commit"
+echo "child pre-commit"
 
 "$CURRENT_BIN_DIRECTORY"/terraform fmt
 "$CURRENT_BIN_DIRECTORY"/tflint

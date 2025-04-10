@@ -4,7 +4,7 @@ set -eu
 CURRENT_DIRECTORY="$(pwd)"
 CURRENT_BIN_DIRECTORY="$(githook-companion config dependency path)"
 
-echo "CUSTOM pre-commit"
+echo "child pre-commit"
 
 # those are longer running tasks that will only be executed before pushing
 "$CURRENT_BIN_DIRECTORY"/terraform init
