@@ -4,6 +4,7 @@
 
 ### Bug Fixes
 
+* block "zip slip" arbitrary file access attacks
 * remove ignored commit-type from message
 * issue-tracker-reference lexeme must begin with a letter
 
