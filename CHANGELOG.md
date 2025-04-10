@@ -1,6 +1,10 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.9...Unreleased) (2025-04-10)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.10...Unreleased) (0001-01-01)
+
+
+<a name="0.8.10"></a>
+## [0.8.10](https://github.com/ylallemant/githook-companion/compare/0.8.9...0.8.10) (2025-04-10)
 
 ### Bug Fixes
 
