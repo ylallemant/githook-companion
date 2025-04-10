@@ -66,6 +66,9 @@ func unTarGz(src, dest string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+		if strings.Contains(header.Name, "..") {
+			return "", errors.Errorf("probable arbitrary file access tentative with: \"%s\"", header.Name)
+		}
 
 		decompressedFilename = header.Name
 

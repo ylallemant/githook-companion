@@ -285,6 +285,9 @@ func decompress(tempDir, fileName string) error {
 		if err != nil {
 			return err
 		}
+		if strings.Contains(header.Name, "..") {
+			return errors.Errorf("probable arbitrary file access tentative with: \"%s\"", header.Name)
+		}
 
 		// Construct the output path
 		outputPath := filepath.Join(tempDir, header.Name)
