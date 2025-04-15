@@ -10,10 +10,20 @@ import (
 	nlpapi "github.com/ylallemant/githook-companion/pkg/nlp/api"
 )
 
-func Validate(message string, configuration *api.Config) (string, bool, *nlpapi.Token, []*nlpapi.Token, error) {
+func Validate(message string, forceDefaultLanguage bool, configuration *api.Config) (string, bool, *nlpapi.Token, []*nlpapi.Token, error) {
+	if forceDefaultLanguage {
+		configuration.Commit.TokenizerOptions.LanguageDetectionOptions.ForceDefault = true
+	}
+
 	tokenizer, _ := nlp.NewTokenizer(configuration.Commit.TokenizerOptions)
 	languageCode, _, known := tokenizer.LanguageDetector().DetectLanguage(message, false)
 	log.Debug().Msgf("detected language \"%s\"", languageCode)
+
+	if forceDefaultLanguage {
+		languageCode = configuration.Commit.TokenizerOptions.LanguageDetectionOptions.DefautLanguageCode
+		known = true
+		log.Debug().Msgf("language forced to code \"%s\"", languageCode)
+	}
 
 	if !known {
 		return languageCode, false, nil, []*nlpapi.Token{}, errors.Errorf("unknown language")

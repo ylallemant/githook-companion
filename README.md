@@ -14,14 +14,9 @@ Sticking with Git means any workflow/tool you build/use on top of it will not br
 > The main focus has been put on Linux and Darwin.
 > Windows has not been tested at all, but support is planed
 >
-> most probable issue: false detection of the tool being used
-> in the terminal - there is no good way to do it I fear. 
-> If falsly assuming a terminal, the tool will wait for an user input
-> on an interactive list... (a timeout exists and a log is written in .githook-companion/logs)
->
-> the threshold configuration for the language detector is also still
+> the threshold configuration for the language detector is still
 > being tweaked and may be a nuisance. You can see the confidence value
-> by using `--debug` ([see here](#test-commit-standard))
+> by using `--debug` ([see here](#test-commit-standard)) or force the usage of the defaut language defined in the `language_detection_options` with the `--force-default-language` flag.
 
 ## Binary
 
@@ -84,7 +79,7 @@ The tool uses tokenization to provide complex checks and formatting capabilities
 > You can test/tweak your commit configuration effects with following command:
 > 
 > ```bash
-> githook-companion git commit validate -m "commit-message" [--debug]
+> githook-companion git commit validate -m "commit-message" [--debug] [--force-default-language]
 > ```
 
 ### Parent Configurations

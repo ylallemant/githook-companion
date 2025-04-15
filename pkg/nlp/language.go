@@ -21,6 +21,7 @@ func NewLanguageDetector(options *api.LanguageDetectionOptions) (api.LanguageDet
 	detector.threshold = options.ConfidenceThresthold
 	detector.defaultLanguageCode = options.DefautLanguageCode
 	detector.defaultLanguageName = options.DefautLanguageName
+	detector.forceDefault = options.ForceDefault
 
 	detector.minimumWordCount = options.MinimumWordCount
 
@@ -46,6 +47,7 @@ var _ api.LanguageDetector = &languageDetector{}
 
 type languageDetector struct {
 	detector            lingua.LanguageDetector
+	forceDefault        bool
 	defaultLanguageCode string
 	defaultLanguageName string
 	minimumWordCount    int
@@ -53,6 +55,11 @@ type languageDetector struct {
 }
 
 func (i *languageDetector) DetectLanguage(sentence string, ignoreWordCount bool) (string, string, bool) {
+	if i.forceDefault {
+		log.Debug().Msgf("forced to return default language %s (%s)", i.defaultLanguageCode, i.defaultLanguageName)
+		return i.defaultLanguageCode, i.defaultLanguageName, true
+	}
+
 	simpleWordCount := whitespaceRegexp.Split(sentence, -1)
 	log.Debug().Msgf("detect language with %d words (ignoreWordCount=%v)", len(simpleWordCount), ignoreWordCount)
 

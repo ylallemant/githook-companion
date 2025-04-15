@@ -119,8 +119,10 @@ func TestHasCommitTypeToken(t *testing.T) {
 func TestValidate(t *testing.T) {
 	cases := []struct {
 		name                     string
+		forceDefaultLanguage     bool
 		message                  string
 		config                   *api.Config
+		expectedLanguageCode     string
 		expectedToken            *nlpapi.Token
 		expectedDictionaryFound  bool
 		expectedCommitType       string
@@ -147,6 +149,7 @@ func TestValidate(t *testing.T) {
 			expectedDictionaryFound:  false,
 			expectedCommitType:       "",
 			expectedValidationResult: false,
+			expectedLanguageCode:     "en",
 		},
 		{
 			name:    "matching commit type with a dictionary",
@@ -191,6 +194,7 @@ func TestValidate(t *testing.T) {
 			expectedDictionaryFound:  true,
 			expectedCommitType:       "feat",
 			expectedValidationResult: true,
+			expectedLanguageCode:     "en",
 		},
 		{
 			name:    "no matching commit type with a dictionary",
@@ -226,16 +230,38 @@ func TestValidate(t *testing.T) {
 			expectedDictionaryFound:  false,
 			expectedCommitType:       "",
 			expectedValidationResult: false,
+			expectedLanguageCode:     "en",
+		},
+		{
+			name:                 "force language code",
+			message:              "Hijō ni nagai bunshō ga hitsuyōdesuga, eigode wa zettai ni ikemasen",
+			forceDefaultLanguage: true,
+			config: &api.Config{
+				Commit: &api.Commit{
+					Types: []*api.CommitType{
+						{
+							Type: "feat",
+						},
+					},
+					TokenizerOptions: nlp.DefaultTokenizerOptions(),
+				},
+			},
+			expectedDictionaryFound:  false,
+			expectedCommitType:       "",
+			expectedValidationResult: false,
+			expectedLanguageCode:     "en",
 		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(tt *testing.T) {
-			languageCode, valid, commitTypeToken, _, _ := Validate(c.message, c.config)
+			languageCode, valid, commitTypeToken, _, _ := Validate(c.message, c.forceDefaultLanguage, c.config)
+
+			assert.Equal(tt, c.expectedLanguageCode, languageCode, "wrong language code")
+			assert.Equal(tt, c.expectedValidationResult, valid, "wrong result")
 
 			if c.expectedToken != nil {
 				assert.NotNil(tt, commitTypeToken)
-				assert.Equal(tt, "en", languageCode, "wrong language code")
 
 				if commitTypeToken != nil {
 					assert.Equal(tt, c.expectedToken.Name, commitTypeToken.Name, "wrong token name")
@@ -248,8 +274,6 @@ func TestValidate(t *testing.T) {
 			} else {
 				assert.Nil(tt, commitTypeToken)
 			}
-
-			assert.Equal(tt, c.expectedValidationResult, valid, "wrong result")
 		})
 	}
 }

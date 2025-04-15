@@ -59,7 +59,7 @@ var rootCmd = &cobra.Command{
 
 		log.Debug().Msgf("validate \"%s\"", message)
 
-		languageCode, validated, commitTypeToken, tokens, err := commit.Validate(message, configContext.Config())
+		languageCode, validated, commitTypeToken, tokens, err := commit.Validate(message, options.Current.ForceDefaultLanguage, configContext.Config())
 		if err != nil {
 			return errors.Wrap(err, "failed validation")
 		}
@@ -171,6 +171,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&options.Current.Message, "message", "m", options.Current.Message, "commit message")
 	rootCmd.PersistentFlags().StringVarP(&options.Current.OutputFilePath, "output", "o", options.Current.OutputFilePath, "output file path")
+	rootCmd.PersistentFlags().BoolVar(&options.Current.ForceDefaultLanguage, "force-default-language", options.Current.ForceDefaultLanguage, "force language detection to return the default language")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback-config", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")

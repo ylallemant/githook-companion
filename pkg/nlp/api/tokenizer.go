@@ -25,6 +25,7 @@ type TokenizerOptions struct {
 }
 
 type LanguageDetectionOptions struct {
+	ForceDefault         bool    `yaml:"force_default" json:"force_default"`
 	DefautLanguageCode   string  `yaml:"default_language_code" json:"default_language_code"`
 	DefautLanguageName   string  `yaml:"default_language_Name" json:"default_language_Name"`
 	ConfidenceThresthold float64 `yaml:"confidence_thresthold" json:"confidence_thresthold"`

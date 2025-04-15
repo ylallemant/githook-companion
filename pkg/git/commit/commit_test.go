@@ -48,7 +48,7 @@ func TestEnsureFormat(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(tt *testing.T) {
 			cfg := config.Default()
-			_, _, commitTypeToken, tokens, _ := Validate(c.message, cfg)
+			_, _, commitTypeToken, tokens, _ := Validate(c.message, false, cfg)
 
 			result, err := EnsureFormat(c.message, cfg.Commit.MessageTemplate, commitTypeToken, tokens)
 			assert.Nil(tt, err)
