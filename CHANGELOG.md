@@ -1,10 +1,6 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (2025-04-15)
-
-### Bug Fixes
-
-* terminal detection
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (0001-01-01)
 
 
 <a name="0.8.11"></a>
@@ -12,6 +8,7 @@
 
 ### Bug Fixes
 
+* terminal detection
 * long dial timeout on request with credentials
 
 ### Features
