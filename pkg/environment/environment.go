@@ -7,29 +7,20 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/pkg/errors"
+	"golang.org/x/term"
+
 	"github.com/rs/zerolog/log"
 )
 
 func CalledFromTerminal() (bool, error) {
-	dirname, err := os.Getwd()
-	if err != nil {
-		return false, errors.Wrapf(err, "failed to get local directory")
+	if term.IsTerminal(int(os.Stdin.Fd())) {
+		log.Debug().Msg("called from a terminal")
+		return true, nil
+	} else {
+		log.Debug().Msg("NOT called from a terminal")
 	}
-	log.Debug().Msgf("local path \"%s\"", dirname)
 
-	oldpwd := FindEnvVar("OLDPWD")
-	// absolute path of the called executable
-	underscore := FindEnvVar("_")
-	log.Debug().Msgf("OLDPWD       \"%s\"", oldpwd)
-	log.Debug().Msgf("_            \"%s\"", underscore)
-	log.Debug().Msgf("TERM_PROGRAM \"%s\"", FindEnvVar("TERM_PROGRAM"))
-	log.Debug().Msgf("TERM         \"%s\"", FindEnvVar("TERM"))
-
-	assertion := pathValid(dirname, oldpwd) &&
-		binaryPathValid(underscore)
-
-	return assertion, nil
+	return false, nil
 }
 
 func FindEnvVar(name string) string {
