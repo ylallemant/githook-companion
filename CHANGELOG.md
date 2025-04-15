@@ -1,6 +1,14 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11_pre...Unreleased) (2025-04-15)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (2025-04-15)
+
+### Bug Fixes
+
+* terminal detection
+
+
+<a name="0.8.11"></a>
+## [0.8.11](https://github.com/ylallemant/githook-companion/compare/0.8.11_pre...0.8.11) (2025-04-15)
 
 ### Bug Fixes
 
