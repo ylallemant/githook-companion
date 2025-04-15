@@ -207,16 +207,38 @@ func commitLexemes() []*nlpapi.Lexeme {
 		},
 		{
 			LanguageCode: nlpapi.LanguageCodeWildcard,
+			Name:         "iso8601-date",
+			Description:  "lexeme to identify a date formatted after ISO-8601",
+			TokenName:    "iso8601_date",
+			Variants: []*nlpapi.Variant{
+				{
+					Name:    "iso8601-date",
+					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?`)},
+					Normalisers: []*nlpapi.NormalisationStep{
+						{
+							Name:       "ISO-8601 date",
+							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`(.+)`)},
+							ReplaceAll: true,
+							Formatter: &nlpapi.Formatter{
+								Template: "{{ upper . }}",
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			LanguageCode: nlpapi.LanguageCodeWildcard,
 			Name:         "issue_tracker_reference",
 			Description:  "lexeme to identify issue tracker references from different providers",
 			TokenName:    "issue_tracker_reference",
 			Variants: []*nlpapi.Variant{
 				{
 					Name:    "JIRA like issue reference",
-					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`[\(\[]{0,1}([a-zA-z][\w]{0,5})[-_]([\d]+)[\)\]]{0,1}`)},
+					Matcher: &nlpapi.Matcher{Regex: regexp.MustCompile(`[\(\[]{0,1}([a-zA-z][\w]{1,6})[-_]([\d]+)[\)\]]{0,1}`)},
 					Normalisers: []*nlpapi.NormalisationStep{
 						{
-							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`([\w]{0,6})[-_]([\d]+)`)},
+							Matcher:    &nlpapi.Matcher{Regex: regexp.MustCompile(`([a-zA-Z][\w]{1,6})[-_]([\d]+)`)},
 							ReplaceAll: true,
 							Formatter: &nlpapi.Formatter{
 								Template: "{{ upper . }}",
