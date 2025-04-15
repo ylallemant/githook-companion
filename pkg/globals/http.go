@@ -7,8 +7,12 @@ import (
 )
 
 var DefaultApiClient = &http.Client{
-	Timeout: time.Second * 5,
-	Transport: &http.Transport{
+	Timeout:   time.Second * 5,
+	Transport: transport(),
+}
+
+func transport() *http.Transport {
+	return &http.Transport{
 		MaxIdleConns:          100,
 		MaxConnsPerHost:       20,
 		ResponseHeaderTimeout: 5 * time.Second,
@@ -16,9 +20,14 @@ var DefaultApiClient = &http.Client{
 		IdleConnTimeout:       5 * time.Second,
 		TLSHandshakeTimeout:   5 * time.Second,
 		DisableCompression:    false,
-		DialContext: (&net.Dialer{
-			Timeout:   5 * time.Second,
-			KeepAlive: 10 * time.Second,
-		}).DialContext,
-	},
+		DialTLSContext:        dialer().DialContext,
+		DialContext:           dialer().DialContext,
+	}
+}
+
+func dialer() *net.Dialer {
+	return &net.Dialer{
+		Timeout:   3 * time.Second,
+		KeepAlive: 10 * time.Second,
+	}
 }

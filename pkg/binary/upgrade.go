@@ -68,7 +68,7 @@ func ListReleases() ([]*github.RepositoryRelease, error) {
 
 	if hasCredentials {
 		log.Debug().Msgf("request with PAT token")
-		client = github.NewClient(nil).WithAuthToken(token)
+		client = client.WithAuthToken(token)
 	}
 
 	releases, _, err = client.Repositories.ListReleases(context.Background(), owner, repo, nil)
