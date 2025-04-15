@@ -1,6 +1,26 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.9...Unreleased) (2025-04-10)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11_pre...Unreleased) (2025-04-15)
+
+### Bug Fixes
+
+* long dial timeout on request with credentials
+
+### Features
+
+* add iso-8601 date to default lexemes
+
+
+<a name="0.8.11_pre"></a>
+## [0.8.11_pre](https://github.com/ylallemant/githook-companion/compare/0.8.10...0.8.11_pre) (2025-04-15)
+
+### Bug Fixes
+
+* fail-fast behind the firewall
+
+
+<a name="0.8.10"></a>
+## [0.8.10](https://github.com/ylallemant/githook-companion/compare/0.8.9...0.8.10) (2025-04-10)
 
 ### Bug Fixes
 
