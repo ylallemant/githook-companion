@@ -2,6 +2,10 @@
 <a name="Unreleased"></a>
 ## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (2025-04-15)
 
+### Features
+
+* add debug flag
+
 
 <a name="0.8.11"></a>
 ## [0.8.11](https://github.com/ylallemant/githook-companion/compare/0.8.10...0.8.11) (2025-04-15)
