@@ -1,10 +1,10 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (0001-01-01)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (2025-04-15)
 
 
 <a name="0.8.11"></a>
-## [0.8.11](https://github.com/ylallemant/githook-companion/compare/0.8.11_pre...0.8.11) (2025-04-15)
+## [0.8.11](https://github.com/ylallemant/githook-companion/compare/0.8.10...0.8.11) (2025-04-15)
 
 ### Bug Fixes
 
@@ -14,14 +14,6 @@
 ### Features
 
 * add iso-8601 date to default lexemes
-
-
-<a name="0.8.11_pre"></a>
-## [0.8.11_pre](https://github.com/ylallemant/githook-companion/compare/0.8.10...0.8.11_pre) (2025-04-15)
-
-### Bug Fixes
-
-* fail-fast behind the firewall
 
 
 <a name="0.8.10"></a>
