@@ -1,14 +1,10 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (2025-04-16)
-
-### Features
-
-* add force-default-language flag to validate command
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (0001-01-01)
 
 
 <a name="0.8.11"></a>
-## [0.8.11](https://github.com/ylallemant/githook-companion/compare/0.8.10...0.8.11) (2025-04-15)
+## [0.8.11](https://github.com/ylallemant/githook-companion/compare/0.8.10...0.8.11) (2025-04-16)
 
 ### Bug Fixes
 
@@ -17,6 +13,7 @@
 
 ### Features
 
+* add force-default-language flag to validate command
 * add debug flag
 * add iso-8601 date to default lexemes
 
