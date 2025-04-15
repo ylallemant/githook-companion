@@ -75,6 +75,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(&options.Current.Force, "force", options.Current.Force, "force the replacement of the binary")
 	rootCmd.PersistentFlags().BoolVar(&options.Current.AllowPrerelease, "allow-prerelease", options.Current.AllowPrerelease, "allow the installation of pre-release binary versions")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.NonBlocking, "non-blocking", globals.Current.NonBlocking, "an issue during the upgrade will not retrun a command error")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
 }
 
 func Command() *cobra.Command {
