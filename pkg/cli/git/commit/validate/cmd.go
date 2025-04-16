@@ -154,7 +154,7 @@ var rootCmd = &cobra.Command{
 		} else {
 			log.Debug().Msg("output to file")
 			// output to file
-			file, err := os.OpenFile(options.Current.OutputFilePath, os.O_RDWR|os.O_CREATE, 0755)
+			file, err := os.OpenFile(options.Current.OutputFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 			if err != nil {
 				return errors.Wrapf(err, "failed to write to output file %s", options.Current.OutputFilePath)
 			}
