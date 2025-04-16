@@ -2,6 +2,10 @@
 <a name="Unreleased"></a>
 ## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.11...Unreleased) (2025-04-16)
 
+### Bug Fixes
+
+* truncate message output file
+
 ### Documentation
 
 * add language detection comment
