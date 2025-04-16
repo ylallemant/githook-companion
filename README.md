@@ -16,7 +16,13 @@ Sticking with Git means any workflow/tool you build/use on top of it will not br
 >
 > the threshold configuration for the language detector is still
 > being tweaked and may be a nuisance. You can see the confidence value
-> by using `--debug` ([see here](#test-commit-standard)) or force the usage of the defaut language defined in the `language_detection_options` with the `--force-default-language` flag.
+> by using `--debug` ([see here](#test-commit-standard)) or force the usage
+> of the defaut language defined in the `language_detection_options`
+> with the `--force-default-language` flag.
+>
+> If anybody has a good suggestion for a language detection library that is Go compatible, I am interested.
+> Main issue is to get reliable detections on short sentences that also have
+> good chances to use technical terms in English - which makes it harder.
 
 ## Binary
 
