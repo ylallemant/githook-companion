@@ -1,6 +1,10 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.12...Unreleased) (0001-01-01)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.12...Unreleased) (2025-04-17)
+
+### Bug Fixes
+
+* remove dial timeout
 
 
 <a name="0.8.12"></a>
