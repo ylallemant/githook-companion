@@ -121,6 +121,15 @@ You may want to use specific binaries in your githooks.
 
 This is done to avoid too complex manipulations in the githook scripts themselves.
 
+#### Environment Commands
+
+```bash
+# checks if the command is running within a terminal
+# returns a "true" or "false"
+githook-companion environment terminal
+```
+
+
 #### Configuration Commands
 
 ```bash
