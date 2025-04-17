@@ -138,20 +138,30 @@ curl --fail --location --output "${downloaded_file}" "${asset_uri}"
 
 echo "[2/3] Install ${exe_name} to the ${absolute_executable_folder}"
 tar -xz -f ${downloaded_file} -C ${absolute_executable_folder}
-exe=${absolute_executable_folder}/${exe_name}
-chmod +x ${exe}
+exe_path=${absolute_executable_folder}/${exe_name}
+chmod +x ${exe_path}
+echo "      ${exe_name} was installed successfully to ${exe_path}"
 
 echo "[3/3] Set environment variables"
-echo "${exe_name} was installed successfully to ${exe}"
-if [ -z "$(grep "/$relative_executable_folder" "$HOME/.profile")" ]; then
-    echo "add the ${absolute_executable_folder} directory to your \$HOME/.profile"
+shell_profile_file=".profile"
+
+case $SHELL in
+*/zsh)
+  shell_profile_file=".zprofile"
+  ;;
+esac
+
+echo "      assuming shell profile file at $HOME/$shell_profile_file"
+
+if [ -z "$(grep "/$relative_executable_folder" "$HOME/$shell_profile_file")" ]; then
+    echo "      add the ${absolute_executable_folder} directory to your \$HOME/$shell_profile_file"
     echo "
 # set PATH so it includes user's private bin if it exists
 if [ -d \"${absolute_executable_folder@Q}\" ] ; then
     PATH=\"${absolute_executable_folder@Q}:\$PATH\"
 fi
 
-" >> $HOME/.profile
+" >> $HOME/$shell_profile_file
 
     export PATH=${absolute_executable_folder}:$PATH
     echo "Run '$exe_name --help' to get started"
