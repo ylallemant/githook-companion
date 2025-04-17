@@ -10,7 +10,7 @@ set -e
 # eg. release-lab/whatchanged
 owner="ylallemant"
 repo="githook-companion"
-exe_name="githook-companion"
+exe_name=""
 githubUrl=""
 githubApiUrl=""
 
@@ -20,13 +20,6 @@ absolute_executable_folder="${HOME}/$relative_executable_folder" # Eventually, t
 # make sure PATH is properly set, in some pipeline it may not be the case
 PATH=${absolute_executable_folder}:$PATH
 
-# if command -v $exe_name >/dev/null; then
-#   echo "$exe_name is already installed in version $(command $exe_name version --semver)"
-#   command $exe_name upgrade --non-blocking
-#   exit 0
-# fi
-
-version=$(curl -s https://api.github.com/repos/ylallemant/githook-companion/releases/latest | grep -m1 -Eo "githook-companion-[^/]+-linux-amd64.tar.gz" | grep -Eo "([0-9]+\.[0-9]+\.[0-9]+)")
 separator="-"
 
 get_arch() {
@@ -87,6 +80,28 @@ if [ -z "$githubUrl" ]; then
 fi
 if [ -z "$githubApiUrl" ]; then
     githubApiUrl="https://api.github.com"
+fi
+
+
+echo "prepare installation of binary $exe_name from repository github.com/$owner/$repo"
+
+
+if [ -z "$version" ]; then
+  echo "no version has been requested, retrieving latest version from the repository"
+  version=$(curl -s https://api.github.com/repos/$owner/$repo/releases/latest | grep -m1 -Eo "$exe_name-[^/]+-linux-amd64.tar.gz" | grep -Eo "([0-9]+\.[0-9]+\.[0-9]+)")
+else
+  echo "version $version has been requested"
+fi
+
+if command -v $exe_name >/dev/null; then
+  local_version=$(command $exe_name version --semver)
+  echo "$exe_name is already installed in version $local_version"
+  if [ $local_version = $version ]; then
+    echo "local installation has already the wanted version, nothing to do"
+    exit 0
+  else
+    echo "local $local_version and wanted $version diverge, start installation"
+  fi
 fi
 
 downloadFolder="${TMPDIR:-/tmp}"
