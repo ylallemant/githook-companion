@@ -24,6 +24,8 @@ var rootCmd = &cobra.Command{
 	Short: "upgrade the binary",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		globals.ProcessGlobals()
+
 		currentLocation, err := binary.Location()
 		if err != nil {
 			return errors.Wrapf(err, "failed to get current installation path")

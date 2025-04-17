@@ -7,8 +7,8 @@ import (
 )
 
 var DefaultApiClient = &http.Client{
-	Timeout:   time.Second * 5,
-	Transport: transport(),
+	// Timeout:   time.Second * 5,
+	// Transport: transport(),
 }
 
 func transport() *http.Transport {
