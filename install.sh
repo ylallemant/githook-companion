@@ -20,11 +20,11 @@ absolute_executable_folder="${HOME}/$relative_executable_folder" # Eventually, t
 # make sure PATH is properly set, in some pipeline it may not be the case
 PATH=${absolute_executable_folder}:$PATH
 
-if command -v $exe_name >/dev/null; then
-  echo "$exe_name is already installed in version $(command $exe_name version --semver)"
-  command $exe_name upgrade --non-blocking
-  exit 0
-fi
+# if command -v $exe_name >/dev/null; then
+#   echo "$exe_name is already installed in version $(command $exe_name version --semver)"
+#   command $exe_name upgrade --non-blocking
+#   exit 0
+# fi
 
 version=$(curl -s https://api.github.com/repos/ylallemant/githook-companion/releases/latest | grep -m1 -Eo "githook-companion-[^/]+-linux-amd64.tar.gz" | grep -Eo "([0-9]+\.[0-9]+\.[0-9]+)")
 separator="-"
