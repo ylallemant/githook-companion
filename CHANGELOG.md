@@ -6,6 +6,10 @@
 
 * remove dial timeout
 
+### Code Refactoring
+
+* raise network-problem lock to 30 minutes
+
 
 <a name="0.8.12"></a>
 ## [0.8.12](https://github.com/ylallemant/githook-companion/compare/0.8.11...0.8.12) (2025-04-16)
