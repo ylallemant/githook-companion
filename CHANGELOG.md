@@ -4,6 +4,7 @@
 
 ### Bug Fixes
 
+* set environment variable for shell zsh
 * do not use binary upgrade in the install script
 
 ### Features
