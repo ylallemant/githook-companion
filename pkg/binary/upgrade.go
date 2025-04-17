@@ -54,7 +54,7 @@ func ListReleases() ([]*github.RepositoryRelease, error) {
 			return releases, nil
 		}
 
-		filesystem.SetTimedLockWithDescription(lockPath, binaryLockDescription, 10*time.Minute)
+		filesystem.SetTimedLockWithDescription(lockPath, binaryLockDescription, 30*time.Minute)
 	}
 
 	owner, repo, err := git.OwnerAndRepositoryFromUri(uri)
