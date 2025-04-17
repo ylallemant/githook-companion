@@ -13,6 +13,7 @@
 
 ### Performance Improvements
 
+* limit sync timeout to 5 seconds
 * check versions before downloading
 
 
