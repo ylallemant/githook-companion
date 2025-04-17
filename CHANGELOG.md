@@ -2,6 +2,10 @@
 <a name="Unreleased"></a>
 ## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.14...Unreleased) (2025-04-17)
 
+### Bug Fixes
+
+* default hooks to be able to run prepare-commit-msg outside a terminal
+
 ### Documentation
 
 * describe the environment terminal command
