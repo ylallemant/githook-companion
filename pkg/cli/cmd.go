@@ -9,6 +9,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/cli/config"
 	"github.com/ylallemant/githook-companion/pkg/cli/debug"
 	"github.com/ylallemant/githook-companion/pkg/cli/dependency"
+	"github.com/ylallemant/githook-companion/pkg/cli/environment"
 	"github.com/ylallemant/githook-companion/pkg/cli/git"
 	initCmd "github.com/ylallemant/githook-companion/pkg/cli/init"
 	"github.com/ylallemant/githook-companion/pkg/cli/remove"
@@ -27,6 +28,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
+	rootCmd.AddCommand(environment.Command())
 	rootCmd.AddCommand(dependency.Command())
 	rootCmd.AddCommand(git.Command())
 	rootCmd.AddCommand(debug.Command())
