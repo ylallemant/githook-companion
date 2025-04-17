@@ -1,6 +1,14 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.13...Unreleased) (2025-04-17)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.14...Unreleased) (2025-04-17)
+
+### Documentation
+
+* describe the environment terminal command
+
+
+<a name="0.8.14"></a>
+## [0.8.14](https://github.com/ylallemant/githook-companion/compare/0.8.13...0.8.14) (2025-04-17)
 
 ### Bug Fixes
 
