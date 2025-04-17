@@ -6,6 +6,10 @@
 
 * do not use binary upgrade in the install script
 
+### Features
+
+* add environment terminal command
+
 ### Performance Improvements
 
 * check versions before downloading
