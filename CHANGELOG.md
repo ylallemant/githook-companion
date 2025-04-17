@@ -6,6 +6,10 @@
 
 * do not use binary upgrade in the install script
 
+### Performance Improvements
+
+* check versions before downloading
+
 
 <a name="0.8.13"></a>
 ## [0.8.13](https://github.com/ylallemant/githook-companion/compare/0.8.12...0.8.13) (2025-04-17)
