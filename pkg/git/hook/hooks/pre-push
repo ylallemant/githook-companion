@@ -21,6 +21,9 @@ echo "apply parent pre-push"
 #   START OF YOUR HOOK LOGIC BLOCK
 #+++
 
+# don't add any commits here : push lists the commits it will
+# send to the server even before the "pre-push" hook
+# any new commit will be ignored
 
 #+++
 #   END OF YOUR HOOK LOGIC BLOCK

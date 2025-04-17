@@ -14,7 +14,8 @@ CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
 # project child githook directory
 CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 
-
+# the post-commit hook can't be avoided by Git means
+# that is why we use a lock to ensure it will be run only once
 if [ "$(githook-companion git hook locked post-commit)" != "true" ]
 then
 

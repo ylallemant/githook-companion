@@ -38,4 +38,12 @@ env >>  "$CHILD_LOG_FILE"
 echo "-------------------------" >>  "$CHILD_LOG_FILE"
 ls -al /dev/tty* >>  "$CHILD_LOG_FILE"
 
-githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE" < /dev/tty
+
+# if the hook is not running in a terminal /dev/tty will not be available
+# and no interactive selection of the commit type will be possible
+if [ "true" = "$(githook-companion environment terminal)"]
+then
+  githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE" < /dev/tty
+else
+  githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE"
+fi
