@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	ConfigKind                  = "GithookCompanionConfig"
+	ConfigKind                  = "GithookCompanionConfiguration"
 	ConfigVersion               = "0.8.16"
 	ConfigDirectory             = ".githook-companion"
 	ConfigFile                  = "config.yaml"
@@ -43,7 +43,8 @@ type Config struct {
 }
 
 type ToolSync struct {
-	Enabled             bool
+	Parent              bool
+	Binary              bool
 	Timeout             time.Duration
 	CheckPeriod         time.Duration
 	OfflineLockDuration time.Duration

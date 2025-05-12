@@ -1,3 +1,5 @@
+kind: GithookCompanionConfiguration
+version: 0.8.16
 parent:
     path: ../githooks
     repository: https://github.com/ylallemant/githooks

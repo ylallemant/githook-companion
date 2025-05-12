@@ -58,6 +58,8 @@ func Default() *api.Config {
 func defaultSync() *api.ToolSync {
 	sync := new(api.ToolSync)
 
+	sync.Parent = true
+	sync.Binary = false
 	sync.Timeout = 5 * time.Second
 	sync.OfflineLockDuration = 20 * time.Minute
 	sync.CheckPeriod = 3 * time.Minute

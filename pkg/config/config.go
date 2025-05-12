@@ -5,8 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
+	"github.com/ylallemant/githook-companion/pkg/binary"
 	"github.com/ylallemant/githook-companion/pkg/environment"
 	"github.com/ylallemant/githook-companion/pkg/filesystem"
 	"gopkg.in/yaml.v3"
@@ -132,6 +135,28 @@ func Load(path string, strict bool) (*api.Config, error) {
 			return nil, errors.Wrapf(err, "config could not be loaded from %s", path)
 		}
 
+		if cfg.Kind != api.ConfigKind {
+			return nil, errors.Errorf(
+				"configuration kind should be \"%s\" but found \"%s\" at %s",
+				api.ConfigKind,
+				cfg.Kind,
+				path,
+			)
+		}
+
+		log.Debug().Msgf("configuration parsed from: %s", path)
+
+		compatible, configVersion, binaryVersion := CompatibleToBinary(cfg)
+		log.Debug().Msgf("configuration (%s) and binary (%s) versions compatible: %v", configVersion, binaryVersion, compatible)
+		if !compatible {
+			return nil, errors.Errorf(
+				"upgrade your binary: its version is out of sync with the minimum required by the configuration: %s < %s: configuration at %s",
+				binaryVersion,
+				configVersion,
+				path,
+			)
+		}
+
 		return cfg, nil
 	}
 
@@ -174,4 +199,25 @@ func ToJSON(config *api.Config) ([]byte, error) {
 
 func ToPrettyJSON(config *api.Config) ([]byte, error) {
 	return json.MarshalIndent(config, "", "  ")
+}
+
+func CompatibleToBinary(config *api.Config) (compatible bool, configVersionString, binaryVersionString string) {
+	binaryVersionString = binary.Semver()
+
+	if binaryVersionString == "n/a" {
+		// only possible locally on "go run"
+		binaryVersionString = api.ConfigVersion
+	}
+
+	configVersionString = config.Version
+
+	if configVersionString == "" {
+		// old configuration have no version
+		configVersionString = api.ConfigVersion
+	}
+
+	binaryVersion := semver.MustParse(binaryVersionString)
+	configVersion := semver.MustParse(configVersionString)
+
+	return configVersion.LessThanEqual(binaryVersion), configVersionString, binaryVersionString
 }

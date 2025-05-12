@@ -34,8 +34,13 @@ curl -fsSL https://github.com/ylallemant/githook-companion/raw/main/install.sh |
 
 ### Upgrade
 
+Upgrades may introduce soft or breaking changes to the configuration, please check the `./migrations` folder.
+
+The `dry-run` flag will only print information about the upgrade, without making any change.
+You can use it to simply compare your local version to the official release list.
+
 ```sh
-githook-companion upgrade [--force]
+githook-companion upgrade [--dry-run]
 ```
 
 ### Debug
@@ -97,6 +102,8 @@ In the presence of a child configuration, `githook-companion` will automatically
 The hooks in the parent configuration can also trigger project specific hook-scripts in the child project.
 
 Here you can find an [example of parent configuration](https://github.com/ylallemant/githooks/tree/main/.githook-companion)
+
+The binary makes sure it is compatible to the used configuration : version greater or equal to all configuration versions used (child, parent).
 
 
 > [!TIP]

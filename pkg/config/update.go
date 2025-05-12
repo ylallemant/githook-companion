@@ -66,6 +66,7 @@ func parentRemoteVersion(ctx api.ConfigContext, branch string) (string, error) {
 func EnsureVersionSync(ctx api.ConfigContext) (bool, error) {
 	if !ctx.HasParent() {
 		// no repository to pull
+		log.Debug().Msgf("no parent to sync")
 		return false, nil
 	}
 
