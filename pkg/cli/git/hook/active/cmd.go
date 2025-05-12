@@ -1,21 +1,22 @@
-package locked
+package active
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/ylallemant/githook-companion/pkg/cli/git/hook/locked/options"
 	"github.com/ylallemant/githook-companion/pkg/config"
 	"github.com/ylallemant/githook-companion/pkg/git/hook"
 	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "locked \"hookname\"",
-	Short: "checks if a specific hook is permanently or temporary locked",
-	Long:  ``,
-	Args:  cobra.MatchAll(cobra.MinimumNArgs(1), cobra.MaximumNArgs(1)),
+	Use:   "active \"hookname\"",
+	Short: "checks if a specific hook is active or not",
+	Long: `checks if a specific hook is active or not:
+	the status is affected by different things like a lock,
+	an active merge process, ...`,
+	Args: cobra.MatchAll(cobra.MinimumNArgs(1), cobra.MaximumNArgs(1)),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		status := false
 		hookname := args[0]
@@ -25,7 +26,7 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		status, err = hook.Locked(hookname, configContext)
+		status, err = hook.Active(hookname, configContext)
 		if err != nil {
 			return err
 		}
@@ -36,7 +37,6 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().DurationVarP(&options.Current.Duration, "duration", "d", options.Current.Duration, "set a validity duration for the lock. without this setting the lock is permanent")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.FallbackConfig, "fallback-config", globals.Current.FallbackConfig, "if no configuration was found, fallback to the default one")
 	//rootCmd.PersistentFlags().StringVarP(&globals.Current.ConfigPath, "config", "c", globals.Current.ConfigPath, "path to configuration file")
 	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")

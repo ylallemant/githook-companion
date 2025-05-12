@@ -193,6 +193,14 @@ githook-companion git merge active
 #### Git Hooks Commands
 
 ```bash
+# checks if a specific githook is active - returns "true" or "false"
+# reasons for a hook to be deactivated:
+# - specifically by a valid lock
+# - globally if a merge process is in progress
+githook-companion git hook active "hook-name"
+```
+
+```bash
 # disables the locally the githooks by unsetting "core.hooksPath"
 githook-companion git hook disable
 ```
