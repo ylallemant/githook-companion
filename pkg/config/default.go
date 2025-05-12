@@ -28,6 +28,9 @@ const (
 func Default() *api.Config {
 	config := new(api.Config)
 
+	config.Kind = api.ConfigKind
+	config.Version = api.ConfigVersion
+
 	config.ToolSync = defaultSync()
 
 	commit := new(api.Commit)

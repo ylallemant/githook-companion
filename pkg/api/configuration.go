@@ -8,6 +8,8 @@ import (
 )
 
 const (
+	ConfigKind                  = "GithookCompanionConfig"
+	ConfigVersion               = "0.8.15"
 	ConfigDirectory             = ".githook-companion"
 	ConfigFile                  = "config.yaml"
 	GithooksDirectory           = "hooks"
@@ -30,6 +32,8 @@ var (
 )
 
 type Config struct {
+	Kind                string `yaml:"kind,omitempty" json:"kind,omitempty"`
+	Version             string `yaml:"version,omitempty" json:"version,omitempty"`
 	*ParentConfig       `yaml:"parent,omitempty" json:"parent,omitempty"`
 	*Commit             `yaml:"commit" json:"commit"`
 	*ToolSync           `yaml:"sync" json:"sync"`
