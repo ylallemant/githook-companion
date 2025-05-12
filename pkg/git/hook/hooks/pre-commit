@@ -15,38 +15,46 @@ CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
 CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 CHILD_CONFIG_DIRECTORY="$(githook-companion config directory --child)"
 
-echo "apply parent pre-commit"
 
-# unlock all githooks from last cycle
-githook-companion git hook unlock --all
-
-# Make sure my email is set properly
-if [ -z "$(git config user.email)" ]
+if [ "$(githook-companion git hook active pre-commit)" == "true" ]
 then
-	cat "\nError: user.email not set\n\n"
-	exit 1
-fi
 
-# Make sure my name is set properly
-if [ -z "$(git config user.name)" ]
-then
-	cat "\nError: user.name not set\n\n"
-	exit 1
-fi
+	echo "apply parent pre-commit"
+
+	# unlock all githooks from last cycle
+	githook-companion git hook unlock --all
+
+	# Make sure my email is set properly
+	if [ -z "$(git config user.email)" ]
+	then
+		cat "\nError: user.email not set\n\n"
+		exit 1
+	fi
+
+	# Make sure my name is set properly
+	if [ -z "$(git config user.name)" ]
+	then
+		cat "\nError: user.name not set\n\n"
+		exit 1
+	fi
 
 
-#************************************
-#   START OF YOUR HOOK LOGIC BLOCK
-#+++
+	#************************************
+	#   START OF YOUR HOOK LOGIC BLOCK
+	#+++
 
 
-#+++
-#   END OF YOUR HOOK LOGIC BLOCK
-#************************************
+	#+++
+	#   END OF YOUR HOOK LOGIC BLOCK
+	#************************************
 
 
-if [ -d "$CHILD_GITHOOKS_DIRECTORY" ] && [ -f "$CHILD_GITHOOKS_DIRECTORY/pre-commit" ] && [ "$PARENT_REPOSITORY_ROOT" != "$CHILD_REPOSITORY_ROOT" ]
-then
-  echo "apply child pre-commit"
-  "$CHILD_GITHOOKS_DIRECTORY"/pre-commit
+	if [ -d "$CHILD_GITHOOKS_DIRECTORY" ] && [ -f "$CHILD_GITHOOKS_DIRECTORY/pre-commit" ] && [ "$PARENT_REPOSITORY_ROOT" != "$CHILD_REPOSITORY_ROOT" ]
+	then
+	echo "apply child pre-commit"
+	"$CHILD_GITHOOKS_DIRECTORY"/pre-commit
+	fi
+
+else
+  echo "parent pre-commit is inactive"
 fi

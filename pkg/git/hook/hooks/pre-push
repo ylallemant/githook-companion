@@ -15,36 +15,42 @@ CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
 CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 CHILD_CONFIG_DIRECTORY="$(githook-companion config directory --child)"
 
-echo "apply parent pre-push"
-
-#************************************
-#   START OF YOUR HOOK LOGIC BLOCK
-#+++
-
-# don't add any commits here : push lists the commits it will
-# send to the server even before the "pre-push" hook
-# any new commit will be ignored
-
-#+++
-#   END OF YOUR HOOK LOGIC BLOCK
-#************************************
-
-
-# apply child git-hooks
-if [ -d "$CHILD_GITHOOKS_DIRECTORY" ] && [ -f "$CHILD_GITHOOKS_DIRECTORY/pre-push" ] && [ "$PARENT_REPOSITORY_ROOT" != "$CHILD_REPOSITORY_ROOT" ]
+if [ "$(githook-companion git hook active pre-push)" == "true" ]
 then
-  echo "apply child pre-push"
-  "$CUSTOM_GITHOOKS_DIRECTORY"/pre-push
-fi
+
+  # apply child git-hooks
+  if [ -d "$CHILD_GITHOOKS_DIRECTORY" ] && [ -f "$CHILD_GITHOOKS_DIRECTORY/pre-push" ] && [ "$PARENT_REPOSITORY_ROOT" != "$CHILD_REPOSITORY_ROOT" ]
+  then
+    echo "apply child pre-push"
+    "$CUSTOM_GITHOOKS_DIRECTORY"/pre-push
+  fi
+
+  echo "apply parent pre-push"
+
+  #************************************
+  #   START OF YOUR HOOK LOGIC BLOCK
+  #+++
+
+  # don't add any commits here : push lists the commits it will
+  # send to the server even before the "pre-push" hook
+  # any new commit will be ignored
+
+  #+++
+  #   END OF YOUR HOOK LOGIC BLOCK
+  #************************************
 
 
-# make sure a clean state is being pushed
-if [ -z "$(git status --porcelain)" ]; then
-  # Working directory clean
-  echo "clean state: proceed with push"
+  # make sure a clean state is being pushed
+  if [ -z "$(git status --porcelain)" ]; then
+    # Working directory clean
+    echo "clean state: proceed with push"
+  else
+    # Uncommitted changes
+    echo "you have uncommited changes: stopping the push"
+    git status
+    exit 1
+  fi
+
 else
-  # Uncommitted changes
-  echo "you have uncommited changes: stopping the push"
-  git status
-  exit 1
+  echo "parent pre-push is inactive"
 fi

@@ -14,12 +14,10 @@ CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
 # project child githook directory
 CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 
-# the post-commit hook can't be avoided by Git means
-# that is why we use a lock to ensure it will be run only once
-if [ "$(githook-companion git hook locked post-commit)" != "true" ]
+if [ "$(githook-companion git hook active post-commit)" == "true" ]
 then
-
-  echo "apply parent post-commit"
+  # the post-commit hook can't be avoided by Git means
+  # that is why we use a lock to ensure it will be run only once
   githook-companion git hook lock post-commit --duration 5m
 
   if [ -d "$CHILD_GITHOOKS_DIRECTORY" ] && [ -f "$CHILD_GITHOOKS_DIRECTORY/post-commit" ] && [ "$PARENT_REPOSITORY_ROOT" != "$CHILD_REPOSITORY_ROOT" ]
@@ -27,6 +25,8 @@ then
     echo "apply child post-commit"
     "$CHILD_GITHOOKS_DIRECTORY"/post-commit
   fi
+
+  echo "apply parent post-commit"
 
   #************************************
   #   START OF YOUR HOOK LOGIC BLOCK
@@ -40,5 +40,5 @@ then
   # remove lock
   githook-companion git hook unlock post-commit
 else
-  echo "parent post-commit is locked"
+  echo "parent post-commit is inactive"
 fi

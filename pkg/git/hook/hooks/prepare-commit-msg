@@ -20,30 +20,35 @@ CHILD_BIN_DIRECTORY="$(githook-companion config dependency path --child)"
 CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 CHILD_CONFIG_DIRECTORY="$(githook-companion config directory --child)"
 
-echo "apply parent prepare-commit-msg"
-
-COMMIT_MESSAGE_FILE=$1
-COMMIT_SOURCE=$2
-
-# log some information for debugging
-CHILD_LOG_FILE="$CHILD_CONFIG_DIRECTORY"/logs/prepare-commit-msg.log
-echo "$(date)" > "$CHILD_LOG_FILE"
-echo "-------------------------" >> "$CHILD_LOG_FILE"
-echo "COMMIT_MESSAGE_FILE: $COMMIT_MESSAGE_FILE" >> "$CHILD_LOG_FILE"
-echo "COMMIT_SOURCE:       $COMMIT_SOURCE" >>  "$CHILD_LOG_FILE"
-echo "-------------------------" >>  "$CHILD_LOG_FILE"
-githook-companion debug >>  "$CHILD_LOG_FILE"
-echo "-------------------------" >>  "$CHILD_LOG_FILE"
-env >>  "$CHILD_LOG_FILE"
-echo "-------------------------" >>  "$CHILD_LOG_FILE"
-ls -al /dev/tty* >>  "$CHILD_LOG_FILE"
-
-
-# if the hook is not running in a terminal /dev/tty will not be available
-# and no interactive selection of the commit type will be possible
-if [ "true" = "$(githook-companion environment terminal)"]
+if [ "$(githook-companion git hook active prepare-commit-msg)" == "true" ]
 then
-  githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE" < /dev/tty
+
+  echo "apply parent prepare-commit-msg"
+
+  COMMIT_MESSAGE_FILE=$1
+  COMMIT_SOURCE=$2
+
+  # log some information for debugging
+  CHILD_LOG_FILE="$CHILD_CONFIG_DIRECTORY"/logs/prepare-commit-msg.log
+  echo "$(date)" > "$CHILD_LOG_FILE"
+  echo "-------------------------" >> "$CHILD_LOG_FILE"
+  echo "COMMIT_MESSAGE_FILE: $COMMIT_MESSAGE_FILE" >> "$CHILD_LOG_FILE"
+  echo "COMMIT_SOURCE:       $COMMIT_SOURCE" >>  "$CHILD_LOG_FILE"
+  echo "-------------------------" >>  "$CHILD_LOG_FILE"
+  githook-companion debug >>  "$CHILD_LOG_FILE"
+  echo "-------------------------" >>  "$CHILD_LOG_FILE"
+  env >>  "$CHILD_LOG_FILE"
+
+
+  # if the hook is not running in a terminal /dev/tty will not be available
+  # and no interactive selection of the commit type will be possible
+  if [ "true" = "$(githook-companion environment terminal)"]
+  then
+    githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE" < /dev/tty
+  else
+    githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE"
+  fi
+
 else
-  githook-companion git commit validate -m "$(cat $COMMIT_MESSAGE_FILE)" -o "$COMMIT_MESSAGE_FILE"
+  echo "parent prepare-commit-msg is inactive"
 fi
