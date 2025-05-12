@@ -183,6 +183,13 @@ githook-companion git commit type list
 githook-companion git commit validate 'message' [--debug]
 ```
 
+#### Git Merge Commands
+
+```bash
+# check if a merge process is in progress - returns "true" or "false"
+githook-companion git merge active
+```
+
 #### Git Hooks Commands
 
 ```bash

@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/cli/git/commit"
 	"github.com/ylallemant/githook-companion/pkg/cli/git/hook"
+	"github.com/ylallemant/githook-companion/pkg/cli/git/merge"
 	"github.com/ylallemant/githook-companion/pkg/cli/git/server"
 )
 
@@ -24,6 +25,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(server.Command())
 	rootCmd.AddCommand(commit.Command())
+	rootCmd.AddCommand(merge.Command())
 	rootCmd.AddCommand(hook.Command())
 }
 
