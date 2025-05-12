@@ -4,6 +4,8 @@
 
 ### Features
 
+* add kind and version properties to configuration
+* add git hook active command
 * add git merge active command
 
 
