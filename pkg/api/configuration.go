@@ -9,7 +9,7 @@ import (
 
 const (
 	ConfigKind                  = "GithookCompanionConfig"
-	ConfigVersion               = "0.8.15"
+	ConfigVersion               = "0.8.16"
 	ConfigDirectory             = ".githook-companion"
 	ConfigFile                  = "config.yaml"
 	GithooksDirectory           = "hooks"
