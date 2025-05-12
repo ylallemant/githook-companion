@@ -1,6 +1,14 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.14...Unreleased) (2025-04-17)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.15...Unreleased) (2025-05-12)
+
+### Features
+
+* add git merge active command
+
+
+<a name="0.8.15"></a>
+## [0.8.15](https://github.com/ylallemant/githook-companion/compare/0.8.14...0.8.15) (2025-04-17)
 
 ### Bug Fixes
 
