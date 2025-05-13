@@ -1,9 +1,18 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.15...Unreleased) (2025-05-12)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.16...Unreleased) (2025-05-13)
+
+### Bug Fixes
+
+* use POSIX compliant string comparaison
+
+
+<a name="0.8.16"></a>
+## [0.8.16](https://github.com/ylallemant/githook-companion/compare/0.8.15...0.8.16) (2025-05-12)
 
 ### Features
 
+* add active status check to all githooks
 * add configuration kind and version
 * add kind and version properties to configuration
 * add git hook active command
