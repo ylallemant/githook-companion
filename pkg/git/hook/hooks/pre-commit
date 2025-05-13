@@ -16,7 +16,7 @@ CHILD_GITHOOKS_DIRECTORY="$(githook-companion config hook path --child)"
 CHILD_CONFIG_DIRECTORY="$(githook-companion config directory --child)"
 
 
-if [ "$(githook-companion git hook active pre-commit)" == "true" ]
+if [ "$(githook-companion git hook active pre-commit)" = "true" ]
 then
 
 	echo "apply parent pre-commit"
