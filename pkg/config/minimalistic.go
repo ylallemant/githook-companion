@@ -9,6 +9,7 @@ func Minimalistic() *api.Config {
 	config := new(api.Config)
 	config.Kind = api.ConfigKind
 	config.Version = api.ConfigVersion
+	config.ToolSync = defaultSync()
 
 	config.Commit = new(api.Commit)
 	config.Commit.TokenizerOptions = new(nlpapi.TokenizerOptions)

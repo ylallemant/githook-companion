@@ -26,24 +26,16 @@ const (
 )
 
 func Default() *api.Config {
-	config := new(api.Config)
+	config := Minimalistic()
 
-	config.Kind = api.ConfigKind
-	config.Version = api.ConfigVersion
-
-	config.ToolSync = defaultSync()
-
-	commit := new(api.Commit)
-	config.Commit = commit
-
-	commit.MessageTemplate = "{{ .CommitType | upper }}{{ if .CommitScope }}({{ .CommitScope | lower }}){{ end }}{{ if .CommitBreakingFlag }}{{ .CommitBreakingFlag }}{{ end }}: {{ if .IssueTrackerReference }}[{{ .IssueTrackerReference }}]{{ end }} {{ .Message | lower }}"
-	commit.DefaultType = typeFeature
-	commit.Types = commitTypes()
-	commit.NoFormatting = []string{
+	config.Commit.MessageTemplate = "{{ .CommitType | upper }}{{ if .CommitScope }}({{ .CommitScope | lower }}){{ end }}{{ if .CommitBreakingFlag }}{{ .CommitBreakingFlag }}{{ end }}: {{ if .IssueTrackerReference }}[{{ .IssueTrackerReference }}]{{ end }} {{ .Message | lower }}"
+	config.Commit.DefaultType = typeFeature
+	config.Commit.Types = commitTypes()
+	config.Commit.NoFormatting = []string{
 		TypeIgnore,
 	}
 
-	commit.TokenizerOptions = &nlpapi.TokenizerOptions{
+	config.Commit.TokenizerOptions = &nlpapi.TokenizerOptions{
 		LanguageDetectionOptions: nlp.DefaultLanguageDetectionOptions(),
 		LanguageCodes: []string{
 			"en",

@@ -157,7 +157,7 @@ func Load(path string, strict bool) (*api.Config, error) {
 			)
 		}
 
-		return cfg, nil
+		return Merge(Minimalistic(), cfg)
 	}
 
 	return nil, nil
