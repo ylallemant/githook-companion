@@ -65,6 +65,7 @@ type Dependency struct {
 	ChecksumUrlTemplate string   `yaml:"checksum_url_template" json:"checksum_url_template"`
 	ChecksumAlgorithm   string   `yaml:"checksum_algorithm" json:"checksum_algorithm"`
 	ArchiveUrlTemplate  string   `yaml:"archive_url_template" json:"archive_url_template"`
+	BinaryUrlTemplate   string   `yaml:"binary_url_template" json:"binary_url_template"`
 }
 
 type Commit struct {
