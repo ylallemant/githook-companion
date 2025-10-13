@@ -8,6 +8,26 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
+func targetUriTemplate(dependency *api.Dependency) (string, error) {
+	if dependency.ArchiveUrlTemplate != "" && dependency.BinaryUrlTemplate != "" {
+		return "", errors.Errorf("only an archive OR a binary target url template are allowed, found both for dependency \"%s\"", dependency.Name)
+	}
+
+	if dependency.ArchiveUrlTemplate != "" {
+		return dependency.ArchiveUrlTemplate, nil
+	}
+
+	if dependency.BinaryUrlTemplate != "" {
+		return dependency.BinaryUrlTemplate, nil
+	}
+
+	return "", errors.Errorf("no target url template found for dependency \"%s\"", dependency.Name)
+}
+
+func isArchive(dependency *api.Dependency) bool {
+	return dependency.ArchiveUrlTemplate != ""
+}
+
 func Available(dependency *api.Dependency, directory string) (bool, error) {
 	path := filepath.Join(directory, dependency.Name)
 
@@ -36,8 +56,12 @@ func Delete(dependency *api.Dependency, directory string) error {
 
 func Install(dependency *api.Dependency, directory string) error {
 	templateData := templateDataFromDependency(dependency)
+	targetUriTemplate, err := targetUriTemplate(dependency)
+	if err != nil {
+		return errors.Wrapf(err, "failed to find \"%s\" target uri template", dependency.Name)
+	}
 
-	archiveUri, err := renderUriTempate(dependency.ArchiveUrlTemplate, templateData)
+	targetUri, err := renderUriTempate(targetUriTemplate, templateData)
 	if err != nil {
 		return errors.Wrapf(err, "failed to render \"%s\" archive uri", dependency.Name)
 	}
@@ -48,12 +72,12 @@ func Install(dependency *api.Dependency, directory string) error {
 	}
 	defer os.RemoveAll(tempDirectory)
 
-	archiveFilename, err := filenameFromUrl(archiveUri)
+	targetFilename, err := filenameFromUrl(targetUri)
 	if err != nil {
 		return errors.Wrapf(err, "failed to get \"%s\" archive filename", dependency.Name)
 	}
 
-	err = download(archiveUri, archiveFilename, tempDirectory)
+	err = download(targetUri, targetFilename, tempDirectory)
 	if err != nil {
 		return errors.Wrapf(err, "failed to download \"%s\" archive", dependency.Name)
 	}
@@ -64,7 +88,7 @@ func Install(dependency *api.Dependency, directory string) error {
 			return errors.Wrapf(err, "faile to render \"%s\" checksum uri", dependency.Name)
 		}
 
-		checksumFilename, err := filenameFromUrl(archiveUri)
+		checksumFilename, err := filenameFromUrl(targetUri)
 		if err != nil {
 			return errors.Wrapf(err, "failed to get \"%s\" checksum filename", dependency.Name)
 		}
@@ -74,15 +98,20 @@ func Install(dependency *api.Dependency, directory string) error {
 			return errors.Wrapf(err, "failed to download \"%s\" checksum", dependency.Name)
 		}
 
-		err = verify(archiveFilename, checksumFilename, dependency.ChecksumAlgorithm, tempDirectory)
+		err = verify(targetFilename, checksumFilename, dependency.ChecksumAlgorithm, tempDirectory)
 		if err != nil {
 			return errors.Wrapf(err, "failed to verify \"%s\" archive", dependency.Name)
 		}
 	}
 
-	decompressedFilename, err := decompress(archiveFilename, tempDirectory)
+	if isArchive(dependency) {
+		targetFilename, err = decompress(targetFilename, tempDirectory)
+		if err != nil {
+			return err
+		}
+	}
 
-	err = moveFile(decompressedFilename, dependency.Name, tempDirectory, directory)
+	err = moveFile(targetFilename, dependency.Name, tempDirectory, directory)
 	if err != nil {
 		return errors.Wrapf(err, "failed to move \"%s\" binary", dependency.Name)
 	}
