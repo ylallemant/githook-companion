@@ -1,6 +1,22 @@
 
 <a name="Unreleased"></a>
-## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.8.16...Unreleased) (2025-05-13)
+## [Unreleased](https://github.com/ylallemant/githook-companion/compare/0.9.0...Unreleased) (2025-10-16)
+
+### Features
+
+* add debug to init command
+
+
+<a name="0.9.0"></a>
+## [0.9.0](https://github.com/ylallemant/githook-companion/compare/0.8.17...0.9.0) (2025-10-13)
+
+### Bug Fixes
+
+* use minimalistic as base for config loading
+
+
+<a name="0.8.17"></a>
+## [0.8.17](https://github.com/ylallemant/githook-companion/compare/0.8.16...0.8.17) (2025-05-13)
 
 ### Bug Fixes
 
