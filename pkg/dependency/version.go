@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
@@ -30,5 +31,6 @@ func AvailableVersion(binary string) (string, error) {
 		}
 	}
 
+	log.Debug().Msgf("dependency local version \"%s\"", output)
 	return string(output), nil
 }

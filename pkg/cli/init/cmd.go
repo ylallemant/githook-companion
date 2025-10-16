@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/ylallemant/githook-companion/pkg/api"
@@ -15,6 +16,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/git"
 	gitConfig "github.com/ylallemant/githook-companion/pkg/git/config"
 	"github.com/ylallemant/githook-companion/pkg/git/hook"
+	"github.com/ylallemant/githook-companion/pkg/globals"
 )
 
 var rootCmd = &cobra.Command{
@@ -22,6 +24,8 @@ var rootCmd = &cobra.Command{
 	Short: "initialize configuration locally or globally",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		globals.ProcessGlobals()
+
 		var err error
 		var basePath string
 		var reference *api.ParentConfig
@@ -41,6 +45,8 @@ var rootCmd = &cobra.Command{
 		} else {
 			basePath = localBasePath
 		}
+
+		log.Debug().Msgf("config base path %s", basePath)
 
 		if options.Current.ParentPath != "" && options.Current.ParentRepository != "" {
 			reference = &api.ParentConfig{
@@ -130,6 +136,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&options.Current.ParentPath, "parent-path", options.Current.ParentPath, fmt.Sprintf("relative path to the parent configuration root (parent of %s)", api.ConfigDirectory))
 	rootCmd.PersistentFlags().BoolVar(&options.Current.ParentPrivate, "parent-private", options.Current.ParentPrivate, "specifies if the parent configuration repository is private")
 	rootCmd.PersistentFlags().BoolVarP(&options.Current.Minimalistic, "minimalistic", "m", options.Current.Minimalistic, "only install the bare minimum. no hooks, no dictionaries, no nothing")
+	rootCmd.PersistentFlags().BoolVar(&globals.Current.Debug, "debug", globals.Current.Debug, "outputs processing information")
 	rootCmd.SetOutput(os.Stderr)
 }
 

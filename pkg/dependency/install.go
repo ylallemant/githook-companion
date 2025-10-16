@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
 	"github.com/ylallemant/githook-companion/pkg/environment"
 )
@@ -30,13 +31,16 @@ func DependencyDirectoryFromConfig(configuration *api.Config) string {
 		panic(err)
 	}
 
+	log.Debug().Msgf("dependency installation directory %s", path)
 	return path
 }
 
 func DefaultInstallDirectory() string {
+	path := ""
+
 	switch runtime.GOOS {
 	case "darwin":
-		return "/usr/local/bin"
+		path = "/usr/local/bin"
 	default:
 		home, err := environment.Home()
 		if err != nil {
@@ -48,8 +52,11 @@ func DefaultInstallDirectory() string {
 			panic(err)
 		}
 
-		return filepath.Join(home, ".local", "bin")
+		path = filepath.Join(home, ".local", "bin")
 	}
+
+	log.Debug().Msgf("dependency default installation directory %s", path)
+	return path
 }
 
 func InstallAll(installationDirectory string, configuration *api.Config) error {
