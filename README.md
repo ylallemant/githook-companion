@@ -134,6 +134,13 @@ You may want to use specific binaries in your githooks.
 
 This is done to avoid too complex manipulations in the githook scripts themselves.
 
+#### Sync Commands
+
+```bash
+# forces the synchronization of parent configurations and dependencies
+githook-companion sync [--skip-parents] [--skip-dependencies]
+```
+
 #### Environment Commands
 
 ```bash

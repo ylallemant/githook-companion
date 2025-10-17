@@ -13,6 +13,7 @@ import (
 	"github.com/ylallemant/githook-companion/pkg/cli/git"
 	initCmd "github.com/ylallemant/githook-companion/pkg/cli/init"
 	"github.com/ylallemant/githook-companion/pkg/cli/remove"
+	"github.com/ylallemant/githook-companion/pkg/cli/sync"
 )
 
 var rootCmd = &cobra.Command{
@@ -33,6 +34,7 @@ func init() {
 	rootCmd.AddCommand(git.Command())
 	rootCmd.AddCommand(debug.Command())
 	rootCmd.AddCommand(initCmd.Command())
+	rootCmd.AddCommand(sync.Command())
 	rootCmd.AddCommand(remove.Command())
 	rootCmd.AddCommand(config.Command())
 	rootCmd.AddCommand(upgrade.Command())

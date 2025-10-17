@@ -65,7 +65,7 @@ var rootCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to ensure configuration")
 		}
 
-		configContext, err := config.Context(false)
+		configContext, err := config.Context(false, true)
 		if err != nil {
 			return err
 		}
