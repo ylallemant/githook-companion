@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
@@ -26,6 +27,7 @@ func templateDataFromDependency(dependency *api.Dependency) *archiveContext {
 
 func renderUriTempate(urlTemplate string, data *archiveContext) (string, error) {
 	var err error
+	log.Debug().Msgf("url template context %#+v", data)
 
 	tmpl := template.New("url")
 	if tmpl, err = tmpl.Parse(urlTemplate); err != nil {

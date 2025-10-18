@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 func verify(archiveFilename, checksumFilename, algorithm, directory string) error {
@@ -41,6 +42,7 @@ func verify(archiveFilename, checksumFilename, algorithm, directory string) erro
 	}
 
 	archiveChecksum := hex.EncodeToString(hasher.Sum(nil))
+	log.Debug().Msgf("dependency local checksum %s", archiveChecksum)
 
 	// read expected checksum
 	content, err := os.ReadFile(filepath.Join(directory, checksumFilename))
@@ -49,6 +51,7 @@ func verify(archiveFilename, checksumFilename, algorithm, directory string) erro
 	}
 
 	expectedChecksum := strings.TrimSpace(string(content))
+	log.Debug().Msgf("dependency expected checksum %s", expectedChecksum)
 
 	// check validity
 	if archiveChecksum != expectedChecksum {

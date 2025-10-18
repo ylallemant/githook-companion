@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/ylallemant/githook-companion/pkg/api"
 )
 
@@ -25,6 +26,7 @@ func targetUriTemplate(dependency *api.Dependency) (string, error) {
 }
 
 func isArchive(dependency *api.Dependency) bool {
+	log.Debug().Msgf("dependency file is an archive: %v", dependency.ArchiveUrlTemplate != "")
 	return dependency.ArchiveUrlTemplate != ""
 }
 
@@ -65,6 +67,7 @@ func Install(dependency *api.Dependency, directory string) error {
 	if err != nil {
 		return errors.Wrapf(err, "failed to render \"%s\" archive uri", dependency.Name)
 	}
+	log.Debug().Msgf("dependency download url %s", targetUri)
 
 	tempDirectory, err := os.MkdirTemp(os.TempDir(), dependency.Name)
 	if err != nil {
@@ -87,6 +90,7 @@ func Install(dependency *api.Dependency, directory string) error {
 		if err != nil {
 			return errors.Wrapf(err, "faile to render \"%s\" checksum uri", dependency.Name)
 		}
+		log.Debug().Msgf("dependency checksum url %s", checksumUri)
 
 		checksumFilename, err := filenameFromUrl(targetUri)
 		if err != nil {

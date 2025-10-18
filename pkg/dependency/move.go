@@ -5,11 +5,13 @@ import (
 	"path/filepath"
 
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 )
 
 func moveFile(decompressedFilename, binaryFilename, sourceDirectory, targetDirectory string) error {
 	sourcePath := filepath.Join(sourceDirectory, decompressedFilename)
 	targetPath := filepath.Join(targetDirectory, binaryFilename)
+	log.Debug().Msgf("dependency binary move to %s", targetPath)
 
 	content, err := os.ReadFile(sourcePath)
 	if err != nil {

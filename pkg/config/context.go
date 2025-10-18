@@ -14,7 +14,7 @@ const (
 	networkLockDescription = `lock used to mitigate network connectivity problems`
 )
 
-func Context(fallbackToDefault bool) (*configContext, error) {
+func Context(fallbackToDefault, disableSync bool) (*configContext, error) {
 	var err error
 	var basePath string
 
@@ -54,10 +54,10 @@ func Context(fallbackToDefault bool) (*configContext, error) {
 
 	log.Debug().Msgf("base path set to \"%s\"", basePath)
 
-	return ContextFromPath(basePath, fallbackToDefault)
+	return ContextFromPath(basePath, fallbackToDefault, disableSync)
 }
 
-func ContextFromPath(customPath string, fallbackToDefault bool) (*configContext, error) {
+func ContextFromPath(customPath string, fallbackToDefault, disableSync bool) (*configContext, error) {
 	var err error
 	log.Debug().Msgf("use base path \"%s\"", customPath)
 
@@ -111,7 +111,7 @@ func ContextFromPath(customPath string, fallbackToDefault bool) (*configContext,
 		syncConfig = defaultSync()
 	}
 
-	if syncConfig.Parent || syncConfig.Binary {
+	if !disableSync && (syncConfig.Parent || syncConfig.Binary) {
 		reloadNeeded := false
 
 		if syncConfig.Parent {
@@ -139,7 +139,7 @@ func ContextFromPath(customPath string, fallbackToDefault bool) (*configContext,
 		}
 
 		if reloadNeeded {
-			return ContextFromPath(customPath, fallbackToDefault)
+			return ContextFromPath(customPath, fallbackToDefault, disableSync)
 		}
 	} else {
 		log.Warn().Msgf("auto sync is disabled")
